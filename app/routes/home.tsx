@@ -20,6 +20,16 @@ export default function Home() {
     src:''
   }
   return (
-    <h1>hello world</h1>
+    <center>
+      <SongItem 
+      id={song.id}
+      name={song.name}
+      author={song.author}
+      likes={song.likes}
+      dislikes={song.dislikes}
+      img={song.img}
+      src={song.src}
+      />  
+    </center>
   );
 }

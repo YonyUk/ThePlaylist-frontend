@@ -5,6 +5,18 @@
     max-width: 200px;
     gap: 10px;
     border-radius: 15px;
+    overflow-x: hidden;
+}
+
+@keyframes move{
+    0%{
+        left:100%;
+        transform: translateX(0);
+    }
+    100%{
+        left: 0;
+        transform: translateX(-100%);
+    }
 }
 
 .song-item img{
