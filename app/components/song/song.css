@@ -1,0 +1,53 @@
+.song-item{
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    max-width: 200px;
+    gap: 10px;
+    border-radius: 15px;
+}
+
+.song-item img{
+    border-radius: 15px;
+    margin: 5%;
+}
+
+.song-timeline{
+    appearance: none;
+    background-color: gray;
+    height: 1px;
+    cursor: pointer;
+    accent-color: gray;
+    scale: 0.7;
+}
+
+.song-name-header{
+    align-self: center;
+}
+
+.song-item-controls{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.song-item-controls button{
+    cursor: pointer;
+}
+
+.song-item-controls button:hover{
+    opacity: 0.4;
+    transition: opacity 0.2s;
+}
+
+.song-social-info{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.song-social-info button:hover{
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+}

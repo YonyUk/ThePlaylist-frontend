@@ -1,5 +1,6 @@
+import type { Song } from "~/types/song";
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+import SongItem from "~/components/song/song";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -9,5 +10,16 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  return <Welcome />;
+  let song:Song = {
+    id:'1',
+    name:'name',
+    author:'author',
+    likes:0,
+    dislikes:0,
+    img:'app/assets/images/background.jpg',
+    src:''
+  }
+  return (
+    <h1>hello world</h1>
+  );
 }
