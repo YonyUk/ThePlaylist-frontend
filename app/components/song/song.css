@@ -8,6 +8,12 @@
     overflow-x: hidden;
 }
 
+.glass-box{
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
 @keyframes move{
     0%{
         left:100%;
