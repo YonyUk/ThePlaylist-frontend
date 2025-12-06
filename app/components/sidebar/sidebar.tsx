@@ -3,28 +3,38 @@ import { IoHomeSharp } from 'react-icons/io5'
 import { BsMusicNoteList } from 'react-icons/bs'
 import { IoMdContact } from 'react-icons/io'
 import { useState } from 'react'
+import { Routes, useNavigate } from 'react-router-dom';
+import { ROUTES } from '~/routes'
 
 const menuItems = [
     {
         icon: <IoHomeSharp size={30}/>,
-        label:'Home'
+        label:'Home',
+        url:ROUTES.HOME
     },
     {
         icon: <BsMusicNoteList size={30}/>,
-        label: 'Playlists'
+        label: 'Playlists',
+        url:ROUTES.PLAYLISTS
     },
     {
         icon: <IoMdContact size={30}/>,
-        label: 'Account'
+        label: 'Account',
+        url:ROUTES.LOGIN
     }
 ]
 
 const SideBar = () => {
 
     const [isOpen, setIsOpen] = useState(false);
+    const navigate = useNavigate();
 
     return (
-        <nav className={`h-screen bg-[#00000040] p-2 flex flex-col duration-500 text-white backdrop-blur-sm ${isOpen ? 'w-80' : 'w-16'}`}>
+        <nav className={`h-screen bg-[#00000040] p-2 flex flex-col duration-500 text-white backdrop-blur-sm ${isOpen ? 'w-80' : 'w-16'} fixed z-10 inset-0`}>
+            {/* Routes */}
+            <Routes>
+
+            </Routes>
             {/* Header */}
             <div className='px-3 py-2 h-20 justify-between items-center'>
                 <div><TiThMenu size={34}
@@ -39,6 +49,7 @@ const SideBar = () => {
                         return (
                             <li key={index}
                             className='px-3 py-2 my-2 rounded-md duration-300 cursor-pointer flex gap-2 items-center relative group hover:bg-[#00000045]'
+                            onClick={(e) => navigate(item.url)}
                             >
                                 <div>{item.icon}</div>
                                 <p className={`${!isOpen && 'w-0 '} duration-500 overflow-hidden`}>{item.label}</p>
