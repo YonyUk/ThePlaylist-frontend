@@ -4,7 +4,7 @@ export interface PlayList
 {
     id:string
     name:string
-    songs:Song[]
+    songs:number
     img:string
     author:string
     reproductions?:number
