@@ -1,12 +1,60 @@
+import { useState } from "react";
+import PlayListItem from "~/components/playlist/playlist";
 import SearchBar from "~/components/searchbar/searchbar";
 import SideBar from "~/components/sidebar/sidebar";
+import type { PlayList } from "~/types/playlist";
+import type { Song } from "~/types/song";
 
 const PlayLists = () => {
 
+    const id = 'nada';
+    const name = 'nada';
+    const img = 'app/assets/images/background.jpg';
+    const songs: Song[] = [];
+    const author = 'nadie';
+    const reproductions = 0
+
+    const playlist: PlayList = {
+        id,
+        name,
+        img,
+        songs,
+        author,
+        reproductions
+    };
+
+    const [playLists,setPlayLists] = useState<PlayList[]>([]);
+
     return (
-        <div className="p-3 pl-18 flex flex-col">
+        <div className="p-3 pl-18 gap-5 flex flex-col h-screen w-full items-center">
             <SideBar />
             <SearchBar />
+            <div className={`flex ${playLists.length !== 0 ?
+                'flex-wrap bg-[#00000045] w-full px-5 py-2 overflow-scroll' : 
+                'flex-col h-full justify-center'}
+                rounded-md justify-items-start`}>
+                {
+                    playLists.length === 0 &&
+                    <div className='bg-[#00000045] rounded-md p-10 flex flex-row self-center
+                        justify-self-center'>
+                        <h1 className="text-[30px]">No playlists</h1>
+                    </div>
+                }
+                {
+                    playLists.map((item,index) => {
+                        return (
+                            <PlayListItem
+                            id={item.id}
+                            name={item.name}
+                            img={item.img}
+                            songs={item.songs}
+                            author={item.author}
+                            reproductions={item.reproductions}
+                            />
+                        )
+                    })
+                }
+            </div>
         </div>
     )
 
