@@ -1,13 +1,12 @@
+import SearchBar from "~/components/searchbar/searchbar";
 import SideBar from "~/components/sidebar/sidebar";
 
 const PlayLists = () => {
 
     return (
-        <div className="h-screen pl-18 flex flex-row flex-wrap">
+        <div className="p-3 pl-18 flex flex-col">
             <SideBar />
-            <div className="playlists">
-                Hello world
-            </div>
+            <SearchBar />
         </div>
     )
 
