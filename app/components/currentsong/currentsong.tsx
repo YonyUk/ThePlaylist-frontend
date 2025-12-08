@@ -1,5 +1,5 @@
 import type { Song } from "~/types/song";
-import SocialStats from "../socialcontrols/socialcontrols";
+import SocialStats from "../socialstats/socialstats";
 
 const CurrentSong = ({name,img,author}:Song) => {
     

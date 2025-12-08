@@ -1,5 +1,5 @@
 import type { PlayList } from "~/types/playlist";
-import SocialStats from "../socialcontrols/socialcontrols";
+import SocialStats from "../socialstats/socialstats";
 import { BiSolidPlaylist } from "react-icons/bi";
 import { useNavigate } from "react-router";
 import { ROUTES } from "~/routes";
