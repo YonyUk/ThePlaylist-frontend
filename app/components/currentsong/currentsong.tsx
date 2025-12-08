@@ -51,7 +51,7 @@ const CurrentSong = ({name,img,author}:Song) => {
                 {author.length >= 25 && <h1 style={authorAnimationStyle}>{author}</h1>}
                 {author.length < 25 && <h1>{author}</h1>}
             </div>
-            <SocialStats/>
+            <SocialStats interactive={true}/>
         </div>
     )
 };
