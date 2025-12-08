@@ -8,8 +8,8 @@ import CurrentSong from "~/components/currentsong/currentsong";
 const PlayListView = ({ params }: Route.ComponentProps) => {
 
     const songId = 'nada';
-    const name = 'nada';
-    const author = 'nada';
+    const name = 'nadanadanadanadanada';
+    const author = 'nadanadanadanadanadanadan';
     const src = 'nada';
 
     const song:Song = {

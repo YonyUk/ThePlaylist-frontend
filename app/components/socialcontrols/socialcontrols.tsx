@@ -23,19 +23,19 @@ const SocialStats = ({ hearts, likes, dislikes, reproductions }: SocialControlsI
 
     return (
         <div className="flex flex-row justify-bettwen gap-3 w-full mt-3">
-            <div className="flex flex-row gap-1 hover:text-[#00000045] duration-200 w-10 items-center">
+            <div className="flex flex-row gap-1 w-10 items-center">
                 <FaHeart size={15} />
                 <small className="text-[10px]">{`${hearts ? formatStats(hearts) : 0}`}</small>
             </div>
-            <div className="flex flex-row gap-1 hover:text-[#00000045] duration-200 w-10 items-center">
+            <div className="flex flex-row gap-1 w-10 items-center">
                 <AiFillLike size={15} />
                 <small className="text-[10px]">{`${likes ? formatStats(likes) : 0}`}</small>
             </div>
-            <div className="flex flex-row gap-1 hover:text-[#00000045] duration-200 w-10 items-center">
+            <div className="flex flex-row gap-1 w-10 items-center">
                 <AiFillDislike size={15} />
                 <small className="text-[10px]">{`${dislikes ? formatStats(dislikes) : 0}`}</small>
             </div>
-            <div className="flex flex-row gap-1 hover:text-[#00000045] duration-200 w-10 items-center">
+            <div className="flex flex-row gap-1 w-10 items-center">
                 <IoPlay size={15} />
                 <small className="text-[10px]">{`${reproductions ? formatStats(reproductions) : 0}`}</small>
             </div>
