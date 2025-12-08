@@ -1,6 +1,6 @@
 import { FaHeart,FaRegHeart } from "react-icons/fa";
 import { AiFillLike, AiOutlineLike, AiFillDislike, AiOutlineDislike } from "react-icons/ai";
-import { IoPlay, IoPause } from "react-icons/io5";
+import { IoPlay } from "react-icons/io5";
 import { useState } from "react";
 
 export interface SocialControlsInterface {
