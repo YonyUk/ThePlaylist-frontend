@@ -8,6 +8,18 @@ import Cookies from 'js-cookie';
 import environmentSettings from '~/environment';
 import { ROUTES } from '~/routes';
 
+export interface PaginationParams {
+    page: number;
+    limit: number;
+};
+
+export interface PaginatedResponse<T> {
+    data: T[];
+    total: number;
+    page: number;
+    limit: number;
+};
+
 export class AxiosClient {
     private instance: AxiosInstance;
 
@@ -85,28 +97,28 @@ export class AxiosClient {
         }
     }
 
-    public async get<T>(url:string,config?:AxiosRequestConfig): Promise<T> {
-        const response = await this.instance.get<T>(url,config);
+    public async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+        const response = await this.instance.get<T>(url, config);
         return response.data;
     }
 
-    public async post<T>(url:string,data?:any,config?:AxiosRequestConfig): Promise<T> {
-        const response = await this.instance.post<T>(url,data,config);
+    public async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+        const response = await this.instance.post<T>(url, data, config);
         return response.data;
     }
 
-    public async put<T>(url:string,data?: any,config?: AxiosRequestConfig): Promise<T> {
-        const response = await this.instance.put<T>(url,data,config);
+    public async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+        const response = await this.instance.put<T>(url, data, config);
         return response.data;
     }
 
-    public async patch<T>(url:string,data?: any, config?: AxiosRequestConfig): Promise<T> {
-        const response = await this.instance.patch<T>(url,data,config);
+    public async patch<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+        const response = await this.instance.patch<T>(url, data, config);
         return response.data;
     }
 
-    public async delete<T>(url:string,config?: AxiosRequestConfig): Promise<T> {
-        const response = await this.instance.delete<T>(url,config)
+    public async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+        const response = await this.instance.delete<T>(url, config)
         return response.data;
     }
 
@@ -115,21 +127,21 @@ export class AxiosClient {
     }
 
     private async delay(ms: number): Promise<void> {
-        return new Promise(resolve => setTimeout(resolve,ms));
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    private async handleUnauthorized(): Promise<void>{
-        
+    private async handleUnauthorized(): Promise<void> {
+
         try {
             const response = await this.instance.post(`${environmentSettings.apiUrl}/${environmentSettings.tokenUrl}`);
-            Cookies.set('access_token',response.data.access_token);
+            Cookies.set('access_token', response.data.access_token);
             return;
         } catch (error) {
             this.redirectToLogin();
         }
     }
 
-    private redirectToLogin(): void{
+    private redirectToLogin(): void {
         window.location.href = ROUTES.LOGIN;
     }
 
@@ -137,4 +149,4 @@ export class AxiosClient {
         const token = Cookies.get('access_token');
         return token ? token : null;
     }
-}
+};
