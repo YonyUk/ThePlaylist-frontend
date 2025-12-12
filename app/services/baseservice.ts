@@ -3,8 +3,8 @@ import apiClient from "./api/apiservice";
 
 class BaseService {
 
-    endpoint: string
-    api: AxiosInstance
+    private endpoint: string
+    private api: AxiosInstance
 
     constructor(endpoint: string) {
 

@@ -2,9 +2,10 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import Cookies from 'js-cookie';
 import { ROUTES } from '~/routes';
+import environmentSettings from '~/environment';
 
 const apiClient = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
+    baseURL: environmentSettings.apiUrl,
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
@@ -46,7 +47,7 @@ apiClient.interceptors.response.use(
             originalRequest._retry = true;
             try {
                 const refreshToken = Cookies.get('refresh_token');
-                const response = await axios.post(`${process.env.REACT_APP_API_ACCESS_TOKEN_URL}`, { refreshToken });
+                const response = await axios.post(`${environmentSettings.apiUrl}/${environmentSettings.tokenUrl}`, { refreshToken });
 
                 const { accessToken } = response.data;
                 Cookies.set('access_token', accessToken, { path: '/' });
