@@ -5,15 +5,17 @@ import type { UserDto } from "~/dtos/userdtos";
 
 export class UserService {
 
-    private axiosClient: AxiosClient;
-    private basePath: string = '';
+    private axiosClient:AxiosClient;
+    private static instance:UserService;
 
-    constructor(
-        axiosClient: AxiosClient
-    ) {
-        this.axiosClient = axiosClient;
-        if (environmentSettings.usersUrl)
-            this.basePath = environmentSettings.usersUrl;
+    private constructor( ) {
+        this.axiosClient = new AxiosClient(String(environmentSettings.apiUrl));
+    }
+
+    public static get():UserService {
+        if (!this.instance)
+            this.instance = new UserService();
+        return this.instance;
     }
 
     private normalizePaginationParams(params?: PaginationParams) {
@@ -39,7 +41,7 @@ export class UserService {
     public async getAll(params?: PaginationParams): Promise<PaginatedResponse<UserDto>> {
         try {
             const response = await this.axiosClient.get<PaginatedResponse<UserDto>>(
-                this.basePath,
+                String(environmentSettings.usersUrl),
                 {
                     params: this.normalizePaginationParams(params),
                 }

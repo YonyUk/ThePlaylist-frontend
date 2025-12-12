@@ -8,6 +8,7 @@ export async function clientAction({request}:Route.ClientActionArgs){
     const email = formData.get('email');
     const password = formData.get('password');
     const confirmPassword = formData.get('confirm-password');
+
 }
 
 const Account = () => {
