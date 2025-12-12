@@ -4,7 +4,6 @@ export const ROUTES = {
     HOME: '/',
     PLAYLISTS: '/playlists',
     TRACKS:'/playlists',
-    LOGIN:'/login',
     REGISTER:'/register'
 } as const;
 
@@ -15,6 +14,5 @@ export default [
     index("routes/home.tsx"),
     route(ROUTES.PLAYLISTS,'routes/playlists/playlists.tsx'),
     route(`${ROUTES.PLAYLISTS}/:playlistId`,'routes/playlistview/playlistview.tsx'),
-    route(ROUTES.LOGIN,'routes/accounts/accounts.tsx'),
-    route(ROUTES.REGISTER,'routes/accounts/register/register.tsx')
+    route(ROUTES.REGISTER,'routes/register/register.tsx')
 ] satisfies RouteConfig;

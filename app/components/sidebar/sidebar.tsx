@@ -3,7 +3,7 @@ import { IoHomeSharp } from 'react-icons/io5'
 import { BsMusicNoteList } from 'react-icons/bs'
 import { IoMdContact } from 'react-icons/io'
 import { useState } from 'react'
-import { Routes, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '~/routes'
 
 
@@ -23,7 +23,7 @@ const SideBar = () => {
         {
             icon: <IoMdContact size={30} />,
             label: 'Account',
-            url: ROUTES.LOGIN
+            url: ROUTES.REGISTER
         }
     ]
 
@@ -32,10 +32,6 @@ const SideBar = () => {
 
     return (
         <nav className={`h-screen bg-[#00000040] p-2 flex flex-col duration-500 text-white backdrop-blur-sm ${isOpen ? 'w-80' : 'w-16'} fixed z-10 inset-0`}>
-            {/* Routes */}
-            <Routes>
-
-            </Routes>
             {/* Header */}
             <div className='px-3 py-2 h-20 justify-between items-center'>
                 <div><TiThMenu size={34}

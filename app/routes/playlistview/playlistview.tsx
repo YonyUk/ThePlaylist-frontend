@@ -25,7 +25,6 @@ const PlayListView = ({ params }: Route.ComponentProps) => {
 
     return (
         <div className="flex flex-col pl-18 w-full h-screen items-center gap-5 p-2 overflow-auto">
-            <SideBar />
             <SearchBar />
             <CurrentSong
                 name={currentSong.name}
