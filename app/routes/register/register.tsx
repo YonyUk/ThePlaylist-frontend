@@ -42,15 +42,24 @@ export default function Register({ actionData, loaderData }: Route.ComponentProp
     const validatePassword = () => password === confirm;
 
     const validationsDetails = (actionData?.data as ValidationError)?.detail;
-    const usernameValidationDetails = validationsDetails?.find(
-        detail => detail.loc[1] === 'username'
-    );
-    const emailValidationDetails = validationsDetails?.find(
-        detail => detail.loc[1] === 'email'
-    );
-    const passwordValidationDetails = validationsDetails?.find(
-        detail => detail.loc[1] === 'password'
-    )
+
+    const usernameValidationDetails = typeof validationsDetails === 'object' ?
+        validationsDetails?.find(
+            detail => detail.loc[1] === 'username'
+        ) : null;
+
+    const emailValidationDetails = typeof validationsDetails === 'object' ?
+        validationsDetails?.find(
+            detail => detail.loc[1] === 'email'
+        ) : null;
+
+    const passwordValidationDetails = typeof validationsDetails === 'object' ?
+        validationsDetails?.find(
+            detail => detail.loc[1] === 'password'
+        ) : null;
+
+    const invalidOperation = validationsDetails &&
+        !(usernameValidationDetails || emailValidationDetails || passwordValidationDetails);
 
     const networkError = actionData &&
         (actionData?.data as any) &&
@@ -71,6 +80,10 @@ export default function Register({ actionData, loaderData }: Route.ComponentProp
                 <div>
                     <h1>Register</h1>
                 </div>
+                {
+                    invalidOperation &&
+                    <p className="text-red-500 text-[10px]">{validationsDetails.toString()}</p>
+                }
                 <div>
                     <p className="text-red-500 text-[10px] pl-2">
                         {`${attempted && !validateField(username) ? 'required field' :

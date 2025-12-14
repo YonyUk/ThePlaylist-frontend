@@ -19,11 +19,6 @@ export class UserService {
         return this.instance;
     }
 
-    private handleUserError(error: Error): void {
-        console.error('[UserService Error]', error.message);
-        // Lógica específica para errores de usuario
-    }
-
     public async create(user:CreateUserDto) {
         return await this.axiosClient.post<NetworkError | ValidationError | UserDto>(`${environmentSettings.usersUrl}/register`,user);
     }
