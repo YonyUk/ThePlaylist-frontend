@@ -1,5 +1,4 @@
 export interface ValidationError {
-    status:number;
     detail:ValidationErrorDetail[];
 }
 

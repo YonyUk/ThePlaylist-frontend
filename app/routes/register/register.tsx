@@ -1,7 +1,9 @@
-import { Form } from "react-router";
+import { Form, useNavigate } from "react-router";
 import { useState } from "react";
 import type { Route } from "./+types/register";
 import { UserService } from "~/services/UserService";
+import type { ValidationError, ValidationErrorDetail } from "~/types/responsetypes";
+import { ROUTES } from "~/routes";
 
 export async function action({ request }: Route.ActionArgs) {
     const formData = await request.formData();
@@ -11,12 +13,10 @@ export async function action({ request }: Route.ActionArgs) {
     const confirm = String(formData.get('confirm-password'));
 
     if (username.length * email.length * password.length == 0) {
-        console.log('Please, fill all the required fields');
-        return { error: 'error' };
+        return null;
     }
     else if (password.length !== confirm.length) {
-        console.log('Passwords does not match');
-        return { error: 'error' };
+        return null;
     }
     else {
         const response = await UserService.get().create({
@@ -30,6 +30,8 @@ export async function action({ request }: Route.ActionArgs) {
 
 export default function Register({ actionData, loaderData }: Route.ComponentProps) {
 
+    const navigate = useNavigate();
+
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, SetPassword] = useState('');
@@ -38,6 +40,27 @@ export default function Register({ actionData, loaderData }: Route.ComponentProp
 
     const validateField = (field: string) => field.length > 0;
     const validatePassword = () => password === confirm;
+
+    const validationsDetails = (actionData?.data as ValidationError)?.detail;
+    const usernameValidationDetails = validationsDetails?.find(
+        detail => detail.loc[1] === 'username'
+    );
+    const emailValidationDetails = validationsDetails?.find(
+        detail => detail.loc[1] === 'email'
+    );
+    const passwordValidationDetails = validationsDetails?.find(
+        detail => detail.loc[1] === 'password'
+    )
+
+    const networkError = actionData &&
+        (actionData?.data as any) &&
+        'msg' in (actionData?.data as any);
+
+    if (networkError)
+        alert((actionData?.data as any).msg);
+
+    if (actionData && !networkError && !validationsDetails)
+        navigate(ROUTES.HOME);
 
     return (
         <div className="flex flex-col h-screen w-full pl-18 justify-center items-center">
@@ -49,30 +72,39 @@ export default function Register({ actionData, loaderData }: Route.ComponentProp
                     <h1>Register</h1>
                 </div>
                 <div>
-                    <p className="text-red-500 text-[10px] pl-2">{`${attempted && !validateField(username) ? 'required field' : ''}`}</p>
+                    <p className="text-red-500 text-[10px] pl-2">
+                        {`${attempted && !validateField(username) ? 'required field' :
+                            usernameValidationDetails ? usernameValidationDetails.msg : ''}`}
+                    </p>
                     <input type="text" name="username" id="username"
                         placeholder="username"
                         onChange={(e) => setUsername(e.target.value)}
                         className={`outline-none rounded-md bg-[#00000015] p-2 
-                    ${attempted && !validateField(username) && "border-[1px] border-red-500"}`} />
+                    ${(attempted && !validateField(username) || usernameValidationDetails) && "border-[1px] border-red-500"}`} />
                 </div>
                 <div>
-                    <p className="text-red-500 text-[10px] pl-2">{`${attempted && !validateField(email) ? 'required field' : ''}`}</p>
+                    <p className="text-red-500 text-[10px] pl-2">
+                        {`${attempted && !validateField(email) ? 'required field' :
+                            emailValidationDetails ? emailValidationDetails.msg : ''}`}</p>
                     <input type="email" name="email" id="email"
                         placeholder="email"
                         onChange={(e) => setEmail(e.target.value)}
                         className={`outline-none rounded-md bg-[#00000015] p-2
-                    ${attempted && !validateField(email) && "border-[1px] border-red-500"}`} />
+                    ${(attempted && !validateField(email) || emailValidationDetails) && "border-[1px] border-red-500"}`} />
                 </div>
                 <div>
                     <p className="text-red-500 text-[10px] pl-2">
-                        {!validatePassword() ? 'passwords do not matchs' : `${attempted && !validateField(password) ? 'required field' : ''}`}
+                        {!validatePassword() ? 'passwords do not matchs' :
+                            `${attempted && !validateField(password) ? 'required field' :
+                                passwordValidationDetails ? passwordValidationDetails.msg : ''}`}
                     </p>
                     <input type="password" name="password" id="password"
                         placeholder="password"
                         onChange={(e) => SetPassword(e.target.value)}
                         className={`outline-none rounded-md bg-[#00000015] p-2
-                    ${attempted && !validateField(password) && validatePassword() && "border-[1px] border-red-500"}
+                    ${(attempted && !validateField(password) && validatePassword()
+                                || passwordValidationDetails) &&
+                            "border-[1px] border-red-500"}
                     `} />
                 </div>
                 <div>
