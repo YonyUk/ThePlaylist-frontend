@@ -1,13 +1,20 @@
-import SideBar from "~/components/sidebar/sidebar";
 import { Form } from "react-router";
 import { useState } from "react";
-import { UserService } from "~/services/UserService";
 import type { Route } from "./+types/register";
 
 export async function clientAction({request}:Route.ClientActionArgs){
     const formData = await request.formData();
-    const username = formData.get('username');
-    console.log(username)
+    const username = String(formData.get('username'));
+    const email = String(formData.get('email'));
+    const password = String(formData.get('password'));
+    const confirm = String(formData.get('confirm-password'));
+
+    if(username.length * email.length * password.length == 0)
+        alert('Please, fill all the required fields');
+    else if(password.length !== confirm.length)
+        alert('Passwords does not match');
+    else
+        alert('Sending form');
 }
 
 const Register = () => {
@@ -54,7 +61,7 @@ const Register = () => {
                         placeholder="password"
                         onChange={(e) => SetPassword(e.target.value)}
                         className={`outline-none rounded-md bg-[#00000015] p-2
-                    ${attempted && !validateField(password) && !validatePassword() && "border-[1px] border-red-500"}
+                    ${attempted && !validateField(password) && validatePassword() && "border-[1px] border-red-500"}
                     `} />
                 </div>
                 <div>
@@ -65,7 +72,7 @@ const Register = () => {
                         placeholder="confirm password"
                         onChange={(e) => setConfirm(e.target.value)}
                         className={`outline-none rounded-md bg-[#00000015] p-2
-                    ${attempted && !validateField(confirm) && !validatePassword() && "border-[1px] border-red-500"}`} />
+                    ${attempted && !validateField(confirm) && validatePassword() && "border-[1px] border-red-500"}`} />
                 </div>
                 <div className="text-[#ffffff75] text-[12px] flex flex-start">
                     <p>ALready registered?,</p><u className="cursor-pointer text-[#ffffff]"> login</u>
