@@ -24,12 +24,14 @@ export async function action({request}:Route.ActionArgs){
             email,
             password
         });
+        console.log(response);
         return response;
     }
 }
 
 export default function Register({actionData,loaderData}:Route.ComponentProps){
 
+    
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, SetPassword] = useState('');

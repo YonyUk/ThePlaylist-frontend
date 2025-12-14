@@ -2,7 +2,7 @@ import { ROUTES } from "~/routes";
 import { AxiosClient, type PaginatedResponse, type PaginationParams } from "./http/AxiosClient";
 import environmentSettings from "~/environment";
 import type { UserDto,CreateUserDto } from "~/dtos/userdtos";
-import type { ValidationError } from "~/types/responsetypes";
+import { type NetworkError, type ValidationError } from "~/types/responsetypes";
 
 export class UserService {
 
@@ -40,7 +40,7 @@ export class UserService {
     }
 
     public async create(user:CreateUserDto) {
-        const response = await this.axiosClient.post<ValidationError | UserDto>(`${environmentSettings.usersUrl}/register`,user);
+        const response = await this.axiosClient.post<NetworkError | ValidationError | UserDto>(`${environmentSettings.usersUrl}/register`,user);
         return response;
     }
 

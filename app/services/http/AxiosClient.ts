@@ -68,7 +68,11 @@ export class AxiosClient {
         }
 
         if (!error.response) {
-            throw new Error('Network error');
+            error.response = {
+                data:{
+                    msg:'Network Error'
+                }
+            };
         }
 
         const { status, data } = error.response;

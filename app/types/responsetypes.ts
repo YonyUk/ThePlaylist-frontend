@@ -8,3 +8,7 @@ export interface ValidationErrorDetail{
     loc:any[],
     input:string
 }
+
+export interface NetworkError{
+    msg:string
+}
