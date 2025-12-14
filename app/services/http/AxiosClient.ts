@@ -108,29 +108,24 @@ export class AxiosClient {
         return error.response;
     }
 
-    public async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-        const response = await this.instance.get<T>(url, config);
-        return response.data;
+    public async get<T>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+        return await this.instance.get<T>(url, config);
     }
 
-    public async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-        const response = await this.instance.post<T>(url, data, config);
-        return response.data;
+    public async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+        return await this.instance.post<T>(url, data, config);
     }
 
-    public async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-        const response = await this.instance.put<T>(url, data, config);
-        return response.data;
+    public async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+        return await this.instance.put<T>(url, data, config);
     }
 
-    public async patch<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-        const response = await this.instance.patch<T>(url, data, config);
-        return response.data;
+    public async patch<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+        return await this.instance.patch<T>(url, data, config);
     }
 
-    public async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-        const response = await this.instance.delete<T>(url, config)
-        return response.data;
+    public async delete<T>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+        return await this.instance.delete<T>(url, config)
     }
 
     public createCancelToken() {

@@ -40,8 +40,7 @@ export class UserService {
     }
 
     public async create(user:CreateUserDto) {
-        const response = await this.axiosClient.post<NetworkError | ValidationError | UserDto>(`${environmentSettings.usersUrl}/register`,user);
-        return response;
+        return await this.axiosClient.post<NetworkError | ValidationError | UserDto>(`${environmentSettings.usersUrl}/register`,user);
     }
 
     public async getAll(params?: PaginationParams): Promise<PaginatedResponse<UserDto>> {
@@ -53,8 +52,8 @@ export class UserService {
                 }
             );
             return {
-                ...response,
-                data: response.data.map(this.transformApiUserToDomain),
+                ...response.data,
+                data: response.data.data.map(this.transformApiUserToDomain),
             };
         } catch (error: any) {
             this.handleUserError(error);

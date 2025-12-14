@@ -1,14 +1,15 @@
 export interface ValidationError {
-    detail:ValidationErrorDetail[],
+    status:number;
+    detail:ValidationErrorDetail[];
 }
 
 export interface ValidationErrorDetail{
-    msg:string,
-    type:string,
-    loc:any[],
-    input:string
+    msg:string;
+    type:string;
+    loc:any[];
+    input:string;
 }
 
 export interface NetworkError{
-    msg:string
+    msg:string;
 }
