@@ -32,7 +32,7 @@ export class AxiosClient {
                 'Accept': 'application/json'
             }
         });
-
+        this.setupInterceptors();
     }
 
     private setupInterceptors(): void {
@@ -62,7 +62,7 @@ export class AxiosClient {
         )
     }
 
-    private async handleError(error: any): Promise<never> {
+    private async handleError(error: any): Promise<void> {
         if (axios.isCancel(error)) {
             throw new Error('RequestCancelledError');
         }
@@ -76,25 +76,32 @@ export class AxiosClient {
         switch (status) {
             case 401:
                 await this.handleUnauthorized();
-                throw new Error('UnauthorizedError');
+                // throw new Error('UnauthorizedError');
+                break;
 
             case 403:
-                throw new Error('ForbiddenError');
+                // throw new Error('ForbiddenError');
+                break;
 
             case 404:
-                throw new Error('NotFoundError');
+                // throw new Error('NotFoundError');
+                break;
 
             case 429:
                 // Rate limiting - JUSTIFICACIÓN: Backoff automático
                 await this.delay(1000);
-                throw new Error('RateLimitError');
+                // throw new Error('RateLimitError');
+                break;
 
             case 500:
-                throw new Error('ServerError');
+                // throw new Error('ServerError');
+                break;
 
             default:
-                throw new Error(`APIError: ${status}`);
+                // throw new Error(`APIError: ${status}`);
+                break;
         }
+        return error.response;
     }
 
     public async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
@@ -142,7 +149,7 @@ export class AxiosClient {
     }
 
     private redirectToLogin(): void {
-        window.location.href = ROUTES.LOGIN;
+        window.location.href = ROUTES.REGISTER;
     }
 
     private getAuthToken(): string | null {

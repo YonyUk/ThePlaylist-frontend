@@ -1,23 +1,34 @@
 import { Form } from "react-router";
 import { useState } from "react";
 import type { Route } from "./+types/register";
+import { UserService } from "~/services/UserService";
 
-export async function clientAction({request}:Route.ClientActionArgs){
+export async function action({request}:Route.ActionArgs){
     const formData = await request.formData();
     const username = String(formData.get('username'));
     const email = String(formData.get('email'));
     const password = String(formData.get('password'));
     const confirm = String(formData.get('confirm-password'));
 
-    if(username.length * email.length * password.length == 0)
-        alert('Please, fill all the required fields');
-    else if(password.length !== confirm.length)
-        alert('Passwords does not match');
-    else
-        alert('Sending form');
+    if(username.length * email.length * password.length == 0){
+        console.log('Please, fill all the required fields');
+        return {error:'error'};
+    }
+    else if(password.length !== confirm.length){
+        console.log('Passwords does not match');
+        return {error:'error'};
+    }
+    else{
+        const response = await UserService.get().create({
+            username,
+            email,
+            password
+        });
+        return response;
+    }
 }
 
-const Register = () => {
+export default function Register({actionData,loaderData}:Route.ComponentProps){
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -90,5 +101,3 @@ const Register = () => {
         </div>
     )
 };
-
-export default Register;

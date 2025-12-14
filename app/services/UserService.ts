@@ -1,7 +1,8 @@
 import { ROUTES } from "~/routes";
 import { AxiosClient, type PaginatedResponse, type PaginationParams } from "./http/AxiosClient";
 import environmentSettings from "~/environment";
-import type { UserDto } from "~/dtos/userdtos";
+import type { UserDto,CreateUserDto } from "~/dtos/userdtos";
+import type { ValidationError } from "~/types/responsetypes";
 
 export class UserService {
 
@@ -36,6 +37,11 @@ export class UserService {
     private handleUserError(error: Error): void {
         console.error('[UserService Error]', error.message);
         // Lógica específica para errores de usuario
+    }
+
+    public async create(user:CreateUserDto) {
+        const response = await this.axiosClient.post<ValidationError | UserDto>(`${environmentSettings.usersUrl}/register`,user);
+        return response;
     }
 
     public async getAll(params?: PaginationParams): Promise<PaginatedResponse<UserDto>> {
