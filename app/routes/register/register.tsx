@@ -15,7 +15,7 @@ const Register = () => {
     return (
         <div className="flex flex-col h-screen w-full pl-18 justify-center items-center">
             <Form
-                method="post"
+                // method="post"
                 className="flex flex-col p-5 px-10 w-fit justify-center items-center bg-[#c0c0c025]
                 rounded-md backdrop-blur-xs gap-5">
                 <div>
@@ -45,7 +45,7 @@ const Register = () => {
                         placeholder="password"
                         onChange={(e) => SetPassword(e.target.value)}
                         className={`outline-none rounded-md bg-[#00000015] p-2
-                    ${attempted && !validateField(password) && !validatePassword() && "border-[1px] border-red-500"}
+                    ${attempted && !validateField(password) && validatePassword() && "border-[1px] border-red-500"}
                     `} />
                 </div>
                 <div>
@@ -56,7 +56,7 @@ const Register = () => {
                         placeholder="confirm password"
                         onChange={(e) => setConfirm(e.target.value)}
                         className={`outline-none rounded-md bg-[#00000015] p-2
-                    ${attempted && !validateField(confirm) && !validatePassword() && "border-[1px] border-red-500"}`} />
+                    ${attempted && !validateField(confirm) && validatePassword() && "border-[1px] border-red-500"}`} />
                 </div>
                 <div className="text-[#ffffff75] text-[12px] flex flex-start">
                     <p>ALready registered?,</p><u className="cursor-pointer text-[#ffffff]"> login</u>
