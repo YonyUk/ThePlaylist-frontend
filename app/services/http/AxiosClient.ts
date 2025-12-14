@@ -8,18 +8,6 @@ import Cookies from 'js-cookie';
 import environmentSettings from '~/environment';
 import { ROUTES } from '~/routes';
 
-export interface PaginationParams {
-    page: number;
-    limit: number;
-};
-
-export interface PaginatedResponse<T> {
-    data: T[];
-    total: number;
-    page: number;
-    limit: number;
-};
-
 export class AxiosClient {
     private instance: AxiosInstance;
 

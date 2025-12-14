@@ -131,7 +131,9 @@ export default function Register({ actionData, loaderData }: Route.ComponentProp
                     ${attempted && !validateField(confirm) && validatePassword() && "border-[1px] border-red-500"}`} />
                 </div>
                 <div className="text-[#ffffff75] text-[12px] flex flex-start">
-                    <p>ALready registered?,</p><u className="cursor-pointer text-[#ffffff]"> login</u>
+                    <p>ALready registered?,</p>
+                    <u className="cursor-pointer text-[#ffffff]"
+                    onClick={() => navigate(ROUTES.LOGIN)}> login</u>
                 </div>
                 <div className="flex flex-row justify-around items-center p-2 w-full">
                     <button

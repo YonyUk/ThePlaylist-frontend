@@ -2,6 +2,10 @@ export interface ValidationError {
     detail:ValidationErrorDetail[];
 }
 
+export interface AuthenticationError {
+    detail:string
+}
+
 export interface ValidationErrorDetail{
     msg:string;
     type:string;
