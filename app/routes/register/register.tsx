@@ -1,5 +1,21 @@
 import { Form } from "react-router";
 import { useState } from "react";
+import type { Route } from "./+types/register";
+
+export async function clientAction({request}:Route.ClientActionArgs){
+    const formData = await request.formData();
+    const username = String(formData.get('username'));
+    const email = String(formData.get('email'));
+    const password = String(formData.get('password'));
+    const confirm = String(formData.get('confirm-password'));
+
+    if(username.length * email.length * password.length == 0)
+        alert('Please, fill all the required fields');
+    else if(password.length !== confirm.length)
+        alert('Passwords does not match');
+    else
+        alert('Sending form');
+}
 
 const Register = () => {
 
@@ -15,7 +31,7 @@ const Register = () => {
     return (
         <div className="flex flex-col h-screen w-full pl-18 justify-center items-center">
             <Form
-                // method="post"
+                method="post"
                 className="flex flex-col p-5 px-10 w-fit justify-center items-center bg-[#c0c0c025]
                 rounded-md backdrop-blur-xs gap-5">
                 <div>
