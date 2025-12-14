@@ -27,7 +27,6 @@ const PlayLists = () => {
 
     return (
         <div className="p-3 pl-18 gap-5 flex flex-col h-screen w-full items-center">
-            <SideBar />
             <SearchBar />
             <div className={`flex ${playLists.length !== 0 ?
                 'flex-wrap bg-[#00000045] w-full px-5 py-2 overflow-auto' : 

@@ -4,7 +4,7 @@ export const ROUTES = {
     HOME: '/',
     PLAYLISTS: '/playlists',
     TRACKS:'/playlists',
-    LOGIN:'/login'
+    REGISTER:'/register'
 } as const;
 
 export type AppRoute = keyof typeof ROUTES;

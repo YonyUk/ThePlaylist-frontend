@@ -10,8 +10,8 @@ export function meta({ }: Route.MetaArgs) {
 
 export default function Home() {
   return (
-    <>
-      <SideBar/>
-    </>
+    <div className="pl-18">
+      <h1>Hello world</h1>
+    </div>
   );
 }
