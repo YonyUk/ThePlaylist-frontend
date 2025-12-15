@@ -1,10 +1,19 @@
 import { useState } from "react";
 import PlayListItem from "~/components/playlist/playlist";
 import SearchBar from "~/components/searchbar/searchbar";
-import SideBar from "~/components/sidebar/sidebar";
 import type { PlayList } from "~/types/playlist";
+import type { Route } from "./+types/playlists";
+import Cookies from "js-cookie";
+import { redirect } from "react-router";
+import { ROUTES } from "~/routes";
 
-const PlayLists = () => {
+export async function clientLoader({params}:Route.ClientLoaderArgs){
+    if (!Cookies.get('access_token'))
+        return redirect(ROUTES.LOGIN);
+    return null;
+}
+
+export default function PlayLists({loaderData}:Route.ComponentProps) {
 
     const id = 'nada';
     const name = 'nada';
@@ -59,5 +68,3 @@ const PlayLists = () => {
     )
 
 };
-
-export default PlayLists;

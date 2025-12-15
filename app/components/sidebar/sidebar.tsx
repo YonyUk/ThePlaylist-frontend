@@ -23,7 +23,7 @@ const SideBar = () => {
         {
             icon: <IoMdContact size={30} />,
             label: 'Account',
-            url: ROUTES.REGISTER
+            url: ROUTES.LOGIN
         }
     ]
 

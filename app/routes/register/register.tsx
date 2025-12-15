@@ -1,9 +1,10 @@
-import { Form, useNavigate } from "react-router";
+import { Form, redirect, useNavigate } from "react-router";
 import { useState } from "react";
 import type { Route } from "./+types/register";
 import { UserService } from "~/services/UserService";
 import type { ValidationError, ValidationErrorDetail } from "~/types/responsetypes";
 import { ROUTES } from "~/routes";
+import Cookies from "js-cookie";
 
 export async function action({ request }: Route.ActionArgs) {
     const formData = await request.formData();
@@ -26,6 +27,12 @@ export async function action({ request }: Route.ActionArgs) {
         });
         return response;
     }
+}
+
+export async function clientLoader({params}:Route.ClientLoaderArgs){
+    if (Cookies.get('access_token'))
+        return redirect(ROUTES.HOME);
+    return null;
 }
 
 export default function Register({ actionData, loaderData }: Route.ComponentProps) {

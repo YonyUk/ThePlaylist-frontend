@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, useNavigate } from "react-router";
+import { Form, redirect, useNavigate } from "react-router";
 import { ROUTES } from "~/routes";
 import type { Route } from "./+types/login";
 import { UserService, type TokenSchema } from "~/services/UserService";
@@ -14,6 +14,12 @@ export async function action({ request }: Route.ActionArgs) {
     const response = await UserService.get().authenticate(username, password);
     if (response.status !== 422)
         return response.data;
+    return null;
+}
+
+export async function clientLoader({params}:Route.ClientLoaderArgs){
+    if (Cookies.get('access_token'))
+        return redirect(ROUTES.HOME);
     return null;
 }
 

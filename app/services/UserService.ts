@@ -3,6 +3,7 @@ import environmentSettings from "~/environment";
 import type { UserDto,CreateUserDto } from "~/dtos/userdtos";
 import { type AuthenticationError, type NetworkError, type ValidationError } from "~/types/responsetypes";
 import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
 export interface TokenSchema{
     access_token:string;
@@ -13,7 +14,6 @@ export class UserService {
 
     private axiosClient:AxiosClient;
     private static instance:UserService;
-    private expirationDate?:Date;
 
     private constructor( ) {
         this.axiosClient = new AxiosClient(String(environmentSettings.apiUrl));
@@ -45,17 +45,25 @@ export class UserService {
                 }
             }
         );
-        if (response.status === 201){
-            const decoded = jwtDecode((response.data as TokenSchema).access_token);
-            this.expirationDate = new Date(parseInt(String(decoded.exp)) * 1000);
-        }
         return response;
     }
 
     public authenticated() {
-        const now = new Date(Date.now());
-        const authenticated = this.expirationDate && now <= this.expirationDate;
-        this.expirationDate = authenticated ? this.expirationDate : undefined;
-        return authenticated;
+        if (Cookies.get('access_token'))
+            return true;
+        return false;
+    }
+
+    public setToken(token:string){
+        try {
+            const decoded = jwtDecode(token);
+            const expires = parseInt(String(decoded.exp)) * 1000;
+            Cookies.set('access_token',token,{
+                expires,
+                sameSite:'Strict'
+            });
+        } catch (error) {
+            
+        }
     }
 }
