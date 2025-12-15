@@ -57,8 +57,7 @@ export class UserService {
                 }
             );
             console.log(Cookies.get());
-            return true;
         }
-        return false;
+        return response.data;
     }
 }

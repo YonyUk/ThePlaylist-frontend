@@ -17,9 +17,9 @@ export async function action({request}:Route.ActionArgs){
 export default function Login({actionData,loaderData}:Route.ComponentProps) {
 
     const navigate = useNavigate();
+    const [sended,setSended] = useState(false);
 
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const msg = (actionData as any)?.msg ? (actionData as any)?.msg : (actionData as any)?.detail;
 
     return (
         <div className="flex flex-col h-screen w-full pl-18 justify-center items-center">
@@ -31,21 +31,19 @@ export default function Login({actionData,loaderData}:Route.ComponentProps) {
                     <h1>Login</h1>
                 </div>
                 {
-                    !actionData &&
-                    <p className="text-red-500 text-[10px]">Incorrect username or password</p>
+                    sended && msg &&
+                    <p className="text-red-500 text-[10px]">{msg}</p>
                 }
                 <div>
                     <input type="text" name="username" id="username"
                         placeholder="username"
                         className="outline-none rounded-md bg-[#00000015] p-2"
-                        onChange={(e) => setUsername(e.target.value)}
                     />
                 </div>
                 <div>
                     <input type="password" name="password" id="password"
                         placeholder="password"
                         className="outline-none rounded-md bg-[#00000015] p-2"
-                        onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
                 <div className="text-[#ffffff75] text-[12px] flex flex-start">
@@ -56,6 +54,7 @@ export default function Login({actionData,loaderData}:Route.ComponentProps) {
                 <div className="flex flex-row justify-around items-center p-2 w-full">
                     <button
                         type="submit"
+                        onClick={() => setSended(true)}
                         className="cursor-pointer hover:bg-[#00000045] rounded-md duration-300 p-1">
                         Login</button>
                     <button className="cursor-pointer hover:bg-[#00000045] rounded-md duration-300 p-1">
