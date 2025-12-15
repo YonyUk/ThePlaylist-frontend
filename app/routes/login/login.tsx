@@ -19,7 +19,7 @@ export async function action({ request }: Route.ActionArgs) {
 
 export async function clientLoader({params}:Route.ClientLoaderArgs){
     if (Cookies.get('access_token'))
-        return redirect(ROUTES.HOME);
+        return redirect(ROUTES.SETTINGS);
     return null;
 }
 
