@@ -18,6 +18,7 @@ export default [
     route(ROUTES.PLAYLISTS,'routes/playlists/playlists.tsx'),
     route(`${ROUTES.PLAYLISTS}/:playlistId`,'routes/playlistview/playlistview.tsx'),
     route(ROUTES.REGISTER,'routes/register/register.tsx'),
+    route(ROUTES.LOGIN,'routes/login/login.tsx'),
     layout('routes/account/account.tsx',[
         route(ROUTES.SETTINGS,'routes/account/settings/settings.tsx')
     ])

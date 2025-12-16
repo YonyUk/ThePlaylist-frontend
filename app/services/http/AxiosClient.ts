@@ -4,12 +4,13 @@ import axios, {
     type AxiosResponse,
     type InternalAxiosRequestConfig
 } from 'axios';
-import Cookies from 'js-cookie';
+import Cookies from 'universal-cookie';
 import environmentSettings from '~/environment';
 import { ROUTES } from '~/routes';
 
 export class AxiosClient {
     private instance: AxiosInstance;
+    private cookies:Cookies = new Cookies(null,{path:'/'});
 
     constructor(baseUrl: string) {
         this.instance = axios.create({
@@ -55,6 +56,7 @@ export class AxiosClient {
             throw new Error('RequestCancelledError');
         }
 
+        console.log(error);
         if (!error.response) {
             error.response = {
                 data:{
@@ -128,7 +130,7 @@ export class AxiosClient {
 
         try {
             const response = await this.instance.post(`${environmentSettings.apiUrl}/${environmentSettings.tokenUrl}`);
-            Cookies.set('access_token', response.data.access_token);
+            this.cookies.set('access_token', response.data.access_token);
             return;
         } catch (error) {
             this.redirectToLogin();
@@ -140,7 +142,7 @@ export class AxiosClient {
     }
 
     private getAuthToken(): string | null {
-        const token = Cookies.get('access_token');
+        const token = this.cookies.get('access_token');
         return token ? token : null;
     }
 };

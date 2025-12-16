@@ -4,7 +4,7 @@ import type { Route } from "./+types/register";
 import { UserService } from "~/services/UserService";
 import type { ValidationError, ValidationErrorDetail } from "~/types/responsetypes";
 import { ROUTES } from "~/routes";
-import Cookies from "js-cookie";
+import Cookies from "universal-cookie";
 
 export async function action({ request }: Route.ActionArgs) {
     const formData = await request.formData();
@@ -30,7 +30,8 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export async function clientLoader({params}:Route.ClientLoaderArgs){
-    if (Cookies.get('access_token'))
+    const cookies = new Cookies(null,{path:'/'});
+    if (cookies.get('access_token'))
         return redirect(ROUTES.HOME);
     return null;
 }
