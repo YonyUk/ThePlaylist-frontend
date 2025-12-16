@@ -46,16 +46,6 @@ export class UserService {
                 }
             }
         );
-        if (response.status === 201){
-            const token = (response.data as TokenSchema).access_token;
-            const decoded = jwtDecode(token);
-            const expires = parseInt(String(decoded.exp)) * 1000;
-            this.cookies.set('access_token',token,{
-                sameSite:'strict',
-                httpOnly:true,
-                expires:new Date(expires)
-            });
-        }
         return response;
     }
 
