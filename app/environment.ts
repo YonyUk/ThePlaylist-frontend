@@ -6,6 +6,7 @@ const environmentSettings = () => {
         const usersUrl = process.env.REACT_APP_API_USERS_URL;
         const usersMeUrl = process.env.REACT_APP_USERS_ME_URL;
         const usersVerifyUrl = process.env.REACT_APP_USERS_VERIFY_URL;
+        const usersLogoutUrl = process.env.REACT_APP_USERS_LOGOUT_URL;
 
         return {
             apiUrl,
@@ -13,7 +14,8 @@ const environmentSettings = () => {
             registerUrl,
             usersUrl,
             usersMeUrl,
-            usersVerifyUrl
+            usersVerifyUrl,
+            usersLogoutUrl
         };
     } catch (error) {
         const apiUrl = import.meta.env.VITE_API_URL;
@@ -22,6 +24,7 @@ const environmentSettings = () => {
         const usersUrl = import.meta.env.VITE_API_USERS_URL;
         const usersMeUrl = import.meta.env.VITE_API_USERS_ME_URL;
         const usersVerifyUrl = import.meta.env.VITE_API_USERS_VERIFY_URL;
+        const usersLogoutUrl = import.meta.env.VITE_API_USESR_LOGOUT_URL;
 
         return {
             apiUrl,
@@ -29,7 +32,8 @@ const environmentSettings = () => {
             registerUrl,
             usersUrl,
             usersMeUrl,
-            usersVerifyUrl
+            usersVerifyUrl,
+            usersLogoutUrl
         };
     }
 }

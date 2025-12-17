@@ -4,9 +4,9 @@ import type { Route } from "./+types/register";
 import { UserService } from "~/services/UserService";
 import type { ValidationError, ValidationErrorDetail } from "~/types/responsetypes";
 import { ROUTES } from "~/routes";
-import Cookies from "universal-cookie";
 
-export async function action({ request }: Route.ActionArgs) {
+export async function clientAction({ request }: Route.ClientActionArgs) {
+    const service = UserService.get();
     const formData = await request.formData();
     const username = String(formData.get('username'));
     const email = String(formData.get('email'));
@@ -20,18 +20,22 @@ export async function action({ request }: Route.ActionArgs) {
         return null;
     }
     else {
-        const response = await UserService.get().create({
+        const response = await service.create({
             username,
             email,
             password
         });
+        if (response.status === 201)
+            return redirect(ROUTES.LOGIN);
         return response;
     }
 }
 
 export async function clientLoader({params}:Route.ClientLoaderArgs){
-    const cookies = new Cookies(null,{path:'/'});
-    if (cookies.get('access_token'))
+    const service = UserService.get();
+    const authenticated = await service.authenticated();
+
+    if (authenticated)
         return redirect(ROUTES.HOME);
     return null;
 }
@@ -69,15 +73,14 @@ export default function Register({ actionData, loaderData }: Route.ComponentProp
     const invalidOperation = validationsDetails &&
         !(usernameValidationDetails || emailValidationDetails || passwordValidationDetails);
 
-    const networkError = actionData &&
+    console.log(validationsDetails);
+    console.log(actionData);
+    const networkError = !validationsDetails && actionData &&
         (actionData?.data as any) &&
         'msg' in (actionData?.data as any);
 
     if (networkError)
         alert((actionData?.data as any).msg);
-
-    if (actionData && !networkError && !validationsDetails)
-        navigate(ROUTES.HOME);
 
     return (
         <div className="flex flex-col h-screen w-full pl-18 justify-center items-center">

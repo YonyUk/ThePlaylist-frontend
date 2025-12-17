@@ -4,5 +4,24 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
-  plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
+	plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
+	server: {
+		proxy: {
+			'/api/v1': {
+				target: 'http://localhost:8000',
+				changeOrigin: true,
+				secure: false,
+				configure: (proxy, _options) => {
+					proxy.on('proxyRes', (proxyRes, _req, _res) => {
+						const cookies = proxyRes.headers['set-cookie'];
+						if (cookies){
+							proxyRes.headers['set-cookie'] = cookies.map(cookie => 
+								 cookie.replace(/;?\s*Domain=[^;]+/gi, '')
+							)
+						}
+					})
+				}
+			}
+		}
+	}
 });

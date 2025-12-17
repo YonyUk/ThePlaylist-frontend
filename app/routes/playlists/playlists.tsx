@@ -3,12 +3,13 @@ import PlayListItem from "~/components/playlist/playlist";
 import SearchBar from "~/components/searchbar/searchbar";
 import type { PlayList } from "~/types/playlist";
 import type { Route } from "./+types/playlists";
-import Cookies from "js-cookie";
 import { redirect } from "react-router";
 import { ROUTES } from "~/routes";
+import { UserService } from "~/services/UserService";
 
 export async function clientLoader({params}:Route.ClientLoaderArgs){
-    if (!Cookies.get('access_token'))
+    const service = UserService.get();
+    if (!service.authenticated())
         return redirect(ROUTES.LOGIN);
     return null;
 }

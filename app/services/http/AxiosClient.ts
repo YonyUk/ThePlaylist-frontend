@@ -4,13 +4,9 @@ import axios, {
     type AxiosResponse,
     type InternalAxiosRequestConfig
 } from 'axios';
-import Cookies from 'universal-cookie';
-import environmentSettings from '~/environment';
-import { ROUTES } from '~/routes';
 
 export class AxiosClient {
     private instance: AxiosInstance;
-    private cookies:Cookies = new Cookies(null,{path:'/'});
 
     constructor(baseUrl: string) {
         this.instance = axios.create({
@@ -29,12 +25,6 @@ export class AxiosClient {
 
         this.instance.interceptors.request.use(
             (config: InternalAxiosRequestConfig) => {
-
-                const token = this.getAuthToken();
-                if (token) {
-                    config.headers.Authorization = `Bearer ${token}`;
-                }
-
                 return config;
             },
             (error) => {
@@ -47,7 +37,8 @@ export class AxiosClient {
                 return response;
             },
             (error) => {
-                return this.handleError(error);
+                this.handleError(error);
+                return Promise.reject(error);
             }
         )
     }
@@ -69,7 +60,6 @@ export class AxiosClient {
 
         switch (status) {
             case 401:
-                await this.handleUnauthorized();
                 // throw new Error('UnauthorizedError');
                 break;
 
@@ -103,7 +93,8 @@ export class AxiosClient {
     }
 
     public async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-        return await this.instance.post<T>(url, data, config);
+        const response = await this.instance.post<T>(url, data, config);
+        return response;
     }
 
     public async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
@@ -124,25 +115,5 @@ export class AxiosClient {
 
     private async delay(ms: number): Promise<void> {
         return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    private async handleUnauthorized(): Promise<void> {
-
-        try {
-            const response = await this.instance.post(`${environmentSettings().apiUrl}/${environmentSettings().tokenUrl}`);
-            this.cookies.set('access_token', response.data.access_token);
-            return;
-        } catch (error) {
-            this.redirectToLogin();
-        }
-    }
-
-    private redirectToLogin(): void {
-        window.location.href = ROUTES.REGISTER;
-    }
-
-    private getAuthToken(): string | null {
-        const token = this.cookies.get('access_token');
-        return token ? token : null;
     }
 };

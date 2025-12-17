@@ -2,8 +2,6 @@ import { AxiosClient } from "./http/AxiosClient";
 import environmentSettings from "~/environment";
 import type { UserDto,CreateUserDto } from "~/dtos/userdtos";
 import { type AuthenticationError, type NetworkError, type ValidationError } from "~/types/responsetypes";
-import { jwtDecode } from "jwt-decode";
-import Cookies from "universal-cookie";
 
 export interface TokenSchema{
     message:string;
@@ -15,9 +13,10 @@ export class UserService {
     private axiosClient:AxiosClient;
     private static instance:UserService;
     private currentUser?:string;
+    private environmentSettings = environmentSettings();
 
     private constructor( ) {
-        this.axiosClient = new AxiosClient(String(environmentSettings().apiUrl));
+        this.axiosClient = new AxiosClient(String(this.environmentSettings.apiUrl));
     }
 
     public static get():UserService {
@@ -28,14 +27,15 @@ export class UserService {
 
     public async create(user:CreateUserDto) {
         return await this.axiosClient.post<NetworkError | ValidationError | UserDto>(
-            environmentSettings().registerUrl,
-            user
+            this.environmentSettings.registerUrl,
+            user,
+            {withCredentials:false}
         );
     }
 
     public async authenticate(username:string,password:string) {
         const response = await this.axiosClient.post<NetworkError | AuthenticationError | TokenSchema>(
-            `${environmentSettings().usersUrl}/token`,
+            `${this.environmentSettings.usersUrl}/token`,
             {
                 username,
                 password
@@ -51,8 +51,15 @@ export class UserService {
         return response;
     }
 
+    public async logout(){
+        const response = await this.axiosClient.post(this.environmentSettings.usersLogoutUrl)
+        return response.status === 200;
+    }
+
     public async authenticated() {
-        const response = await this.axiosClient.get<UserDto>(environmentSettings().usersMeUrl);
+        if (!this.currentUser)
+            return false;
+        const response = await this.axiosClient.get<UserDto>(this.environmentSettings.usersMeUrl);
         return response.status === 200 && response.data.username === this.currentUser;
     }
 

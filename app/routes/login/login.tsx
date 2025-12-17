@@ -3,8 +3,6 @@ import type { Route } from "./+types/login";
 import { UserService } from "~/services/UserService";
 import { useNavigate } from "react-router";
 import { useState } from "react";
-import Cookies from "universal-cookie";
-import { jwtDecode } from "jwt-decode";
 import { ROUTES } from "~/routes";
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
@@ -14,6 +12,9 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
     const password = String(formData.get('password'));
 
     const response = await service.authenticate(username, password);
+    if (response.status === 201){
+        return redirect(ROUTES.HOME);
+    }
     if (response.status !== 422)
         return response.data;
     return null;
@@ -21,7 +22,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 
 export async function clientLoader({request}:Route.ClientLoaderArgs){
     const service = UserService.get();
-    const authenticated = await service.authenticated();    
+    const authenticated = await service.authenticated();
     if (authenticated)
         return redirect(ROUTES.HOME);
     return null;
@@ -29,7 +30,6 @@ export async function clientLoader({request}:Route.ClientLoaderArgs){
 
 export default function Login({ actionData, loaderData }: Route.ComponentProps) {
 
-    const service = UserService.get();
     const navigate = useNavigate();
 
     const [sended, setSended] = useState(false);
