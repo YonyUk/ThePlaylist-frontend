@@ -14,10 +14,10 @@ export class UserService {
 
     private axiosClient:AxiosClient;
     private static instance:UserService;
-    private cookies:Cookies = new Cookies(null,{path:'/'});
+    private currentUser?:string;
 
     private constructor( ) {
-        this.axiosClient = new AxiosClient(String(environmentSettings.apiUrl));
+        this.axiosClient = new AxiosClient(String(environmentSettings().apiUrl));
     }
 
     public static get():UserService {
@@ -28,14 +28,14 @@ export class UserService {
 
     public async create(user:CreateUserDto) {
         return await this.axiosClient.post<NetworkError | ValidationError | UserDto>(
-            `${environmentSettings.usersUrl}/register`,
+            environmentSettings().registerUrl,
             user
         );
     }
 
     public async authenticate(username:string,password:string) {
         const response = await this.axiosClient.post<NetworkError | AuthenticationError | TokenSchema>(
-            `${environmentSettings.usersUrl}/token`,
+            `${environmentSettings().usersUrl}/token`,
             {
                 username,
                 password
@@ -46,15 +46,14 @@ export class UserService {
                 }
             }
         );
+        if (response.status === 201)
+            this.currentUser = username;
         return response;
     }
 
-    public authenticated() {
-        const token = this.cookies.get('access_token');
-        console.log(token);
-        if (this.cookies.get('access_token'))
-            return true;
-        return false;
+    public async authenticated() {
+        const response = await this.axiosClient.get<UserDto>(environmentSettings().usersMeUrl);
+        return response.status === 200 && response.data.username === this.currentUser;
     }
 
 }

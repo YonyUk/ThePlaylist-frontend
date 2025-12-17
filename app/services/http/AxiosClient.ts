@@ -57,7 +57,6 @@ export class AxiosClient {
             throw new Error('RequestCancelledError');
         }
 
-        console.log(error);
         if (!error.response) {
             error.response = {
                 data:{
@@ -130,7 +129,7 @@ export class AxiosClient {
     private async handleUnauthorized(): Promise<void> {
 
         try {
-            const response = await this.instance.post(`${environmentSettings.apiUrl}/${environmentSettings.tokenUrl}`);
+            const response = await this.instance.post(`${environmentSettings().apiUrl}/${environmentSettings().tokenUrl}`);
             this.cookies.set('access_token', response.data.access_token);
             return;
         } catch (error) {

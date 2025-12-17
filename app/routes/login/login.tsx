@@ -21,7 +21,8 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 
 export async function clientLoader({request}:Route.ClientLoaderArgs){
     const service = UserService.get();
-    if (service.authenticated())
+    const authenticated = await service.authenticated();    
+    if (authenticated)
         return redirect(ROUTES.HOME);
     return null;
 }
@@ -37,10 +38,6 @@ export default function Login({ actionData, loaderData }: Route.ComponentProps) 
     const [password, setPassword] = useState('');
 
     const msg = (actionData as any)?.msg ? (actionData as any)?.msg : (actionData as any)?.detail;
-
-    if (actionData && service.authenticated() && !msg) {
-        navigate(ROUTES.HOME);
-    }
 
     return (
         <div className="flex flex-col h-screen w-full pl-18 justify-center items-center">
