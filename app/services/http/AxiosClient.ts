@@ -16,6 +16,7 @@ export class AxiosClient {
         this.instance = axios.create({
             baseURL: baseUrl,
             timeout: 10000,
+            withCredentials:true,
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'

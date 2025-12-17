@@ -28,8 +28,7 @@ export async function clientLoader({request}:Route.ClientLoaderArgs){
 
 export default function Login({ actionData, loaderData }: Route.ComponentProps) {
 
-    const cookies = new Cookies(null, { path: '/' });
-
+    const service = UserService.get();
     const navigate = useNavigate();
 
     const [sended, setSended] = useState(false);
@@ -39,15 +38,7 @@ export default function Login({ actionData, loaderData }: Route.ComponentProps) 
 
     const msg = (actionData as any)?.msg ? (actionData as any)?.msg : (actionData as any)?.detail;
 
-    if (actionData && (actionData as any).access_token && !msg) {
-        const token = (actionData as any).access_token
-        const decoded = jwtDecode(token);
-        const expires = parseInt(String(decoded.exp)) * 1000;
-        cookies.set('access_token', token, {
-            sameSite: 'strict',
-            httpOnly: true,
-            expires: new Date(expires)
-        });
+    if (actionData && service.authenticated() && !msg) {
         navigate(ROUTES.HOME);
     }
 

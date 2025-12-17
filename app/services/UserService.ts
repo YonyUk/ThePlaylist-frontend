@@ -6,7 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import Cookies from "universal-cookie";
 
 export interface TokenSchema{
-    access_token:string;
+    message:string;
     token_type:string;
 }
 
@@ -50,6 +50,8 @@ export class UserService {
     }
 
     public authenticated() {
+        const token = this.cookies.get('access_token');
+        console.log(token);
         if (this.cookies.get('access_token'))
             return true;
         return false;
