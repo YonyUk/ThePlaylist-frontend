@@ -4,20 +4,25 @@ import { UserService } from "~/services/UserService";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import { ROUTES } from "~/routes";
+import type { AxiosError } from "axios";
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
     const service = UserService.get();
     const formData = await request.formData()
     const username = String(formData.get('username'));
     const password = String(formData.get('password'));
-
-    const response = await service.authenticate(username, password);
-    if (response.status === 201){
-        return redirect(ROUTES.HOME);
+    try {
+        const response = await service.authenticate(username, password);
+        if (response.status === 201){
+            return redirect(ROUTES.HOME);
+        }
+        if (response.status !== 422)
+            return response.data;
+        return null;
+    } catch (error) {
+        return (error as AxiosError).response?.data;
     }
-    if (response.status !== 422)
-        return response.data;
-    return null;
+
 }
 
 export async function clientLoader({request}:Route.ClientLoaderArgs){

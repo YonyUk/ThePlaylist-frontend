@@ -4,6 +4,7 @@ import type { Route } from "./+types/register";
 import { UserService } from "~/services/UserService";
 import type { ValidationError, ValidationErrorDetail } from "~/types/responsetypes";
 import { ROUTES } from "~/routes";
+import type { AxiosError } from "axios";
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
     const service = UserService.get();
@@ -20,14 +21,18 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
         return null;
     }
     else {
-        const response = await service.create({
-            username,
-            email,
-            password
-        });
-        if (response.status === 201)
-            return redirect(ROUTES.LOGIN);
-        return response;
+        try {
+            const response = await service.create({
+                username,
+                email,
+                password
+            });
+            if (response.status === 201)
+                return redirect(ROUTES.LOGIN);
+            return response;
+        } catch (error) {
+            return (error as AxiosError).response;
+        }
     }
 }
 
@@ -73,14 +78,9 @@ export default function Register({ actionData, loaderData }: Route.ComponentProp
     const invalidOperation = validationsDetails &&
         !(usernameValidationDetails || emailValidationDetails || passwordValidationDetails);
 
-    console.log(validationsDetails);
-    console.log(actionData);
     const networkError = !validationsDetails && actionData &&
         (actionData?.data as any) &&
         'msg' in (actionData?.data as any);
-
-    if (networkError)
-        alert((actionData?.data as any).msg);
 
     return (
         <div className="flex flex-col h-screen w-full pl-18 justify-center items-center">
@@ -91,6 +91,10 @@ export default function Register({ actionData, loaderData }: Route.ComponentProp
                 <div>
                     <h1>Register</h1>
                 </div>
+                {
+                    networkError &&
+                    <p className="text-red-500 text-[10px]">NETWORK ERROR</p>
+                }
                 {
                     invalidOperation &&
                     <p className="text-red-500 text-[10px]">{validationsDetails.toString()}</p>

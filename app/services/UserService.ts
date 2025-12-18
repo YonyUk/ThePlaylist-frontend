@@ -12,7 +12,6 @@ export class UserService {
 
     private axiosClient:AxiosClient;
     private static instance:UserService;
-    private currentUser?:string;
     private environmentSettings = environmentSettings();
 
     private constructor( ) {
@@ -46,8 +45,6 @@ export class UserService {
                 }
             }
         );
-        if (response.status === 201)
-            this.currentUser = username;
         return response;
     }
 
@@ -57,10 +54,12 @@ export class UserService {
     }
 
     public async authenticated() {
-        if (!this.currentUser)
+        try {
+            const response = await this.axiosClient.get<UserDto>(this.environmentSettings.usersMeUrl);
+            return response.status === 200;
+        } catch (error) {
             return false;
-        const response = await this.axiosClient.get<UserDto>(this.environmentSettings.usersMeUrl);
-        return response.status === 200 && response.data.username === this.currentUser;
+        }
     }
 
 }
