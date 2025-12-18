@@ -29,7 +29,7 @@ export async function clientLoader({request}:Route.ClientLoaderArgs){
     const service = UserService.get();
     const authenticated = await service.authenticated();
     if (authenticated)
-        return redirect(ROUTES.HOME);
+        return redirect(ROUTES.SETTINGS);
     return null;
 }
 

@@ -1,4 +1,4 @@
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router";
 import { ROUTES } from "~/routes";
 
 export default function Account() {
@@ -10,14 +10,19 @@ export default function Account() {
         }
     ]
 
+    const location = useLocation();
+
     return (
         <>
             <nav className="pl-18 pt-2 bg-[#00000090]">
                 <div className="flex flex-row w-full justify-end gap-3">
                     {
-                        menuItems.map(item => 
+                        menuItems.map((item,index) => 
                             <div
-                            className="rounded-t-md cursor-pointer p-2 px-4 duration-300 hover:bg-[#00000040] hover:border-b-1">
+                            key={index}
+                            className={`rounded-t-md cursor-pointer p-2 px-4 duration-300
+                             hover:bg-[#00000040] hover:border-b-1 
+                             ${location.pathname === item.url && "bg-[#00000040] border-b-1"}`}>
                                 {item.label}
                             </div>
                         )

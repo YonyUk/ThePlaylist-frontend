@@ -62,4 +62,8 @@ export class UserService {
         }
     }
 
+    public async getInfo() {
+        return await this.axiosClient.get<UserDto>(this.environmentSettings.usersMeUrl);
+    }
+
 }
