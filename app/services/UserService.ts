@@ -1,6 +1,6 @@
 import { AxiosClient } from "./http/AxiosClient";
 import environmentSettings from "~/environment";
-import type { UserDto,CreateUserDto } from "~/dtos/userdtos";
+import type { UserDto,CreateUserDto, UpdateUserDto } from "~/dtos/userdtos";
 import { type AuthenticationError, type NetworkError, type ValidationError } from "~/types/responsetypes";
 
 export interface TokenSchema{
@@ -64,6 +64,10 @@ export class UserService {
 
     public async getInfo() {
         return await this.axiosClient.get<UserDto>(this.environmentSettings.usersMeUrl);
+    }
+
+    public async updateInfo(user_id:string,data:UpdateUserDto) {
+        return await this.axiosClient.put<UserDto | ValidationError>(`${this.environmentSettings.usersUrl}/${user_id}`,data);
     }
 
 }

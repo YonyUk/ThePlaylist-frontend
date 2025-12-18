@@ -20,38 +20,23 @@ export default function EditableField({ invalidDescription, valid, value, id, na
 
     return (
         <div className="flex flex-row gap-5 p-2 relative">
-            {
-                editing &&
+            
                 <input type={type} name={name} id={id}
                     placeholder={name}
                     className="outline-none color-white  rounded-md bg-[#00000035] p-2"
                     value={fieldValue}
+                    disabled={!editing}
                     onChange={(e) => {
                         onEditCallback(e.target.value);
                         setFieldValue(e.target.value);
                     }}
                 />
-            }
             {
                 !validField &&
                 <p
                     className="absolute text-red-500 text-[10px] -top-[1px] backdrop-blur-xs rounded-md ml-1">
                     {invalidDescription}
                 </p>
-            }
-            {
-                !editing && type !== 'password' &&
-                <p className={`
-                    p-2 w-59 rounded-md bg-[#00000035] ${!validField && "border-[1px] border-red-500 rounded-md"}`
-                }>{fieldValue ? fieldValue : name}</p>
-            }
-            {
-                !editing && type === 'password' &&
-                <input type={type} name={name} id={id} 
-                className="outline-none color-white  rounded-md bg-[#00000035] p-2"
-                value={fieldValue}
-                disabled={true}
-                />
             }
             <div
                 onClick={() => {

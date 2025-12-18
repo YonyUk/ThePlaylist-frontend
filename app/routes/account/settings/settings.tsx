@@ -2,17 +2,20 @@ import { useState } from "react";
 import EditableField from "~/components/editablefield/editablefield";
 import type { Route } from "./+types/settings";
 import { UserService } from "~/services/UserService";
-import { redirect } from "react-router";
+import { Form,redirect } from "react-router";
 import { ROUTES } from "~/routes";
+import type { AxiosError } from "axios";
+import type { UserDto } from "~/dtos/userdtos";
+import type { ValidationError } from "~/types/responsetypes";
 
-export async function clientLoader({params}:Route.ClientLoaderArgs){
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     const service = UserService.get();
     try {
         const authenticated = await service.authenticated();
-        if (authenticated){
+        if (authenticated) {
             const response = await service.getInfo();
             return response.data;
-        } else{
+        } else {
             return redirect(ROUTES.LOGIN);
         }
     } catch (error) {
@@ -20,60 +23,114 @@ export async function clientLoader({params}:Route.ClientLoaderArgs){
     }
 }
 
-export default function Settings({loaderData}:Route.ComponentProps) {
+export async function clientAction({request}:Route.ClientActionArgs){
+    const service = UserService.get();
 
-    const [username,setUsername] = useState(String(loaderData?.username));
-    const [email,setEmail] = useState(String(loaderData?.email));
-    const [password,setPassword] = useState('');
-    const [confirm,setConfirm] = useState('');
-    const [validUsername,setValidUsername] = useState(loaderData !== undefined);
-    const [validEmail,setValidEmail] = useState(loaderData !== undefined);
-    const [validPassword,setValidPassword] = useState(true);
+    
+    const formData = await request.formData();
+    
+    try {
+        const userInfo = await service.getInfo();
+        
+        const username_ = formData.get("username");
+        const email_ = formData.get("email");
+        const password_ = formData.get("password");
+        const confirm_ = formData.get("verify-password");
+        
+        if (userInfo.status === 200){
+            const username = username_ ? String(username_) : userInfo.data.username;
+            const email = email_ ? String(email_) : userInfo.data.email;
+            const password = password_ ? String(password_) : confirm_ ? String(confirm_) : null;
+            console.log(password);
+            const response = await service.updateInfo(userInfo.data.id,{
+                username,
+                email,
+                password
+            });
+            return response.data;
+        }
+        else if (userInfo.status === 401)
+            return redirect(ROUTES.LOGIN);
+    } catch (error) {
+        return (error as AxiosError).response?.data;
+    }
+}
 
-    const validateField = (field:string) => field.length > 0;
+export default function Settings({ actionData,loaderData }: Route.ComponentProps) {
+
+    const [username, setUsername] = useState(String(loaderData?.username));
+    const [email, setEmail] = useState(String(loaderData?.email));
+    const [password, setPassword] = useState('');
+    const [confirm, setConfirm] = useState('');
+    const [validUsername, setValidUsername] = useState(loaderData !== undefined);
+    const [validEmail, setValidEmail] = useState(loaderData !== undefined);
+    const [validPassword, setValidPassword] = useState(true);
+
+    const validateField = (field: string) => field.length > 0;
     const validatePassword = () => password === confirm;
 
+    const validationError = (actionData as ValidationError)?.detail;
+
     return (
-        <div className="flex flex-col w-full h-full pt-20 items-center justify-center pl-18">
+        <Form
+        method="post"
+        className="flex flex-col w-full h-full pt-20 items-center justify-center pl-18">
+            <input type="hidden" name="username" value={username} />
+            <input type="hidden" name="email" value={email} />
+            <input type="hidden" name="password" value={password} />
+            <input type="hidden" name="verify-password" value={confirm} />
             <EditableField
-            id="username"
-            name="username"
-            type="text"
-            value={username}
-            valid={validUsername}
-            invalidDescription="username field must be filled"
-            onEditCallback={setUsername}
-            onEditEnd={() => setValidUsername(validateField(username))}
+                id="username"
+                name="username"
+                type="text"
+                value={username}
+                valid={validUsername}
+                invalidDescription="username field must be filled"
+                onEditCallback={setUsername}
+                onEditEnd={() => setValidUsername(validateField(username))}
             />
             <EditableField
-            id="email"
-            name="email"
-            type="email"
-            valid={validEmail}
-            value={email}
-            invalidDescription="email field must be filled"
-            onEditCallback={setEmail}
-            onEditEnd={() => setValidEmail(validateField(email))}
+                id="email"
+                name="email"
+                type="email"
+                valid={validEmail}
+                value={email}
+                invalidDescription="email field must be filled"
+                onEditCallback={setEmail}
+                onEditEnd={() => setValidEmail(validateField(email))}
             />
             <EditableField
-            id="password"
-            name="password"
-            type="password"
-            valid={validPassword}
-            invalidDescription="passwords does not matchs"
-            onEditCallback={setPassword}
-            onEditEnd={() => setValidPassword(validatePassword())}
+                id="password"
+                name="password"
+                type="password"
+                valid={validPassword}
+                value={password}
+                invalidDescription="passwords does not matchs"
+                onEditCallback={setPassword}
+                onEditEnd={() => setValidPassword(validatePassword())}
             />
             <EditableField
-            id="verify-password"
-            name="verify-password"
-            type="password"
-            valid={validPassword}
-            invalidDescription="passwords does not matchs"
-            onEditCallback={setConfirm}
-            onEditEnd={() => setValidPassword(validatePassword())}
+                id="verify-password"
+                name="verify-password"
+                type="password"
+                valid={validPassword}
+                value={confirm}
+                invalidDescription="passwords does not matchs"
+                onEditCallback={setConfirm}
+                onEditEnd={() => setValidPassword(validatePassword())}
             />
-            <button onClick={() => console.log(username)}>Click</button>
-        </div>
+            <div className="flex flex-row w-full justify-center items-center gap-20 mt-5">
+                <button
+                    className="cursor-pointer rounded-md px-2 p-1 bg-[#00000025] duration-300 hover:bg-[#00000035]"
+                    type="submit"
+                    >
+                    Save
+                </button>
+                <button
+                    className="cursor-pointer rounded-md px-2 p-1 bg-[#00000025] duration-300 hover:bg-[#00000035]">
+                    Cancel
+                </button>
+            </div>
+        </Form>
     );
 }
