@@ -19,11 +19,18 @@ export default function EditableField({ invalidDescription, valid, value, id, na
     const validField = valid !== undefined ? valid : true;
 
     return (
-        <div className="flex flex-row gap-5 p-2 relative">
-            
+        <>
+            {
+                !validField &&
+                <p
+                    className="text-red-500 text-[10px] rounded-md">
+                    {invalidDescription}
+                </p>
+            }
+            <div className="flex flex-row gap-5 p-2">
                 <input type={type} name={name} id={id}
                     placeholder={name}
-                    className="outline-none color-white  rounded-md bg-[#00000035] p-2"
+                    className={`outline-none color-white  rounded-md bg-[#00000035] p-2 ${!valid && "border-[1px] border-red-500"}`}
                     value={fieldValue}
                     disabled={!editing}
                     onChange={(e) => {
@@ -31,24 +38,18 @@ export default function EditableField({ invalidDescription, valid, value, id, na
                         setFieldValue(e.target.value);
                     }}
                 />
-            {
-                !validField &&
-                <p
-                    className="absolute text-red-500 text-[10px] -top-[1px] backdrop-blur-xs rounded-md ml-1">
-                    {invalidDescription}
-                </p>
-            }
-            <div
-                onClick={() => {
-                    if (editing)
-                        onEditEnd();
-                    setEditing(!editing)
-                }}
-                className="flex justify-center items-center cursor-pointer bg-[#00000035] hover:bg-[#00000050] duration-300 p-1 px-2 rounded-md">
-                {
-                    editing ? <MdDone size={20} /> : <MdEdit size={20} />
-                }
+                <div
+                    onClick={() => {
+                        if (editing)
+                            onEditEnd();
+                        setEditing(!editing)
+                    }}
+                    className="flex justify-center items-center cursor-pointer bg-[#00000035] hover:bg-[#00000050] duration-300 p-1 px-2 rounded-md">
+                    {
+                        editing ? <MdDone size={20} /> : <MdEdit size={20} />
+                    }
+                </div>
             </div>
-        </div>
+        </>
     );
 }
