@@ -1,7 +1,7 @@
 import { FaHeart,FaRegHeart } from "react-icons/fa";
 import { AiFillLike, AiOutlineLike, AiFillDislike, AiOutlineDislike } from "react-icons/ai";
 import { IoPlay } from "react-icons/io5";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export interface SocialControlsInterface {
     interactive?:boolean
@@ -18,12 +18,24 @@ const SocialStats = ({ hearts, likes, dislikes, reproductions, interactive,value
     const [liked,setLiked] = useState(false);
     const [loved,setLoved] = useState(false);
     const [disliked,setDisliked] = useState(false);
-    const [currentHearts,setCurrentHearts] = useState(hearts ? hearts : 0);
-    const [currentLikes,setCurrentLikes] = useState(likes ? likes : 0);
-    const [currentDislikes,setCurrentDislikes] = useState(dislikes ? dislikes : 0);
-    const [isValued,setIsValued] = useState(valued ? valued : false);
-    const [statSelected,setStatSelected] = useState(stat? stat : 'none');
-    const isInteractive = interactive ? interactive : false
+    const [currentHearts,setCurrentHearts] = useState(hearts ?? 0);
+    const [currentLikes,setCurrentLikes] = useState(likes ?? 0);
+    const [currentDislikes,setCurrentDislikes] = useState(dislikes ?? 0);
+    const [isValued,setIsValued] = useState(valued ?? false);
+    const [statSelected,setStatSelected] = useState(stat ?? 'none');
+    const isInteractive = interactive ?? false
+
+    useEffect(() => {
+        setCurrentHearts(hearts ?? 0);
+    },[hearts]);
+
+    useEffect(() => {
+        setCurrentLikes(likes ?? 0);
+    },[likes]);
+
+    useEffect(() => {
+        setCurrentDislikes(dislikes ?? 0);
+    },[dislikes]);
 
     const formatStats = (stat:number):string => {
         if (stat < 1000)
