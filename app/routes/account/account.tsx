@@ -13,7 +13,7 @@ export default function Account({ actionData }: Route.ComponentProps) {
         },
         {
             label:'MyPlaylists',
-            url:ROUTES.MYPLAYLISTS
+            url:`${ROUTES.MYPLAYLISTS}/0`
         }
     ]
 

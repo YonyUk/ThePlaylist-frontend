@@ -1,8 +1,19 @@
-import type { PlayList } from "~/types/playlist";
 import SocialStats from "../socialstats/socialstats";
 import { BiSolidPlaylist } from "react-icons/bi";
 import { useNavigate } from "react-router";
 import { ROUTES } from "~/routes";
+
+interface PlayList
+{
+    id:string
+    name:string
+    songs:number
+    img?:string
+    author:string
+    reproductions?:number
+    likes?:number
+    dislikes?:number
+}
 
 const PlayListItem = ({ name, img, author,songs,id }: PlayList) => {
     
@@ -13,7 +24,8 @@ const PlayListItem = ({ name, img, author,songs,id }: PlayList) => {
             items-center rounded-md cursor-pointer hover:bg-[#00000015]
             duration-500 m-1" onClick={(e) => navigate(`${ROUTES.TRACKS}/${id}`)}>
             <h1 className="text-[20px]">{name}</h1>
-            <img className="rounded-md" src={img} alt={`playlist-${name}`} />
+            { img && <img className="rounded-md" src={img} alt={`playlist-${name}`} />}
+            { !img && <h3 className="flex justify-center items-center rounded-md bg-[#00000050] w-50 h-30">No image</h3>}
             <h1 className="text-[15px]">{author}</h1>
             <div className="flex flex-row justify-around my-2 items-center">
                 <BiSolidPlaylist size={20}/>
