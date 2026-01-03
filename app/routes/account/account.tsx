@@ -10,6 +10,10 @@ export default function Account({ actionData }: Route.ComponentProps) {
         {
             label: 'Settings',
             url: ROUTES.SETTINGS
+        },
+        {
+            label:'MyPlaylists',
+            url:ROUTES.MYPLAYLISTS
         }
     ]
 
@@ -25,6 +29,11 @@ export default function Account({ actionData }: Route.ComponentProps) {
             alert("ERROR WHILE LOGOUT");
     }
 
+    const navigateTo = (url:string) => {
+        if (location.pathname !== url)
+            navigate(url)
+    }
+
     return (
         <>
             <nav className="pl-18 pt-2 bg-[#00000090]">
@@ -35,7 +44,9 @@ export default function Account({ actionData }: Route.ComponentProps) {
                                 key={index}
                                 className={`rounded-t-md cursor-pointer p-2 px-4 duration-300
                              hover:bg-[#00000040] hover:border-b-1 
-                             ${location.pathname === item.url && "bg-[#00000040] border-b-1"}`}>
+                             ${location.pathname === item.url && "bg-[#00000040] border-b-1"}`}
+                             onClick={() => navigateTo(item.url)}
+                             >
                                 {item.label}
                             </div>
                         )
