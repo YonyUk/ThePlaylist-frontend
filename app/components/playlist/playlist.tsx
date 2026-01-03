@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import SocialStats from "../socialstats/socialstats";
 import { BiSolidPlaylist } from "react-icons/bi";
 import { useNavigate } from "react-router";
@@ -13,10 +14,23 @@ interface PlayList
     reproductions?:number
     likes?:number
     dislikes?:number
+    loves?:number
 }
 
-const PlayListItem = ({ name, img, author,songs,id }: PlayList) => {
+export default function PlayListItem({ name, img, author,songs,id,reproductions,dislikes,likes,loves }: PlayList) {
     
+    const [plays,setPlays] = useState(reproductions ?? 0);
+    const [_likes,setLikes] = useState(likes ?? 0);
+    const [_dislikes,setDislikes] = useState(dislikes ?? 0);
+    const [_loves,setLoves] = useState(loves ?? 0);
+
+    useEffect(() => {
+        setPlays(reproductions ?? 0);
+        setLikes(likes ?? 0);
+        setDislikes(dislikes ?? 0);
+        setLoves(loves ?? 0);
+    },[reproductions,likes,dislikes,loves]);
+
     const navigate = useNavigate();
 
     return (
@@ -32,13 +46,11 @@ const PlayListItem = ({ name, img, author,songs,id }: PlayList) => {
                 <p>Tracks: <small>{songs}</small></p>
             </div>
             <SocialStats
-            likes={9000}
-            dislikes={9000000}
-            reproductions={900}
-            hearts={95500000}
+            likes={_likes}
+            dislikes={_dislikes}
+            reproductions={plays}
+            hearts={_loves}
             />
         </div>
     )
 };
-
-export default PlayListItem;
