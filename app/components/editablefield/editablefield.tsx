@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdEdit, MdDone } from "react-icons/md";
 
 interface EditableFieldComponentInput {
@@ -16,7 +16,11 @@ export default function EditableField({ invalidDescription, valid, value, id, na
 
     const [fieldValue, setFieldValue] = useState(value);
     const [editing, setEditing] = useState(false);
-    const validField = valid !== undefined ? valid : true;
+    const [validField,setValidField] = useState(valid !== undefined ? valid : true);
+
+    useEffect(() => {
+        setValidField(valid !== undefined ? valid : true);
+    },[valid]);
 
     return (
         <>
