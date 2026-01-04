@@ -19,6 +19,6 @@ export class TrackService{
     }
 
     public async getTrack(id:string) {
-        return await this.axiosClient.get<TrackDownloadDTO>(`/download/${id}`);
+        return await this.axiosClient.get<TrackDownloadDTO>(`/download/${id}`,{timeout:30000});
     }
 }
