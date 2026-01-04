@@ -28,7 +28,6 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
     const [currentTrack, setCurrentTrack] = useState(tracks[0]);
 
     const { loading, track } = useGetTrack(((loaderData as PlaylistDTO).tracks[0].id))
-    console.log(loading, track);
 
     return (
         <div className="flex flex-col pl-18 w-full h-screen items-center gap-5 p-2 overflow-auto">
@@ -44,7 +43,7 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
                     loves={currentTrack.loves}
                 />
             }
-            <SongBar />
+            <SongBar src={track?.url}/>
             <div className="flex flex-col h-fit w-fit px-5 overflow-auto rounded-md items-center">
 
             </div>
