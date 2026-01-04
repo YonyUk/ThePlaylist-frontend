@@ -1,17 +1,17 @@
-import type { Song } from "~/types/song";
+import type { TrackDTO } from "~/dtos/trackdto";
 import SocialStats from "../socialstats/socialstats";
 
-const CurrentSong = ({name,img,author}:Song) => {
+const CurrentSong = ({name,img,author_name}:TrackDTO) => {
     
     const nameOffset = (name.length / 2) * 15;
-    const authorOffset = (author.length / 2) * 13.28;
+    const authorOffset = (author_name.length / 2) * 13.28;
 
     const nameAnimationStyle = {
         animation : `scrollNameLeft ${5 * (name.length / 4)}s linear infinite`
     };
 
     const authorAnimationStyle = {
-        animation: `scrollAuthorLeft ${5 * (author.length / 4)}s linear infinite`
+        animation: `scrollAuthorLeft ${5 * (author_name.length / 4)}s linear infinite`
     };
 
     return (
@@ -48,8 +48,8 @@ const CurrentSong = ({name,img,author}:Song) => {
             }
             {/* Author header*/}
             <div className="flex flex-row justify-center w-full text-[12px] overflow-hidden px-3">
-                {author.length >= 25 && <h1 style={authorAnimationStyle}>{author}</h1>}
-                {author.length < 25 && <h1>{author}</h1>}
+                {author_name.length >= 25 && <h1 style={authorAnimationStyle}>{author_name}</h1>}
+                {author_name.length < 25 && <h1>{author_name}</h1>}
             </div>
             <SocialStats interactive={true}/>
         </div>

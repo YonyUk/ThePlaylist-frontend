@@ -1,3 +1,5 @@
+import type { TrackDTO } from "./trackdto";
+
 export interface PlaylistDTO {
     id:string;
     name:string;
@@ -8,5 +10,5 @@ export interface PlaylistDTO {
     loves:number;
     author_id:number;
     author:string;
-    tracks:string[];
+    tracks:TrackDTO[];
 }

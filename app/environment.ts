@@ -9,6 +9,7 @@ const environmentSettings = () => {
         const usersLogoutUrl = process.env.REACT_APP_USERS_LOGOUT_URL;
         const playlistsUrl = process.env.REACT_APP_PLAYLISTS_URL;
         const playlistsSearchUrl = process.env.REATC_APP_PLAYLISTS_SEARCH_URL;
+        const tracksUrl = process.env.REACT_APP_TRACKS_URL;
 
         return {
             apiUrl,
@@ -19,7 +20,8 @@ const environmentSettings = () => {
             usersVerifyUrl,
             usersLogoutUrl,
             playlistsUrl,
-            playlistsSearchUrl
+            playlistsSearchUrl,
+            tracksUrl
         };
     } catch (error) {
         const apiUrl = import.meta.env.VITE_API_URL;
@@ -31,6 +33,7 @@ const environmentSettings = () => {
         const usersLogoutUrl = import.meta.env.VITE_API_USESR_LOGOUT_URL;
         const playlistsUrl = import.meta.env.VITE_API_PLAYLISTS_URL;
         const playlistsSearchUrl = import.meta.env.VITE_API_PLAYLISTS_SEARCH_URL;
+        const tracksUrl = import.meta.env.VITE_API_TRACKS_URL;
 
         return {
             apiUrl,
@@ -41,7 +44,8 @@ const environmentSettings = () => {
             usersVerifyUrl,
             usersLogoutUrl,
             playlistsUrl,
-            playlistsSearchUrl
+            playlistsSearchUrl,
+            tracksUrl
         };
     }
 }

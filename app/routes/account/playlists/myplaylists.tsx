@@ -32,6 +32,7 @@ export default function MyPlaylists({actionData,loaderData}:Route.ComponentProps
             { loaderData && playlists.map((playlist,index) => {
                 return (
                     <PlayListItem
+                    key={index}
                     id={playlist.id}
                     name={playlist.name}
                     author={playlist.author}
