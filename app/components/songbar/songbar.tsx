@@ -4,10 +4,12 @@ import { FaVolumeDown, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 
 interface SongBarInput {
-    src?: string
+    src?: string;
+    onNext?: () => void;
+    onPrev?: () => void;
 }
 
-const SongBar = ({ src }: SongBarInput) => {
+const SongBar = ({ src, onNext, onPrev }: SongBarInput) => {
     const [playing, setPlaying] = useState(false);
     const [volume, setVolume] = useState(0.5);
     const [currentTime, setCurrentTime] = useState(0);
@@ -76,8 +78,8 @@ const SongBar = ({ src }: SongBarInput) => {
             audioHandler.current?.play();
     }
 
-    const handleProgressBarValueChanged = (value:number) => {
-        if (audioHandler.current){
+    const handleProgressBarValueChanged = (value: number) => {
+        if (audioHandler.current) {
             audioHandler.current.currentTime = value;
             setCurrentTime(value);
         }
@@ -109,14 +111,22 @@ const SongBar = ({ src }: SongBarInput) => {
                     {getFormattedCurrentTime(currentTime)}/{duration}
                 </small>
                 <div className="flex flex-row justify-around items-center w-fit gap-3">
-                    <div className="cursor-pointer rounded-md hover:bg-[#00000045] duration-500">
+                    <div className="cursor-pointer rounded-md hover:bg-[#00000045] duration-500"
+                        onClick={() => {
+                            if (onPrev)
+                                onPrev();
+                        }}>
                         <MdSkipPrevious size={20} />
                     </div>
                     <div className="cursor-pointer rounded-md hover:bg-[#00000045] duration-500"
                         onClick={() => handlePlay()}>
                         {playing ? <IoPause size={20} /> : <IoPlay size={20} />}
                     </div>
-                    <div className="cursor-pointer rounded-md hover:bg-[#00000045] duration-500">
+                    <div className="cursor-pointer rounded-md hover:bg-[#00000045] duration-500"
+                        onClick={() => {
+                            if (onNext)
+                                onNext();
+                        }}>
                         <MdSkipNext size={20} />
                     </div>
                 </div>
@@ -151,7 +161,7 @@ const SongBar = ({ src }: SongBarInput) => {
                         step={0.01}
                         value={volume.toString()}
                         onChange={(e) => handleVolume(parseFloat(e.target.value))}
-                        className="appearance-none scale-[0.7] accent-[#c0c0c0] w-15 cursor-pointer accent-[#c0c0c0] h-0.25 bg-[#c0c0c0]" />
+                        className="outline-none appearance-none scale-[0.7] accent-[#c0c0c0] w-15 cursor-pointer accent-[#c0c0c0] h-0.25 bg-[#c0c0c0]" />
                 </div>
             </div>
         </div>
