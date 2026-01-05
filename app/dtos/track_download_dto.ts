@@ -4,4 +4,5 @@ export interface TrackDownloadDTO {
     id:string;
     size:number;
     url:string;
+    expires:number;
 }

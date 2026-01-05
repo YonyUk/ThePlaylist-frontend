@@ -25,9 +25,33 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
     const service = TrackService.get();
 
     const tracks = (loaderData as PlaylistDTO)?.tracks;
-    const [currentTrack, setCurrentTrack] = useState(tracks[0]);
+    const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+    const [currentTrack, setCurrentTrack] = useState(tracks[currentTrackIndex]);
+    const { loading, track, setTrackId, refreshTrack } = useGetTrack(currentTrack.id);
+    const [interval, setInternalInterval] = useState<NodeJS.Timeout | null>(null);
 
-    const { loading, track } = useGetTrack(((loaderData as PlaylistDTO).tracks[0].id))
+    const handleNext = () => {
+        setCurrentTrackIndex(currentTrackIndex + 1);
+        setCurrentTrack(tracks[currentTrackIndex + 1]);
+        setTrackId(tracks[currentTrackIndex + 1].id);
+    }
+
+    const handlePrev = () => {
+        setCurrentTrackIndex(currentTrackIndex - 1);
+        setCurrentTrack(tracks[currentTrackIndex - 1]);
+        setTrackId(tracks[currentTrackIndex - 1].id);
+    }
+
+    useEffect(() => {
+        if (!loading) {
+            if (interval)
+                clearInterval(interval);
+            const interval_ = setInterval(() => {
+                refreshTrack(track?.id ?? null);
+            }, Number(track?.expires) * 1000);
+            setInternalInterval(interval_);
+        }
+    }, [loading]);
 
     return (
         <div className="flex flex-col pl-18 w-full h-screen items-center gap-5 p-2 overflow-auto">
@@ -43,7 +67,15 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
                     loves={currentTrack.loves}
                 />
             }
-            <SongBar src={track?.url}/>
+            <SongBar src={track?.url}
+                onNext={
+                    currentTrackIndex < tracks.length - 1 ?
+                        handleNext : undefined
+                }
+                onPrev={
+                    currentTrackIndex > 0 ?
+                        handlePrev : undefined
+                } />
             <div className="flex flex-col h-fit w-fit px-5 overflow-auto rounded-md items-center">
 
             </div>

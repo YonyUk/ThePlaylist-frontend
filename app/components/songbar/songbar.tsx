@@ -104,14 +104,17 @@ const SongBar = ({ src, onNext, onPrev }: SongBarInput) => {
                 onMouseDown={() => audioHandler.current?.pause()}
                 onMouseUp={() => handleProgressBarOnMouseUp()}
                 onChange={(e) => handleProgressBarValueChanged(parseFloat(e.target.value))}
-                className="appearance-none w-full cursor-pointer accent-[#c0c0c0] h-0.25 bg-[#c0c0c0]"
+                className="appearance-none w-full cursor-pointer accent-[#c0c0c0] h-0.25 bg-[#c0c0c0] outline-none"
             />
             <div className="flex flex-row justify-between w-full gap-10">
                 <small className="flex text-[9px] w-21 justify-center items-center">
                     {getFormattedCurrentTime(currentTime)}/{duration}
                 </small>
                 <div className="flex flex-row justify-around items-center w-fit gap-3">
-                    <div className="cursor-pointer rounded-md hover:bg-[#00000045] duration-500"
+                    <div className={`
+                        rounded-md ${onPrev && "hover:bg-[#00000045] cursor-pointer"} duration-500
+                        ${!onPrev && "text-[#ffffff65]"}
+                    `}
                         onClick={() => {
                             if (onPrev)
                                 onPrev();
@@ -122,7 +125,10 @@ const SongBar = ({ src, onNext, onPrev }: SongBarInput) => {
                         onClick={() => handlePlay()}>
                         {playing ? <IoPause size={20} /> : <IoPlay size={20} />}
                     </div>
-                    <div className="cursor-pointer rounded-md hover:bg-[#00000045] duration-500"
+                    <div className={`
+                        rounded-md ${onNext && "hover:bg-[#00000045] cursor-pointer"} duration-500
+                        ${!onNext && "text-[#ffffff65]"}
+                    `}
                         onClick={() => {
                             if (onNext)
                                 onNext();

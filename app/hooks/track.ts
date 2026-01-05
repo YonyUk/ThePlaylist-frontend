@@ -7,21 +7,28 @@ export const useGetTrack = (id: string | null) => {
 
     const [loading, setLoading] = useState(true);
     const [track, setTrack] = useState<TrackDownloadDTO | null>(null);
+    const [track_id, setTrackId] = useState(id);
+    const [expires,setExpires] = useState(0);
 
-
-    useEffect(() => {
+    const getTrack = (id_: string | null) => {
         setLoading(true);
         setTrack(null);
-        if (id) {
-            service.getTrack(id)
+        if (id_) {
+            service.getTrack(id_)
                 .then((resp) => {
                     if (resp.status === 200) {
-                        setTrack(resp.data)
+                        setTrack(resp.data);
+                        setExpires(resp.data.expires);
                     }
-                    setLoading(false);
                 })
+                .finally(() => {
+                    setLoading(false);
+                });
         }
-    }, [id]);
+    }
+    useEffect(() => {
+        getTrack(track_id);
+    }, [track_id]);
 
-    return { loading, track };
+    return { loading, track, setTrackId,refreshTrack:getTrack };
 }
