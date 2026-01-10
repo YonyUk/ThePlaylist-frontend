@@ -108,7 +108,7 @@ const SongBar = ({ src, onNext, onPrev }: SongBarInput) => {
             />
             <div className="flex flex-row justify-between w-full gap-10">
                 <small className="flex text-[9px] w-21 justify-center items-center">
-                    {getFormattedCurrentTime(currentTime)}/{duration}
+                    {currentTime ? getFormattedCurrentTime(currentTime) : '00:00'}/{duration}
                 </small>
                 <div className="flex flex-row justify-around items-center w-fit gap-3">
                     <div className={`
@@ -116,8 +116,11 @@ const SongBar = ({ src, onNext, onPrev }: SongBarInput) => {
                         ${!onPrev && "text-[#ffffff65]"}
                     `}
                         onClick={() => {
-                            if (onPrev)
+                            if (onPrev){
                                 onPrev();
+                                audioHandler.current?.pause();
+                                setPlaying(false);
+                            }
                         }}>
                         <MdSkipPrevious size={20} />
                     </div>
@@ -130,8 +133,11 @@ const SongBar = ({ src, onNext, onPrev }: SongBarInput) => {
                         ${!onNext && "text-[#ffffff65]"}
                     `}
                         onClick={() => {
-                            if (onNext)
+                            if (onNext){
                                 onNext();
+                                audioHandler.current?.pause();
+                                setPlaying(false);
+                            }
                         }}>
                         <MdSkipNext size={20} />
                     </div>

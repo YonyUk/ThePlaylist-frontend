@@ -59,7 +59,7 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
             {
                 track &&
                 <CurrentSong
-                    name={currentTrack.name}
+                    name={currentTrack.name.substring(0,currentTrack.name.indexOf('.'))}
                     id={currentTrack.id}
                     author_name={currentTrack.author_name}
                     likes={currentTrack.likes}
