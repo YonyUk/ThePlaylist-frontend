@@ -1,6 +1,5 @@
 import { UserService } from "~/services/UserService";
 import type { Route } from "./+types/myplaylists";
-import type { AxiosError } from "axios";
 import { redirect } from "react-router";
 import { ROUTES } from "~/routes";
 import type { PlaylistDTO } from "~/dtos/playlistdto";
@@ -37,6 +36,7 @@ export default function MyPlaylists({actionData,loaderData}:Route.ComponentProps
                     name={playlist.name}
                     author={playlist.author}
                     songs={playlist.tracks.length}
+                    toEditMode={true}
                     />
                 )
             })}

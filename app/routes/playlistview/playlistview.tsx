@@ -9,37 +9,71 @@ import { TrackService } from "~/services/TrackService";
 import type { PlaylistDTO } from "~/dtos/playlistdto";
 import { useGetTrack } from "~/hooks/track";
 import TrackLoading from "~/components/track_loading/trackloading";
+import { redirect, useLocation, useNavigate } from "react-router";
+import { UserService } from "~/services/UserService";
+import { ROUTES } from "~/routes";
+
+interface ClientLoaderOutputOK {
+    playlist: PlaylistDTO;
+    authenticated: boolean;
+}
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     const playlist_id = params.playlistId;
     const service = PlaylistService.get();
+    const userService = UserService.get();
 
     try {
         const response = await service.getPlaylist(playlist_id);
-        return response.data;
+        try {
+            const authenticated = await userService.authenticated();
+            return {
+                playlist: response.data,
+                authenticated
+            } as ClientLoaderOutputOK;
+        } catch (error) {
+            return {
+                playlist: response.data,
+                authenticated: false
+            } as ClientLoaderOutputOK;
+        }
     } catch (error) {
         return (error as AxiosError).response?.data;
     }
 }
 
 export default function PlayListView({ loaderData }: Route.ComponentProps) {
+    const navigate = useNavigate();
+
+    const loadedData = (loaderData as ClientLoaderOutputOK);
+
+    const location = useLocation();
+    const isEditMode = location.state.edit;
+    const authenticated = loadedData.authenticated;
+
+    useEffect(() => {
+        if (isEditMode && !authenticated) {
+            navigate(ROUTES.LOGIN);
+        }
+    },[]);
+
     const service = TrackService.get();
 
-    const tracks = (loaderData as PlaylistDTO)?.tracks;
+    const tracks = loadedData.playlist?.tracks;
     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
     const [currentTrack, setCurrentTrack] = useState(tracks[currentTrackIndex]);
     const { loading, track, setTrackId, refreshTrack } = useGetTrack(currentTrack.id);
     const [interval, setInternalInterval] = useState<NodeJS.Timeout | null>(null);
-    const [keepPlay,setKeepPlay] = useState(false);
+    const [keepPlay, setKeepPlay] = useState(false);
 
-    const handleNext = ( keepPlaying:boolean) => {
+    const handleNext = (keepPlaying: boolean) => {
         setCurrentTrackIndex(currentTrackIndex + 1);
         setCurrentTrack(tracks[currentTrackIndex + 1]);
         setTrackId(tracks[currentTrackIndex + 1].id);
         setKeepPlay(keepPlaying);
     }
 
-    const handlePrev = (keepPlaying:boolean) => {
+    const handlePrev = (keepPlaying: boolean) => {
         setCurrentTrackIndex(currentTrackIndex - 1);
         setCurrentTrack(tracks[currentTrackIndex - 1]);
         setTrackId(tracks[currentTrackIndex - 1].id);
@@ -63,7 +97,7 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
             {
                 track &&
                 <CurrentSong
-                    name={currentTrack.name.substring(0,currentTrack.name.indexOf('.'))}
+                    name={currentTrack.name.substring(0, currentTrack.name.indexOf('.'))}
                     id={currentTrack.id}
                     author_name={currentTrack.author_name}
                     likes={currentTrack.likes}
@@ -73,7 +107,7 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
             }
             {
                 !track &&
-                <TrackLoading/>
+                <TrackLoading />
             }
             <SongBar src={track?.url}
                 play={keepPlay}
