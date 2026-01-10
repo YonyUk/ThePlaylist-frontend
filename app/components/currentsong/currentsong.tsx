@@ -1,13 +1,13 @@
 import type { TrackDTO } from "~/dtos/trackdto";
 import SocialStats from "../socialstats/socialstats";
 
-const CurrentSong = ({name,img,author_name}:TrackDTO) => {
-    
+const CurrentSong = ({ name, img, author_name, plays, likes, dislikes, loves }: TrackDTO) => {
+
     const nameOffset = (name.length / 2) * 15;
     const authorOffset = (author_name.length / 2) * 13.28;
 
     const nameAnimationStyle = {
-        animation : `scrollNameLeft ${5 * (name.length / 4)}s linear infinite`
+        animation: `scrollNameLeft ${5 * (name.length / 4)}s linear infinite`
     };
 
     const authorAnimationStyle = {
@@ -17,8 +17,8 @@ const CurrentSong = ({name,img,author_name}:TrackDTO) => {
     return (
         <div className="flex flex-col gap-2 p-3 w-50 h-65 bg-[#00000045] rounded-md items-center overflow-hidden">
             <style>
-            {
-                `
+                {
+                    `
                 @keyframes scrollNameLeft {
                     0%{ transform: translateX(${50 + nameOffset}px); }
                     100%{ transform: translateX(-${50 + nameOffset}px); }
@@ -29,7 +29,7 @@ const CurrentSong = ({name,img,author_name}:TrackDTO) => {
                     100%{ transform: translateX(-${45 + authorOffset}px); }
                 }
                 `
-            }
+                }
             </style>
             {/* Name header*/}
             <div className="flex flex-row justify-center w-full text-[15px] overflow-hidden">
@@ -51,7 +51,12 @@ const CurrentSong = ({name,img,author_name}:TrackDTO) => {
                 {author_name.length >= 25 && <h1 style={authorAnimationStyle}>{author_name}</h1>}
                 {author_name.length < 25 && <h1>{author_name}</h1>}
             </div>
-            <SocialStats interactive={true}/>
+            <SocialStats interactive={true}
+            likes={likes}
+            dislikes={dislikes}
+            hearts={loves}
+            reproductions={plays}
+            />
         </div>
     )
 };

@@ -2,43 +2,57 @@ import { MdSkipPrevious, MdSkipNext } from "react-icons/md";
 import { IoPlay, IoPause } from "react-icons/io5";
 import { FaVolumeDown, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
+import type { TrackDTO } from "~/dtos/trackdto";
 
 interface SongBarInput {
     src?: string;
     play: boolean;
-    onNext?: (keepPlay:boolean) => void;
-    onPrev?: (keepPlay:boolean) => void;
+    onPlay: () => void;
+    onNext?: (keepPlay: boolean) => void;
+    onPrev?: (keepPlay: boolean) => void;
 }
 
-const SongBar = ({ src, play, onNext, onPrev }: SongBarInput) => {
+const formatTime = (duration?: number) => {
+    if (!duration || isNaN(duration) || !isFinite(duration) || duration < 0)
+        return "--:--";
+    const mins = Math.floor(duration / 60);
+    const seconds = Math.floor(duration % 60);
+    return `${mins}:${seconds.toString().padStart(2, '0')}`;
+}
+
+const formatTimeExtended = (duration?: number) => {
+    if (!duration || isNaN(duration) || !isFinite(duration) || duration < 0)
+        return "--:--";
+    const hours = Math.floor(duration / 3600);
+    const minutes = Math.floor(Math.floor(duration % 3600) / 60);
+    const seconds = Math.floor(Math.floor(duration % 3600) % 60);
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+const getFormattedCurrentTime = (value?: number) => {
+    if (value) {
+        if (value >= 3600)
+            return formatTimeExtended(value);
+        else
+            return formatTime(value);
+    }
+    return "--:--";
+}
+
+const SongBar = ({ src, play, onNext, onPrev , onPlay }: SongBarInput) => {
     const [playing, setPlaying] = useState(play);
     const [volume, setVolume] = useState(0.5);
     const [currentTime, setCurrentTime] = useState(0);
     const [muted, setMuted] = useState(false);
     const [source, setSource] = useState(src);
     const [duration, setDuration] = useState("--:--");
+    const [played,setPlayed] = useState(false);
 
     const audioHandler = useRef<HTMLAudioElement>(null);
 
-    const formatTime = (duration?: number) => {
-        if (!duration || isNaN(duration) || !isFinite(duration) || duration < 0)
-            return "--:--";
-        const mins = Math.floor(duration / 60);
-        const seconds = Math.floor(duration % 60);
-        return `${mins}:${seconds.toString().padStart(2, '0')}`;
-    }
-
-    const formatTimeExtended = (duration?: number) => {
-        if (!duration || isNaN(duration) || !isFinite(duration) || duration < 0)
-            return "--:--";
-        const hours = Math.floor(duration / 3600);
-        const minutes = Math.floor(Math.floor(duration % 3600) / 60);
-        const seconds = Math.floor(Math.floor(duration % 3600) % 60);
-        return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
-
     useEffect(() => {
         setSource(src);
+        setPlayed(false);
     }, [src]);
 
     const handleVolume = (value: number) => {
@@ -49,21 +63,15 @@ const SongBar = ({ src, play, onNext, onPrev }: SongBarInput) => {
     }
 
     const handlePlay = () => {
+        if (!played){
+            onPlay();
+            setPlayed(true);
+        }
         if (playing)
             audioHandler.current?.pause();
         else
             audioHandler.current?.play();
         setPlaying(!playing);
-    }
-
-    const getFormattedCurrentTime = (value?: number) => {
-        if (value) {
-            if (value >= 3600)
-                return formatTimeExtended(value);
-            else
-                return formatTime(value);
-        }
-        return "--:--";
     }
 
     const initalizeAudioHandlerProperties = () => {

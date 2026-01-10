@@ -1,6 +1,7 @@
 import environmentSettings from "~/environment";
 import { AxiosClient } from "./http/AxiosClient";
 import type { TrackDownloadDTO } from "~/dtos/track_download_dto";
+import type { TrackDTO, TrackUpdateDTO } from "~/dtos/trackdto";
 
 export class TrackService{
 
@@ -20,5 +21,13 @@ export class TrackService{
 
     public async getTrack(id:string) {
         return await this.axiosClient.get<TrackDownloadDTO>(`/download/${id}`,{timeout:30000});
+    }
+
+    public async updateTrack(id:string,track:TrackUpdateDTO) {
+        return await this.axiosClient.put<TrackDTO>(`${id}/stats`,track);
+    }
+
+    public async getTrackInfo(id:string) {
+        return await this.axiosClient.get<TrackDTO>(id);
     }
 }

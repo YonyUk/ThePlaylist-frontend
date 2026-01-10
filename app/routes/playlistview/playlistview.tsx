@@ -12,6 +12,7 @@ import TrackLoading from "~/components/track_loading/trackloading";
 import { redirect, useLocation, useNavigate } from "react-router";
 import { UserService } from "~/services/UserService";
 import { ROUTES } from "~/routes";
+import type { TrackDTO, TrackUpdateDTO } from "~/dtos/trackdto";
 
 interface ClientLoaderOutputOK {
     playlist: PlaylistDTO;
@@ -55,18 +56,41 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
         if (isEditMode && !authenticated) {
             navigate(ROUTES.LOGIN);
         }
-    },[]);
+    }, []);
 
     const service = TrackService.get();
 
     const tracks = loadedData.playlist?.tracks;
     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
     const [currentTrack, setCurrentTrack] = useState(tracks[currentTrackIndex]);
+    const [likes,setLikes] = useState(0);
+    const [dislikes,setDislikes] = useState(0);
+    const [loves,setLoves] = useState(0);
+    const [plays,setPlays] = useState(0);
     const { loading, track, setTrackId, refreshTrack } = useGetTrack(currentTrack.id);
     const [interval, setInternalInterval] = useState<NodeJS.Timeout | null>(null);
     const [keepPlay, setKeepPlay] = useState(false);
 
+    const onPlayTrack = async () => {
+        const response = await service.getTrackInfo(currentTrack.id);
+        try {
+            const track_data = response.data;
+            const update_track_data: TrackUpdateDTO = {
+                likes: track_data.likes,
+                dislikes: track_data.dislikes,
+                loves: track_data.loves,
+                plays:track_data.plays + 1
+            }
+            service.updateTrack(currentTrack.id,update_track_data);
+        } catch (error) {
+            
+        }
+    }
+
     const handleNext = (keepPlaying: boolean) => {
+        if (isEditMode && !authenticated) {
+            navigate(ROUTES.LOGIN);
+        }
         setCurrentTrackIndex(currentTrackIndex + 1);
         setCurrentTrack(tracks[currentTrackIndex + 1]);
         setTrackId(tracks[currentTrackIndex + 1].id);
@@ -74,11 +98,26 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
     }
 
     const handlePrev = (keepPlaying: boolean) => {
+        if (isEditMode && !authenticated) {
+            navigate(ROUTES.LOGIN);
+        }
         setCurrentTrackIndex(currentTrackIndex - 1);
         setCurrentTrack(tracks[currentTrackIndex - 1]);
         setTrackId(tracks[currentTrackIndex - 1].id);
         setKeepPlay(keepPlaying);
     }
+
+    useEffect(() => {
+        service.getTrackInfo(currentTrack.id)
+        .then( resp => {
+            if (resp.status === 200){
+                setLikes(resp.data.likes);
+                setDislikes(resp.data.dislikes);
+                setLoves(resp.data.loves);
+                setPlays(resp.data.plays);
+            }
+        })
+    },[currentTrack]);
 
     useEffect(() => {
         if (!loading) {
@@ -100,9 +139,10 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
                     name={currentTrack.name.substring(0, currentTrack.name.indexOf('.'))}
                     id={currentTrack.id}
                     author_name={currentTrack.author_name}
-                    likes={currentTrack.likes}
-                    dislikes={currentTrack.dislikes}
-                    loves={currentTrack.loves}
+                    likes={likes}
+                    dislikes={dislikes}
+                    loves={loves}
+                    plays={plays}
                 />
             }
             {
@@ -111,6 +151,7 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
             }
             <SongBar src={track?.url}
                 play={keepPlay}
+                onPlay={onPlayTrack}
                 onNext={
                     currentTrackIndex < tracks.length - 1 ?
                         handleNext : undefined
