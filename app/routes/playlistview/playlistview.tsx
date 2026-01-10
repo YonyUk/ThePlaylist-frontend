@@ -30,17 +30,20 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
     const [currentTrack, setCurrentTrack] = useState(tracks[currentTrackIndex]);
     const { loading, track, setTrackId, refreshTrack } = useGetTrack(currentTrack.id);
     const [interval, setInternalInterval] = useState<NodeJS.Timeout | null>(null);
+    const [keepPlay,setKeepPlay] = useState(false);
 
-    const handleNext = () => {
+    const handleNext = ( keepPlaying:boolean) => {
         setCurrentTrackIndex(currentTrackIndex + 1);
         setCurrentTrack(tracks[currentTrackIndex + 1]);
         setTrackId(tracks[currentTrackIndex + 1].id);
+        setKeepPlay(keepPlaying);
     }
 
-    const handlePrev = () => {
+    const handlePrev = (keepPlaying:boolean) => {
         setCurrentTrackIndex(currentTrackIndex - 1);
         setCurrentTrack(tracks[currentTrackIndex - 1]);
         setTrackId(tracks[currentTrackIndex - 1].id);
+        setKeepPlay(keepPlaying);
     }
 
     useEffect(() => {
@@ -73,6 +76,7 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
                 <TrackLoading/>
             }
             <SongBar src={track?.url}
+                play={keepPlay}
                 onNext={
                     currentTrackIndex < tracks.length - 1 ?
                         handleNext : undefined

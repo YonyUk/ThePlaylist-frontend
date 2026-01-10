@@ -5,12 +5,13 @@ import { useEffect, useRef, useState } from "react";
 
 interface SongBarInput {
     src?: string;
-    onNext?: () => void;
-    onPrev?: () => void;
+    play: boolean;
+    onNext?: (keepPlay:boolean) => void;
+    onPrev?: (keepPlay:boolean) => void;
 }
 
-const SongBar = ({ src, onNext, onPrev }: SongBarInput) => {
-    const [playing, setPlaying] = useState(false);
+const SongBar = ({ src, play, onNext, onPrev }: SongBarInput) => {
+    const [playing, setPlaying] = useState(play);
     const [volume, setVolume] = useState(0.5);
     const [currentTime, setCurrentTime] = useState(0);
     const [muted, setMuted] = useState(false);
@@ -39,11 +40,6 @@ const SongBar = ({ src, onNext, onPrev }: SongBarInput) => {
     useEffect(() => {
         setSource(src);
     }, [src]);
-
-    useEffect(() => {
-        if (audioHandler.current && playing)
-            audioHandler.current.play();
-    },[audioHandler.current]);
 
     const handleVolume = (value: number) => {
         if (audioHandler.current) {
@@ -95,6 +91,11 @@ const SongBar = ({ src, onNext, onPrev }: SongBarInput) => {
             <audio
                 ref={audioHandler}
                 src={source}
+                autoPlay={playing}
+                onEnded={() => {
+                    if (onNext)
+                        onNext(playing);
+                }}
                 onLoadedMetadata={initalizeAudioHandlerProperties}
                 onTimeUpdate={(e) => setCurrentTime(audioHandler.current?.currentTime ?? 0)}
             ></audio>
@@ -121,10 +122,8 @@ const SongBar = ({ src, onNext, onPrev }: SongBarInput) => {
                         ${!onPrev && "text-[#ffffff65]"}
                     `}
                         onClick={() => {
-                            if (onPrev){
-                                onPrev();
-                                audioHandler.current?.pause();
-                                setPlaying(false);
+                            if (onPrev) {
+                                onPrev(playing);
                             }
                         }}>
                         <MdSkipPrevious size={20} />
@@ -138,10 +137,8 @@ const SongBar = ({ src, onNext, onPrev }: SongBarInput) => {
                         ${!onNext && "text-[#ffffff65]"}
                     `}
                         onClick={() => {
-                            if (onNext){
-                                onNext();
-                                audioHandler.current?.pause();
-                                setPlaying(false);
+                            if (onNext) {
+                                onNext(playing);
                             }
                         }}>
                         <MdSkipNext size={20} />
