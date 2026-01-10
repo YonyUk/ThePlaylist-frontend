@@ -40,6 +40,11 @@ const SongBar = ({ src, onNext, onPrev }: SongBarInput) => {
         setSource(src);
     }, [src]);
 
+    useEffect(() => {
+        if (audioHandler.current && playing)
+            audioHandler.current.play();
+    },[audioHandler.current]);
+
     const handleVolume = (value: number) => {
         if (audioHandler.current) {
             audioHandler.current.volume = value;

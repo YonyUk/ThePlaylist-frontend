@@ -8,6 +8,7 @@ import type { AxiosError } from "axios";
 import { TrackService } from "~/services/TrackService";
 import type { PlaylistDTO } from "~/dtos/playlistdto";
 import { useGetTrack } from "~/hooks/track";
+import TrackLoading from "~/components/track_loading/trackloading";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     const playlist_id = params.playlistId;
@@ -66,6 +67,10 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
                     dislikes={currentTrack.dislikes}
                     loves={currentTrack.loves}
                 />
+            }
+            {
+                !track &&
+                <TrackLoading/>
             }
             <SongBar src={track?.url}
                 onNext={
