@@ -32,7 +32,7 @@ const CurrentSong = ({ name, img, author_name, plays, likes, dislikes, loves }: 
                 }
             </style>
             {/* Name header*/}
-            <div className="flex flex-row justify-center w-full text-[15px] overflow-hidden">
+            <div className="flex flex-row justify-center w-max text-[15px] overflow-hidden">
                 {name.length >= 21 && <div><h1 style={nameAnimationStyle as React.CSSProperties}>{name}</h1></div>}
                 {name.length < 21 && <h1>{name}</h1>}
             </div>
