@@ -25,7 +25,43 @@ export class TrackService{
     }
 
     public async updateTrackPlays(id:string){
-        return await this.axiosClient.put<ExistencialQuery>(`${id}/stats/plays`);
+        return await this.axiosClient.put<TrackDTO>(`${id}/stats/plays`);
+    }
+
+    public async isLiked(id:string){
+        return await this.axiosClient.get<ExistencialQuery>(`${id}/stats/likes`);
+    }
+
+    public async addLike(id:string){
+        return await this.axiosClient.put<TrackDTO>(`${id}/stats/likes`);
+    }
+
+    public async removeLike(id:string){
+        return await this.axiosClient.delete<TrackDTO>(`${id}/stats/likes`);
+    }
+
+    public async isDisliked(id:string){
+        return await this.axiosClient.get<ExistencialQuery>(`${id}/stats/dislikes`);
+    }
+
+    public async addDislike(id:string){
+        return await this.axiosClient.put<TrackDTO>(`${id}/stats/dislikes`);
+    }
+
+    public async removeDislike(id:string){
+        return await this.axiosClient.delete<TrackDTO>(`${id}/stats/dislikes`);
+    }
+
+    public async isLoved(id:string){
+        return await this.axiosClient.get<ExistencialQuery>(`${id}/stats/loves`)
+    }
+
+    public async addLove(id:string){
+        return await this.axiosClient.put<TrackDTO>(`${id}/stats/loves`);
+    }
+
+    public async removeLove(id:string){
+        return await this.axiosClient.delete<TrackDTO>(`${id}/stats/loves`);
     }
 
     public async getTrackInfo(id:string) {

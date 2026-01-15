@@ -1,43 +1,59 @@
-import { FaHeart,FaRegHeart } from "react-icons/fa";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { AiFillLike, AiOutlineLike, AiFillDislike, AiOutlineDislike } from "react-icons/ai";
 import { IoPlay } from "react-icons/io5";
 import { useEffect, useState } from "react";
 
 export interface SocialControlsInterface {
-    interactive?:boolean
-    likes?: number
-    dislikes?: number
-    reproductions?: number
-    hearts?: number
-    valued?:boolean
-    stat?:'loved' | 'liked' | 'disliked' | 'none'
+    interactive?: boolean;
+    likes?: number;
+    dislikes?: number;
+    reproductions?: number;
+    hearts?: number;
+    valued?: boolean;
+    stat?: 'loved' | 'liked' | 'disliked' | 'none';
+    already_liked?: boolean;
+    already_disliked?: boolean;
+    already_loved?: boolean;
 }
 
-const SocialStats = ({ hearts, likes, dislikes, reproductions, interactive,valued, stat }: SocialControlsInterface) => {
- 
-    const [liked,setLiked] = useState(false);
-    const [loved,setLoved] = useState(false);
-    const [disliked,setDisliked] = useState(false);
-    const [currentHearts,setCurrentHearts] = useState(hearts ?? 0);
-    const [currentLikes,setCurrentLikes] = useState(likes ?? 0);
-    const [currentDislikes,setCurrentDislikes] = useState(dislikes ?? 0);
-    const [isValued,setIsValued] = useState(valued ?? false);
-    const [statSelected,setStatSelected] = useState(stat ?? 'none');
+const SocialStats = (
+    {
+        hearts,
+        likes,
+        dislikes,
+        reproductions,
+        interactive,
+        valued,
+        stat,
+        already_liked,
+        already_disliked,
+        already_loved
+    }: SocialControlsInterface
+) => {
+
+    const [liked, setLiked] = useState(already_liked ?? false);
+    const [loved, setLoved] = useState(already_loved ?? false);
+    const [disliked, setDisliked] = useState(already_disliked ?? false);
+    const [currentHearts, setCurrentHearts] = useState(hearts ?? 0);
+    const [currentLikes, setCurrentLikes] = useState(likes ?? 0);
+    const [currentDislikes, setCurrentDislikes] = useState(dislikes ?? 0);
+    const [isValued, setIsValued] = useState(valued ?? false);
+    const [statSelected, setStatSelected] = useState(stat ?? 'none');
     const isInteractive = interactive ?? false
 
     useEffect(() => {
         setCurrentHearts(hearts ?? 0);
-    },[hearts]);
+    }, [hearts]);
 
     useEffect(() => {
         setCurrentLikes(likes ?? 0);
-    },[likes]);
+    }, [likes]);
 
     useEffect(() => {
         setCurrentDislikes(dislikes ?? 0);
-    },[dislikes]);
+    }, [dislikes]);
 
-    const formatStats = (stat:number):string => {
+    const formatStats = (stat: number): string => {
         if (stat < 1000)
             return `${stat}`;
         if (stat < 1000000)
@@ -48,20 +64,20 @@ const SocialStats = ({ hearts, likes, dislikes, reproductions, interactive,value
     };
 
     const updateStat = (
-        stat:'loved' | 'liked' | 'disliked',
-        affect:boolean,
-        value:number,
-        statUpdater:(v:number | ((prevState:number) => number)) => void,
-        indicatorUpdater:(v:boolean | ((prevState:boolean) => boolean)) => void
+        stat: 'loved' | 'liked' | 'disliked',
+        affect: boolean,
+        value: number,
+        statUpdater: (v: number | ((prevState: number) => number)) => void,
+        indicatorUpdater: (v: boolean | ((prevState: boolean) => boolean)) => void
     ) => {
         if (!affect)
             return;
-        if (!isValued){
+        if (!isValued) {
             statUpdater(value + 1);
             indicatorUpdater(true);
             setIsValued(true);
             setStatSelected(stat);
-        } else{
+        } else {
             statUpdater(value - 1);
             indicatorUpdater(false);
             setIsValued(false);
@@ -72,53 +88,53 @@ const SocialStats = ({ hearts, likes, dislikes, reproductions, interactive,value
     return (
         <div className="flex flex-row justify-bettwen gap-3 w-full mt-3">
             <div
-            onClick={
-                () => updateStat(
-                    'loved',
-                    statSelected === 'loved' || statSelected === 'none',
-                    currentHearts,
-                    setCurrentHearts,
-                    setLoved
-                )
-            } 
-            className={`flex flex-row gap-1 w-10 items-center ${isInteractive && 'cursor-pointer' }`}>
-                {!interactive && <FaHeart size={15}/>}
+                onClick={
+                    () => updateStat(
+                        'loved',
+                        statSelected === 'loved' || statSelected === 'none',
+                        currentHearts,
+                        setCurrentHearts,
+                        setLoved
+                    )
+                }
+                className={`flex flex-row gap-1 w-10 items-center ${isInteractive && 'cursor-pointer'}`}>
+                {!interactive && <FaHeart size={15} />}
                 {interactive &&
-                (loved ? <FaHeart size={15}/> : <FaRegHeart size={15}/>)
+                    (loved ? <FaHeart size={15} /> : <FaRegHeart size={15} />)
                 }
                 <small className="text-[10px]">{`${formatStats(currentHearts)}`}</small>
             </div>
             <div
-            onClick={
-                () => updateStat(
-                    'liked',
-                    statSelected==='liked' || statSelected === 'none',
-                    currentLikes,
-                    setCurrentLikes,
-                    setLiked
-                )
-            } 
-            className={`flex flex-row gap-1 w-10 items-center ${isInteractive && 'cursor-pointer' }`}>
-                {!interactive && <AiFillLike size={15}/>}
+                onClick={
+                    () => updateStat(
+                        'liked',
+                        statSelected === 'liked' || statSelected === 'none',
+                        currentLikes,
+                        setCurrentLikes,
+                        setLiked
+                    )
+                }
+                className={`flex flex-row gap-1 w-10 items-center ${isInteractive && 'cursor-pointer'}`}>
+                {!interactive && <AiFillLike size={15} />}
                 {interactive &&
-                (liked ? <AiFillLike size={15}/> : <AiOutlineLike size={15}/>)
+                    (liked ? <AiFillLike size={15} /> : <AiOutlineLike size={15} />)
                 }
                 <small className="text-[10px]">{`${formatStats(currentLikes)}`}</small>
             </div>
             <div
-            onClick={
-                () => updateStat(
-                    'disliked',
-                    statSelected==='disliked' || statSelected==='none',
-                    currentDislikes,
-                    setCurrentDislikes,
-                    setDisliked
-                )
-            } 
-            className={`flex flex-row gap-1 w-10 items-center ${isInteractive && 'cursor-pointer' }`}>
-                {!interactive && <AiFillDislike size={15}/>}
+                onClick={
+                    () => updateStat(
+                        'disliked',
+                        statSelected === 'disliked' || statSelected === 'none',
+                        currentDislikes,
+                        setCurrentDislikes,
+                        setDisliked
+                    )
+                }
+                className={`flex flex-row gap-1 w-10 items-center ${isInteractive && 'cursor-pointer'}`}>
+                {!interactive && <AiFillDislike size={15} />}
                 {interactive &&
-                (disliked ? <AiFillDislike size={15}/> : <AiOutlineDislike size={15}/>)
+                    (disliked ? <AiFillDislike size={15} /> : <AiOutlineDislike size={15} />)
                 }
                 <small className="text-[10px]">{`${formatStats(currentDislikes)}`}</small>
             </div>

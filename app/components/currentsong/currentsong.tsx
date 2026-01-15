@@ -1,10 +1,35 @@
 import type { TrackDTO } from "~/dtos/trackdto";
 import SocialStats from "../socialstats/socialstats";
 
-const CurrentSong = ({ name, img, author_name, plays, likes, dislikes, loves }: TrackDTO) => {
+interface CurrentSongInput extends TrackDTO {
+    liked?: boolean;
+    disliked?: boolean;
+    loved?: boolean;
+}
+
+const CurrentSong = (
+    {
+        name,
+        img,
+        author_name,
+        plays,
+        likes,
+        dislikes,
+        loves,
+        liked,
+        disliked,
+        loved
+    }: CurrentSongInput
+) => {
 
     const nameOffset = (name.length / 2) * 15;
     const authorOffset = (author_name.length / 2) * 13.28;
+
+    const valued = liked === true || disliked === true || loved === true;
+    const stat = liked === true ?
+        'liked' : disliked === true ?
+            'disliked' : loved === true ?
+                'loved' : 'none';
 
     const nameAnimationStyle = {
         animation: `scrollNameLeft ${5 * (name.length / 4)}s linear infinite`
@@ -52,10 +77,15 @@ const CurrentSong = ({ name, img, author_name, plays, likes, dislikes, loves }: 
                 {author_name.length < 25 && <h1>{author_name}</h1>}
             </div>
             <SocialStats interactive={true}
-            likes={likes}
-            dislikes={dislikes}
-            hearts={loves}
-            reproductions={plays}
+                likes={likes}
+                dislikes={dislikes}
+                hearts={loves}
+                reproductions={plays}
+                already_liked={liked}
+                already_disliked={disliked}
+                already_loved={loved}
+                valued={valued}
+                stat={stat}
             />
         </div>
     )
