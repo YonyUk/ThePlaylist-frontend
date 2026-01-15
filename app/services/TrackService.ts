@@ -2,6 +2,7 @@ import environmentSettings from "~/environment";
 import { AxiosClient } from "./http/AxiosClient";
 import type { TrackDownloadDTO } from "~/dtos/track_download_dto";
 import type { TrackDTO, TrackUpdateDTO } from "~/dtos/trackdto";
+import type { ExistencialQuery } from "~/types/responsetypes";
 
 export class TrackService{
 
@@ -23,8 +24,8 @@ export class TrackService{
         return await this.axiosClient.get<TrackDownloadDTO>(`/download/${id}`,{timeout:30000});
     }
 
-    public async updateTrack(id:string,track:TrackUpdateDTO) {
-        return await this.axiosClient.put<TrackDTO>(`${id}/stats`,track);
+    public async updateTrackPlays(id:string){
+        return await this.axiosClient.put<ExistencialQuery>(`${id}/stats/plays`);
     }
 
     public async getTrackInfo(id:string) {

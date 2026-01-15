@@ -81,7 +81,7 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
                 loves: track_data.loves,
                 plays:track_data.plays + 1
             }
-            service.updateTrack(currentTrack.id,update_track_data);
+            service.updateTrackPlays(currentTrack.id);
         } catch (error) {
             
         }

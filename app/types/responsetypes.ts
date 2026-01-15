@@ -16,3 +16,7 @@ export interface ValidationErrorDetail{
 export interface NetworkError{
     msg:string;
 }
+
+export interface ExistencialQuery{
+    result:boolean
+}
