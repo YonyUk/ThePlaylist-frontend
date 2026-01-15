@@ -14,6 +14,9 @@ export interface SocialControlsInterface {
     already_liked?: boolean;
     already_disliked?: boolean;
     already_loved?: boolean;
+    onLiked?: (value: boolean) => void;
+    onDisliked?: (value: boolean) => void;
+    onLoved?: (value: boolean) => void;
 }
 
 const SocialStats = (
@@ -27,7 +30,10 @@ const SocialStats = (
         stat,
         already_liked,
         already_disliked,
-        already_loved
+        already_loved,
+        onLiked,
+        onDisliked,
+        onLoved
     }: SocialControlsInterface
 ) => {
 
@@ -73,11 +79,23 @@ const SocialStats = (
         if (!affect)
             return;
         if (!isValued) {
+            if (stat === 'liked' && onLiked)
+                onLiked(true);
+            if (stat === 'disliked' && onDisliked)
+                onDisliked(true);
+            if (stat === 'loved' && onLoved)
+                onLoved(true);
             statUpdater(value + 1);
             indicatorUpdater(true);
             setIsValued(true);
             setStatSelected(stat);
         } else {
+            if (stat === 'liked' && onLiked)
+                onLiked(false);
+            if (stat === 'disliked' && onDisliked)
+                onDisliked(false);
+            if (stat === 'loved' && onLoved)
+                onLoved(false);
             statUpdater(value - 1);
             indicatorUpdater(false);
             setIsValued(false);

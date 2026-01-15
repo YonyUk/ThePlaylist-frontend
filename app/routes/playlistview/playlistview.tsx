@@ -11,7 +11,7 @@ import { useGetTrack } from "~/hooks/track";
 import TrackLoading from "~/components/track_loading/trackloading";
 import { UserService } from "~/services/UserService";
 import { ROUTES } from "~/routes";
-import type { TrackUpdateDTO } from "~/dtos/trackdto";
+import type { TrackDTO, TrackUpdateDTO } from "~/dtos/trackdto";
 import { redirect } from "react-router";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
@@ -51,6 +51,69 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
     const [liked, setLiked] = useState(false);
     const [disliked, setDisliked] = useState(false);
     const [loved, setLoved] = useState(false);
+
+    const updateData = (data: TrackDTO) => {
+        setLikes(data.likes);
+        setDislikes(data.dislikes);
+        setLoves(data.loves);
+        setPlays(data.plays);
+        tracks[currentTrackIndex] = data;
+        setCurrentTrack(data);
+    }
+
+    const onTrackLiked = async () => {
+        try {
+            const response = await service.addLike(currentTrack.id);
+            updateData(response.data);
+        } catch (error) {
+
+        }
+    }
+
+    const onTrackLikeRemoved = async () => {
+        try {
+            const response = await service.removeLike(currentTrack.id);
+            updateData(response.data);
+        } catch (error) {
+
+        }
+    }
+
+    const onTrackDisliked = async () => {
+        try {
+            const response = await service.addDislike(currentTrack.id);
+            updateData(response.data);
+        } catch (error) {
+
+        }
+    }
+
+    const onTrackDislikeRemoved = async () => {
+        try {
+            const response = await service.removeDislike(currentTrack.id);
+            updateData(response.data);
+        } catch (error) {
+
+        }
+    }
+
+    const onTrackLoved = async () => {
+        try {
+            const response = await service.addLove(currentTrack.id);
+            updateData(response.data);
+        } catch (error) {
+
+        }
+    }
+
+    const onTrackLoveRemoved = async () => {
+        try {
+            const response = await service.removeLove(currentTrack.id);
+            updateData(response.data);
+        } catch (error) {
+
+        }
+    }
 
     const onPlayTrack = async () => {
         const response = await service.getTrackInfo(currentTrack.id);
@@ -124,6 +187,9 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
                     liked={liked}
                     disliked={disliked}
                     loved={loved}
+                    onLiked={(value: boolean) => value ? onTrackLiked() : onTrackLikeRemoved()}
+                    onDisliked={(value: boolean) => value ? onTrackDisliked() : onTrackDislikeRemoved()}
+                    onLoved={(value: boolean) => value ? onTrackLoved() : onTrackLoveRemoved()}
                 />
             }
             {

@@ -5,6 +5,9 @@ interface CurrentSongInput extends TrackDTO {
     liked?: boolean;
     disliked?: boolean;
     loved?: boolean;
+    onLiked: (value:boolean) => void;
+    onDisliked: (value:boolean) => void;
+    onLoved: (value:boolean) => void;
 }
 
 const CurrentSong = (
@@ -18,7 +21,10 @@ const CurrentSong = (
         loves,
         liked,
         disliked,
-        loved
+        loved,
+        onLiked,
+        onDisliked,
+        onLoved
     }: CurrentSongInput
 ) => {
 
@@ -86,6 +92,9 @@ const CurrentSong = (
                 already_loved={loved}
                 valued={valued}
                 stat={stat}
+                onLiked={onLiked}
+                onDisliked={onDisliked}
+                onLoved={onLoved}
             />
         </div>
     )
