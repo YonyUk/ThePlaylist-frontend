@@ -12,8 +12,8 @@ export default function Account({ actionData }: Route.ComponentProps) {
             url: ROUTES.SETTINGS
         },
         {
-            label:'MyPlaylists',
-            url:`${ROUTES.MYPLAYLISTS}/0`
+            label: 'MyPlaylists',
+            url: `${ROUTES.MYPLAYLISTS}/0`
         }
     ]
 
@@ -29,13 +29,13 @@ export default function Account({ actionData }: Route.ComponentProps) {
             alert("ERROR WHILE LOGOUT");
     }
 
-    const navigateTo = (url:string) => {
+    const navigateTo = (url: string) => {
         if (location.pathname !== url)
             navigate(url)
     }
 
     return (
-        <>
+        <div className="h-screen">
             <nav className="pl-18 pt-2 bg-[#00000090]">
                 <div className="flex flex-row w-full justify-end gap-3">
                     {
@@ -45,8 +45,8 @@ export default function Account({ actionData }: Route.ComponentProps) {
                                 className={`rounded-t-md cursor-pointer p-2 px-4 duration-300
                              hover:bg-[#00000040] hover:border-b-1 
                              ${location.pathname === item.url && "bg-[#00000040] border-b-1"}`}
-                             onClick={() => navigateTo(item.url)}
-                             >
+                                onClick={() => navigateTo(item.url)}
+                            >
                                 {item.label}
                             </div>
                         )
@@ -56,11 +56,11 @@ export default function Account({ actionData }: Route.ComponentProps) {
                         onClick={logout}
                     >
                         <h1>Logout</h1>
-                        <MdLogout size={20}/>
+                        <MdLogout size={20} />
                     </div>
                 </div>
             </nav>
             <Outlet />
-        </>
+        </div>
     );
 }

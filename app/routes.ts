@@ -8,7 +8,8 @@ export const ROUTES = {
     REGISTER:'/register',
     LOGIN:'/login',
     SETTINGS:'/settings',
-    MYPLAYLISTS:'/myplaylists'
+    MYPLAYLISTS:'/myplaylists',
+    CREATEPLAYLIST:'/create'
 } as const;
 
 export type AppRoute = keyof typeof ROUTES;
@@ -22,6 +23,7 @@ export default [
     route(ROUTES.LOGIN,'routes/login/login.tsx'),
     layout('routes/account/account.tsx',[
         route(ROUTES.SETTINGS,'routes/account/settings/settings.tsx'),
-        route(`${ROUTES.MYPLAYLISTS}/:page`,'routes/account/playlists/myplaylists.tsx')
+        route(`${ROUTES.MYPLAYLISTS}/:page`,'routes/account/playlists/myplaylists.tsx'),
+        route(ROUTES.CREATEPLAYLIST,'routes/account/playlists/create_playlist.tsx')
     ])
 ] satisfies RouteConfig;

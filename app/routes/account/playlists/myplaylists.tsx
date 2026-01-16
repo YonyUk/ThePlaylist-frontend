@@ -1,9 +1,10 @@
 import { UserService } from "~/services/UserService";
 import type { Route } from "./+types/myplaylists";
-import { redirect } from "react-router";
+import { redirect, useNavigate } from "react-router";
 import { ROUTES } from "~/routes";
 import type { PlaylistDTO } from "~/dtos/playlistdto";
 import PlayListItem from "~/components/playlist/playlist";
+import AddItem from "~/components/add_item/add_item";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     const page = parseInt(params.page);
@@ -13,7 +14,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
         if (authenticated) {
             const response = await service.getInfo();
             const user_id = response.data.id;
-            const playlists_response = await service.userPlaylists(user_id,page,10);
+            const playlists_response = await service.userPlaylists(user_id, page, 10);
             return playlists_response.data;
         }
         return redirect(ROUTES.LOGIN);
@@ -22,24 +23,31 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     }
 }
 
-export default function MyPlaylists({actionData,loaderData}:Route.ComponentProps) {
+export default function MyPlaylists({ actionData, loaderData }: Route.ComponentProps) {
 
-    const playlists = (loaderData as PlaylistDTO[]);    
+    const playlists = (loaderData as PlaylistDTO[]);
+
+    const navigate = useNavigate();
 
     return (
         <div className="flex flex-end rounded-md bg-[#00000045] p-4 pl-18">
-            { loaderData && playlists.map((playlist,index) => {
+            {loaderData && playlists.map((playlist, index) => {
                 return (
                     <PlayListItem
-                    key={index}
-                    id={playlist.id}
-                    name={playlist.name}
-                    author={playlist.author}
-                    songs={playlist.tracks.length}
-                    toEditMode={true}
+                        key={index}
+                        id={playlist.id}
+                        name={playlist.name}
+                        author={playlist.author}
+                        songs={playlist.tracks.length}
+                        toEditMode={true}
                     />
                 )
             })}
+            <div className="flex flex-1" onClick={() => navigate(ROUTES.CREATEPLAYLIST)}>
+                <AddItem
+                    width={55}
+                    text="Add new playlist" />
+            </div>
         </div>
     )
 }
