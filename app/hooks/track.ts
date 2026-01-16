@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import type { TrackDownloadDTO } from "~/dtos/track_download_dto";
+import type { TrackDTO } from "~/dtos/trackdto";
 import { TrackService } from "~/services/TrackService";
 
 export const useGetTrack = (id: string | null) => {
@@ -8,7 +9,7 @@ export const useGetTrack = (id: string | null) => {
     const [loading, setLoading] = useState(true);
     const [track, setTrack] = useState<TrackDownloadDTO | null>(null);
     const [track_id, setTrackId] = useState(id);
-    const [expires,setExpires] = useState(0);
+    const [expires, setExpires] = useState(0);
 
     const getTrack = (id_: string | null) => {
         setLoading(true);
@@ -30,5 +31,20 @@ export const useGetTrack = (id: string | null) => {
         getTrack(track_id);
     }, [track_id]);
 
-    return { loading, track, setTrackId,refreshTrack:getTrack };
+    return { loading, track, setTrackId, refreshTrack: getTrack };
+}
+
+export const useGetTrackInfo = (id: string) => {
+    const service = TrackService.get();
+
+    const [track, setTrack] = useState<TrackDTO | null>(null);
+
+    useEffect(() => {
+        service.getTrackInfo(id).then(resp => {
+            if (resp.status === 200)
+                setTrack(resp.data);
+        });
+    },[id])
+
+    return track;
 }

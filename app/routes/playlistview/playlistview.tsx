@@ -13,6 +13,7 @@ import { UserService } from "~/services/UserService";
 import { ROUTES } from "~/routes";
 import type { TrackDTO, TrackUpdateDTO } from "~/dtos/trackdto";
 import { redirect } from "react-router";
+import PlayListTrackItem from "~/components/playlist_track_item/playlist_track_item";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     const playlist_id = params.playlistId;
@@ -172,7 +173,7 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
     }, [loading]);
 
     return (
-        <div className="flex flex-col pl-18 w-full h-screen items-center gap-5 p-2 overflow-auto">
+        <div className="flex flex-col pl-18 w-full h-screen items-center gap-5 p-2 overflow-y-auto">
             <SearchBar />
             {
                 track &&
@@ -207,8 +208,12 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
                     currentTrackIndex > 0 ?
                         handlePrev : undefined
                 } />
-            <div className="flex flex-col h-fit w-fit px-5 overflow-auto rounded-md items-center">
-
+            <div className="flex flex-col h-fit w-full px-5 overflow-hidden rounded-md items-center">
+                {
+                    tracks.map((trackItem,index) => (
+                        <PlayListTrackItem track_id={trackItem.id} key={index}/>
+                    ))
+                }
             </div>
         </div>
     )

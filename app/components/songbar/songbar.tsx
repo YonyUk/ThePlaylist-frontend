@@ -2,7 +2,6 @@ import { MdSkipPrevious, MdSkipNext } from "react-icons/md";
 import { IoPlay, IoPause } from "react-icons/io5";
 import { FaVolumeDown, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
-import type { TrackDTO } from "~/dtos/trackdto";
 
 interface SongBarInput {
     src?: string;
