@@ -8,6 +8,7 @@ import { UserService } from "~/services/UserService";
 import { TrackService } from "~/services/TrackService";
 import { PlaylistService } from "~/services/PlaylistService";
 import { ROUTES } from "~/routes";
+import TrackToUpload from "~/components/track_to_upload/track_to_upload";
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
     const userService = UserService.get();
@@ -80,7 +81,6 @@ export default function CreatePlaylist({ loaderData }: Route.ComponentProps) {
             </div>
             <hr className="w-98/100 my-2" />
             <div className="flex flex-col h-full w-full justify-center items-center text-[#ffffff65] overflow-y-auto"
-                onClick={triggerFileInput}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
@@ -92,7 +92,12 @@ export default function CreatePlaylist({ loaderData }: Route.ComponentProps) {
                 {
                     tracks.map((track,index) => {
                         return (
-                            <h1>{track.name}</h1>
+                            <TrackToUpload
+                            track={track}
+                            track_index={index}
+                            key={index}
+                            onDelete={() => removeTrack(index)}
+                            />
                         )
                     })
                 }
