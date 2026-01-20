@@ -30,7 +30,7 @@ export default function MyPlaylists({ actionData, loaderData }: Route.ComponentP
     const navigate = useNavigate();
 
     return (
-        <div className="flex flex-end rounded-md bg-[#00000045] p-4 pl-18">
+        <div className="flex flex-end flex-wrap rounded-md bg-[#00000045] p-4 pl-18">
             {loaderData && playlists.map((playlist, index) => {
                 return (
                     <PlayListItem
