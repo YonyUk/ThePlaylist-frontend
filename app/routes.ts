@@ -24,6 +24,7 @@ export default [
     layout('routes/account/account.tsx',[
         route(ROUTES.SETTINGS,'routes/account/settings/settings.tsx'),
         route(`${ROUTES.MYPLAYLISTS}/:page`,'routes/account/playlists/myplaylists.tsx'),
-        route(ROUTES.CREATEPLAYLIST,'routes/account/playlists/create_playlist.tsx')
+        route(ROUTES.CREATEPLAYLIST,'routes/account/playlists/create_playlist.tsx'),
+        route(`${ROUTES.MYPLAYLISTS}/:playlistId/modify`,"routes/account/playlists/modify_playlist.tsx")
     ])
 ] satisfies RouteConfig;

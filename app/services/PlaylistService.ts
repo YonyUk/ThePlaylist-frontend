@@ -1,6 +1,7 @@
 import environmentSettings from "~/environment";
 import { AxiosClient } from "./http/AxiosClient";
-import type { PlaylistDTO } from "~/dtos/playlistdto";
+import type { CreatePlaylistDTO, PlaylistDTO } from "~/dtos/playlistdto";
+import type { ExistencialQuery } from "~/types/responsetypes";
 
 export class PlaylistService {
 
@@ -22,6 +23,16 @@ export class PlaylistService {
         return await this.axiosClient.get<PlaylistDTO>(`/${this.environmentSettings.playlistsUrl}/${id}`);
     }
 
+    public async createPlaylist(data:CreatePlaylistDTO){
+        return await this.axiosClient.post<PlaylistDTO>(`/${this.environmentSettings.playlistsUrl}/create`,data);
+    }
 
+    public async getPlaylists(){
+        return await this.axiosClient.get<PlaylistDTO[]>(this.environmentSettings.playlistsUrl);
+    }
+
+    public async checkPlaylistName(name:string){
+        return await this.axiosClient.get<ExistencialQuery>(`${this.environmentSettings.playlistsSearchUrl}/${name}`);
+    }
 
 }

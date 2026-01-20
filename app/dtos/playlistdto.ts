@@ -12,3 +12,8 @@ export interface PlaylistDTO {
     author:string;
     tracks:TrackDTO[];
 }
+
+export interface CreatePlaylistDTO {
+    name:string;
+    description:string;
+}
