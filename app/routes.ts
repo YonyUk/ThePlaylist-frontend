@@ -4,7 +4,7 @@ import { type RouteConfig, index, layout, route } from "@react-router/dev/routes
 export const ROUTES = {
     HOME: '/',
     PLAYLISTS: '/playlists',
-    TRACKS:'/playlists',
+    TRACKS:'/tracks',
     REGISTER:'/register',
     LOGIN:'/login',
     SETTINGS:'/settings',
