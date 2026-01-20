@@ -77,4 +77,11 @@ export class UserService {
             params: { page, limit }
         });
     }
+
+    public async myPlaylists(page: number = 0, limit: number = 10) {
+        const url = `${this.environmentSettings.playlistsUrl}/me`;
+        return await this.axiosClient.get<PlaylistDTO[]>(url,{
+            params:{page,limit}
+        });
+    }
 }

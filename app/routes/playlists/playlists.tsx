@@ -1,11 +1,11 @@
 import { useState } from "react";
 import PlayListItem from "~/components/playlist/playlist";
 import SearchBar from "~/components/searchbar/searchbar";
-import type { PlayList } from "~/types/playlist";
 import type { Route } from "./+types/playlists";
 import { redirect } from "react-router";
 import { ROUTES } from "~/routes";
 import { UserService } from "~/services/UserService";
+import type { PlaylistDTO } from "~/dtos/playlistdto";
 
 export async function clientLoader({params}:Route.ClientLoaderArgs){
     const service = UserService.get();
@@ -16,24 +16,7 @@ export async function clientLoader({params}:Route.ClientLoaderArgs){
 
 export default function PlayLists({loaderData}:Route.ComponentProps) {
 
-    const id = 'nada';
-    const name = 'nada';
-    const img = 'app/assets/images/background.jpg';
-    const songs = 0;
-    const author = 'nadie';
-    const reproductions = 0
-
-    const playlist: PlayList = {
-        id,
-        name,
-        img,
-        author,
-        songs,
-        reproductions
-    };
-
-    const [playLists, setPlayLists] = useState<PlayList[]>([playlist]);
-    // const [playLists,setPlayLists] = useState<PlayList[]>([]);
+    const [playLists,setPlayLists] = useState<PlaylistDTO[]>([]);
 
     return (
         <div className="p-3 pl-18 gap-5 flex flex-col h-screen w-full items-center">
@@ -56,10 +39,9 @@ export default function PlayLists({loaderData}:Route.ComponentProps) {
                             key={index}
                             id={item.id}
                             name={item.name}
-                            img={item.img}
-                            songs={item.songs}
+                            songs={item.tracks.length}
                             author={item.author}
-                            reproductions={item.reproductions}
+                            reproductions={item.plays}
                             />
                         )
                     })
