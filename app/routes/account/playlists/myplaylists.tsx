@@ -14,7 +14,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
         if (authenticated) {
             const response = await service.getInfo();
             const user_id = response.data.id;
-            const playlists_response = await service.userPlaylists(user_id, page, 10);
+            const playlists_response = await service.myPlaylists(page,10);
             return playlists_response.data;
         }
         return redirect(ROUTES.LOGIN);
