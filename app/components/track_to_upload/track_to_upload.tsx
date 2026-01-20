@@ -24,7 +24,7 @@ export default function TrackToUpload({ track, track_index, onDelete }: TrackToU
     }
 
     return (
-        <div className="flex flex-row gap-3 justify-around items-center w-98/100 text-[#ffffffa5] my-2 rounded-md bg-[#00000045] mx-1 p-1">
+        <div className="flex flex-row  flex-wrap gap-3 justify-around items-center w-98/100 text-[#ffffffa5] my-2 rounded-md bg-[#00000045] mx-1 p-1">
             <div className="flex flex-col">
                 <h1>Name: </h1>
                 <EditableField

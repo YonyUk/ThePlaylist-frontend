@@ -62,15 +62,6 @@ export default function ModifyPlaylist() {
                 className="hidden"
                 ref={fileInputRef}
             />
-            <div className="flex w-full justify-center px-2">
-                <input
-                    className="flex w-full text-[18px] outline-none px-1 my-2 bg-[#00000045] rounded-md"
-                    type="text"
-                    name="playlistname"
-                    id="playlistname"
-                    placeholder="name" />
-            </div>
-            <hr className="w-98/100 my-2" />
             <div className="flex flex-col h-full w-full justify-center items-center text-[#ffffff65] overflow-y-auto"
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
@@ -96,6 +87,7 @@ export default function ModifyPlaylist() {
             <div onClick={triggerFileInput}>
                 <AddItem
                     iconSize={30}
+                    text="add from local"
                 />
             </div>
         </div>
