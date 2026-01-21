@@ -68,10 +68,11 @@ export class TrackService{
         return await this.axiosClient.get<TrackDTO>(id);
     }
 
-    public async getMyTracks(page:number=0){
+    public async getMyTracks(page:number=0,pattern:string=''){
         return await this.axiosClient.get<TrackDTO[]>("mytracks",{
             params:{
                 page,
+                text:pattern,
                 limit:10
             }
         });

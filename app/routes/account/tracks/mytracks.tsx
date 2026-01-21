@@ -47,14 +47,28 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
     const [tracks, setTracks] = useState(data.tracks);
     const [page,setPage] = useState(data.currentPage);
     const [next,setNext] = useState(data.next);
-
+    const [textPattern,setTextPattern] = useState('');
+    
     const navigate = useNavigate();
+
+    const searchByPattern = async (text:string) => {
+        try {
+            const tracksResponse = await service.getMyTracks(0,text);
+            const nextTracksResponse = await service.getMyTracks(1,text);
+            setTracks(tracksResponse.data);
+            setNext(nextTracksResponse.data.length > 0);
+            setPage(0);
+            setTextPattern(text);
+        } catch (error) {
+            
+        }
+    }
 
     const handleNextPage = async (nextPage:number) => {
         navigate(`${ROUTES.MYTRACKS}/${nextPage}`);
         try{
-            const tracksResponse = await service.getMyTracks(nextPage);
-            const nextTracksResponse = await service.getMyTracks(nextPage + 1);
+            const tracksResponse = await service.getMyTracks(nextPage,textPattern);
+            const nextTracksResponse = await service.getMyTracks(nextPage + 1,textPattern);
             setTracks(tracksResponse.data);
             setNext(nextTracksResponse.data.length > 0);
             setPage(nextPage);
@@ -66,7 +80,7 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
     const handlePrevPage = async (prevPage:number) => {
         navigate(`${ROUTES.MYTRACKS}/${prevPage}`);
         try {
-            const tracksResponse = await service.getMyTracks(prevPage);
+            const tracksResponse = await service.getMyTracks(prevPage,textPattern);
             setTracks(tracksResponse.data);
             setNext(true);
             setPage(prevPage);
@@ -79,7 +93,7 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
         <div
             className="flex flex-col pl-18 w-full h-22/25 items-center p-2 overflow-y-auto"
         >
-            <SearchBar />
+            <SearchBar onSearchClick={(value:string) => searchByPattern(value)}/>
             <div className="flex flex-col mt-2 h-4/5 w-full p-2 overflow-hidden rounded-md items-center bg-[#00000045]">
                 <h1>Tracks</h1>
                 {
