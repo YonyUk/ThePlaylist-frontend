@@ -9,7 +9,8 @@ export const ROUTES = {
     LOGIN:'/login',
     SETTINGS:'/settings',
     MYPLAYLISTS:'/myplaylists',
-    CREATEPLAYLIST:'/create'
+    CREATEPLAYLIST:'/create',
+    MYTRACKS:'/mytracks'
 } as const;
 
 export type AppRoute = keyof typeof ROUTES;
@@ -25,6 +26,7 @@ export default [
         route(ROUTES.SETTINGS,'routes/account/settings/settings.tsx'),
         route(`${ROUTES.MYPLAYLISTS}/:page`,'routes/account/playlists/myplaylists.tsx'),
         route(ROUTES.CREATEPLAYLIST,'routes/account/playlists/create_playlist.tsx'),
-        route(`${ROUTES.MYPLAYLISTS}/:playlistId/modify`,"routes/account/playlists/modify_playlist.tsx")
+        route(`${ROUTES.MYPLAYLISTS}/:playlistId/modify`,"routes/account/playlists/modify_playlist.tsx"),
+        route(`${ROUTES.MYTRACKS}/:page`,"routes/account/tracks/mytracks.tsx")
     ])
 ] satisfies RouteConfig;

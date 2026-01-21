@@ -54,7 +54,7 @@ export default function ModifyPlaylist() {
 
     return (
         <div
-            className="flex flex-col h-8/10 m-2 ml-18 justify-start items-center rounded-md bg-[#00000045] overflow-y-auto"
+            className="flex flex-col h-22/25 mt-2 mr-2 ml-18 justify-start items-center rounded-md bg-[#00000045] overflow-y-auto"
         >
             <input type="file" name="tracks" id="tracks"
                 multiple
@@ -72,23 +72,31 @@ export default function ModifyPlaylist() {
                     <h1 className="rounded-md p-4 border-dashed border-[1px]">Drag your tracks here</h1>
                 }
                 {
-                    tracks.map((track,index) => {
+                    tracks.map((track, index) => {
                         return (
                             <TrackToUpload
-                            track={track}
-                            track_index={index}
-                            key={index}
-                            onDelete={() => removeTrack(index)}
+                                track={track}
+                                track_index={index}
+                                key={index}
+                                onDelete={() => removeTrack(index)}
                             />
                         )
                     })
                 }
             </div>
-            <div onClick={triggerFileInput}>
-                <AddItem
-                    iconSize={30}
-                    text="add from local"
-                />
+            <div className="flex flex-row justify-around items-center">
+                <div onClick={triggerFileInput}>
+                    <AddItem
+                        iconSize={30}
+                        text="add from local"
+                    />
+                </div>
+                <div>
+                    <AddItem
+                        iconSize={30}
+                        text="add from cloud"
+                    />
+                </div>
             </div>
         </div>
     )
