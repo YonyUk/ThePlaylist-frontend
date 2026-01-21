@@ -1,25 +1,24 @@
 import { TrackService } from "~/services/TrackService";
 import type { Route } from "./+types/mytracks";
 import { UserService } from "~/services/UserService";
-import { redirect } from "react-router";
+import { redirect, useNavigate, useRevalidator } from "react-router";
 import { ROUTES } from "~/routes";
 import type { AxiosError } from "axios";
 import SearchBar from "~/components/searchbar/searchbar";
 import type { TrackDTO } from "~/dtos/trackdto";
 import PlayListTrackItem from "~/components/playlist_track_item/playlist_track_item";
 import { useState } from "react";
-import ComboBox from "~/components/combobox/combobox";
-import type { PlaylistDTO } from "~/dtos/playlistdto";
-import { PlaylistService } from "~/services/PlaylistService";
+import { MdNavigateNext } from "react-icons/md";
+import { MdNavigateBefore } from "react-icons/md";
 
-interface MyTracksLoaderData {
-    tracks:TrackDTO[];
-    playlists:PlaylistDTO[]
+interface ClientLoaderData {
+    tracks: TrackDTO[];
+    next: boolean;
+    currentPage: number;
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     const service = TrackService.get();
-    const playlistService = PlaylistService.get();
     const userService = UserService.get();
 
     const page = params.page;
@@ -30,11 +29,12 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 
     try {
         const tracksResponse = await service.getMyTracks(parseInt(page));
-        const playlistsResponse = await playlistService.getMyPlaylists(parseInt(page));
+        const nextTracks = await service.getMyTracks(parseInt(page) + 1);
         return {
-            tracks:tracksResponse.data,
-            playlists:playlistsResponse.data
-        } as MyTracksLoaderData;
+            tracks: tracksResponse.data,
+            next: nextTracks.data.length > 0,
+            currentPage: parseInt(page)
+        } as ClientLoaderData;
     } catch (error) {
         return (error as AxiosError).response?.data
     }
@@ -42,25 +42,76 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 
 export default function MyTracks({ loaderData }: Route.ComponentProps) {
 
-    const data = (loaderData as MyTracksLoaderData);
-    const tracks = data.tracks;
-    const playlists = data.playlists;
+    const service = TrackService.get();
+    const data = loaderData as ClientLoaderData;
+    const [tracks, setTracks] = useState(data.tracks);
+    const [page,setPage] = useState(data.currentPage);
+    const [next,setNext] = useState(data.next);
 
-    const [playlistSelected, setPlaylistSelected] = useState("none");
+    const navigate = useNavigate();
+
+    const handleNextPage = async (nextPage:number) => {
+        navigate(`${ROUTES.MYTRACKS}/${nextPage}`);
+        try{
+            const tracksResponse = await service.getMyTracks(nextPage);
+            const nextTracksResponse = await service.getMyTracks(nextPage + 1);
+            setTracks(tracksResponse.data);
+            setNext(nextTracksResponse.data.length > 0);
+            setPage(nextPage);
+        } catch (error){
+
+        }
+    }
+
+    const handlePrevPage = async (prevPage:number) => {
+        navigate(`${ROUTES.MYTRACKS}/${prevPage}`);
+        try {
+            const tracksResponse = await service.getMyTracks(prevPage);
+            setTracks(tracksResponse.data);
+            setNext(true);
+            setPage(prevPage);
+        } catch (error) {
+            
+        }
+    }
 
     return (
         <div
-            className="flex flex-col pl-18 w-full h-22/25 items-center gap-5 p-2 overflow-y-auto"
+            className="flex flex-col pl-18 w-full h-22/25 items-center p-2 overflow-y-auto"
         >
             <SearchBar />
-            <div className="flex flex-row h-full w-full gap-2">
-                <div className="flex flex-col h-4/5 w-full p-2 overflow-hidden rounded-md items-center bg-[#00000045]">
-                    <h1>Tracks</h1>
-                    {
-                        tracks.map((trackItem, index) => (
-                            <PlayListTrackItem track_id={trackItem.id} key={index} />
-                        ))
-                    }
+            <div className="flex flex-col mt-2 h-4/5 w-full p-2 overflow-hidden rounded-md items-center bg-[#00000045]">
+                <h1>Tracks</h1>
+                {
+                    tracks.map((trackItem, index) => (
+                        <PlayListTrackItem track_id={trackItem.id} key={index} />
+                    ))
+                }
+            </div>
+            <div
+                className="flex flex-row justify-around mt-2 gap-2">
+                <div 
+                onClick={() => {
+                    if (page > 0)
+                        handlePrevPage(page - 1);
+                }}
+                className={`p-1 bg-[#00000045] rounded-md 
+                    ${page === 0 && 'text-[#ffffff65]'} ${page !== 0 && 'cursor-pointer'}
+                    `}>
+                    <MdNavigateBefore size={20} />
+                </div>
+                <div className="flex flex-row justify-center items-center p-1 bg-[#00000045] rounded-md">
+                    <small> {page} </small>
+                </div>
+                <div
+                onClick={() => {
+                    if (next)
+                        handleNextPage(page + 1);
+                }} 
+                className={`p-1 bg-[#00000045] rounded-md 
+                    ${!next && 'text-[#ffffff65]'} ${next && 'cursor-pointer'}
+                    `}>
+                    <MdNavigateNext size={20} />
                 </div>
             </div>
         </div>
