@@ -9,9 +9,17 @@ import type { TrackDTO } from "~/dtos/trackdto";
 import PlayListTrackItem from "~/components/playlist_track_item/playlist_track_item";
 import { useState } from "react";
 import ComboBox from "~/components/combobox/combobox";
+import type { PlaylistDTO } from "~/dtos/playlistdto";
+import { PlaylistService } from "~/services/PlaylistService";
+
+interface MyTracksLoaderData {
+    tracks:TrackDTO[];
+    playlists:PlaylistDTO[]
+}
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     const service = TrackService.get();
+    const playlistService = PlaylistService.get();
     const userService = UserService.get();
 
     const page = params.page;
@@ -21,8 +29,12 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
         return redirect(ROUTES.LOGIN);
 
     try {
-        const response = await service.getMyTracks(parseInt(page));
-        return response.data;
+        const tracksResponse = await service.getMyTracks(parseInt(page));
+        const playlistsResponse = await playlistService.getMyPlaylists(parseInt(page));
+        return {
+            tracks:tracksResponse.data,
+            playlists:playlistsResponse.data
+        } as MyTracksLoaderData;
     } catch (error) {
         return (error as AxiosError).response?.data
     }
@@ -30,7 +42,10 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 
 export default function MyTracks({ loaderData }: Route.ComponentProps) {
 
-    const tracks = Array.from(loaderData as TrackDTO[]);
+    const data = (loaderData as MyTracksLoaderData);
+    const tracks = data.tracks;
+    const playlists = data.playlists;
+
     const [playlistSelected, setPlaylistSelected] = useState("none");
 
     return (
@@ -50,11 +65,12 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
                 <div className="flex flex-col h-4/5 w-1/3 p-2 overflow-hidden rounded-md justify-start items-center bg-[#00000045]">
                     <ComboBox
                     defaultValue="select a playlist"
-                    width={140}
-                    height={140}
-                    options={["1","2","3"]}
+                    width={130}
+                    height={130}
+                    options={playlists ? playlists.map((p,_) => p.name) : []}
                     onSelect={(value:string) => console.log(value)}
                     iconSize={10}
+                    textSize={15}
                     />
                     <h1>Tracks added</h1>
                 </div>

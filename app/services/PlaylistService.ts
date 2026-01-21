@@ -35,4 +35,13 @@ export class PlaylistService {
         return await this.axiosClient.get<ExistencialQuery>(`${this.environmentSettings.playlistsSearchUrl}/${name}`);
     }
 
+    public async getMyPlaylists(page:number=0){
+        const url = `/${this.environmentSettings.playlistsUrl}/me`
+        return await this.axiosClient.get<PlaylistDTO[]>(url,{
+            params:{
+                page,
+                limit:10
+            }
+        });
+    }
 }
