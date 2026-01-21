@@ -1,5 +1,4 @@
 import { TrackService } from "~/services/TrackService";
-import type { Route } from "./+types/mytracks";
 import { UserService } from "~/services/UserService";
 import { redirect } from "react-router";
 import { ROUTES } from "~/routes";
@@ -8,13 +7,13 @@ import SearchBar from "~/components/searchbar/searchbar";
 import type { TrackDTO } from "~/dtos/trackdto";
 import PlayListTrackItem from "~/components/playlist_track_item/playlist_track_item";
 import { useState } from "react";
-import ComboBox from "~/components/combobox/combobox";
 import type { PlaylistDTO } from "~/dtos/playlistdto";
 import { PlaylistService } from "~/services/PlaylistService";
+import type { Route } from "./+types/add_tracks_from_cloud";
 
 interface MyTracksLoaderData {
-    tracks:TrackDTO[];
-    playlists:PlaylistDTO[]
+    tracks: TrackDTO[];
+    playlists: PlaylistDTO[]
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
@@ -32,15 +31,15 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
         const tracksResponse = await service.getMyTracks(parseInt(page));
         const playlistsResponse = await playlistService.getMyPlaylists(parseInt(page));
         return {
-            tracks:tracksResponse.data,
-            playlists:playlistsResponse.data
+            tracks: tracksResponse.data,
+            playlists: playlistsResponse.data
         } as MyTracksLoaderData;
     } catch (error) {
         return (error as AxiosError).response?.data
     }
 }
 
-export default function MyTracks({ loaderData }: Route.ComponentProps) {
+export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps) {
 
     const data = (loaderData as MyTracksLoaderData);
     const tracks = data.tracks;
@@ -61,6 +60,9 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
                             <PlayListTrackItem track_id={trackItem.id} key={index} />
                         ))
                     }
+                </div>
+                <div className="flex flex-col h-4/5 w-1/3 p-2 overflow-hidden rounded-md justify-start items-center bg-[#00000045]">
+                    <h1>Tracks added</h1>
                 </div>
             </div>
         </div>

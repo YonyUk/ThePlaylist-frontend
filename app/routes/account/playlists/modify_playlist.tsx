@@ -1,12 +1,6 @@
-import { Form, redirect, useActionData } from "react-router";
-import { CgAdd } from "react-icons/cg";
+import { useActionData, useNavigate } from "react-router";
 import { useRef, useState } from "react";
-import type { TrackDTO } from "~/dtos/trackdto";
 import AddItem from "~/components/add_item/add_item";
-import { UserService } from "~/services/UserService";
-import { TrackService } from "~/services/TrackService";
-import { PlaylistService } from "~/services/PlaylistService";
-import { ROUTES } from "~/routes";
 import TrackToUpload from "~/components/track_to_upload/track_to_upload";
 
 export default function ModifyPlaylist() {
@@ -15,6 +9,8 @@ export default function ModifyPlaylist() {
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const actionData = useActionData();
+
+    const navigate = useNavigate();
 
     const handleDragOver = (e: React.DragEvent) => {
         e.preventDefault();
@@ -91,7 +87,9 @@ export default function ModifyPlaylist() {
                         text="add from local"
                     />
                 </div>
-                <div>
+                <div
+                onClick={() => navigate('add_from_cloud/0')}
+                >
                     <AddItem
                         iconSize={30}
                         text="add from cloud"

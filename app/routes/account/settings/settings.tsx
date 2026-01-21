@@ -87,7 +87,7 @@ export default function Settings({ actionData, loaderData }: Route.ComponentProp
     return (
         <Form
             method="post"
-            className="flex flex-col w-full h-full pt-20 items-center justify-center pl-18">
+            className="flex flex-col w-full h-9/10 pt-20 items-center justify-center pl-18">
             <input type="hidden" name="username" value={username} />
             <input type="hidden" name="email" value={email} />
             <input type="hidden" name="password" value={password} />
