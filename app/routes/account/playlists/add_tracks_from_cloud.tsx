@@ -49,8 +49,9 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps) {
 
     const service = PlaylistService.get();
+    const trackService = TrackService.get();
     const data = loaderData as MyLoadedData;
-    const userTracks = data.tracks;
+    const [userTracks, setUserTracks] = useState(data.tracks);
     const playlistId = data.playlistId;
     // the current page of tracks uploadeds by user
     const [currentPage, setCurrentPage] = useState(data.page);
@@ -78,7 +79,7 @@ export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps)
         refreshTracks();
     }
 
-    const removeTrackFromPlaylist = async (trackId:string) => {
+    const removeTrackFromPlaylist = async (trackId: string) => {
         const response = await service.removeTrackFromPlaylist(playlistId, trackId);
         refreshTracks();
     }
@@ -93,11 +94,20 @@ export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps)
         setCurrentPage(currentPage - 1);
     }
 
+    const searchTracksByName = async (name: string) => {
+        try {
+            const response = await trackService.getMyTracks(currentPage, name);
+            setUserTracks(response.data);
+        } catch (error) {
+
+        }
+    }
+
     return (
         <div
             className="flex flex-col pl-18 w-full h-22/25 items-center gap-5 p-2 overflow-y-auto"
         >
-            <SearchBar />
+            <SearchBar onSearchClick={searchTracksByName} />
             <div className="flex flex-row h-full w-full gap-2">
                 <div className="flex flex-col h-full w-full p-2 overflow-hidden rounded-md items-center bg-[#00000045]">
                     <h1>Aviables tracks</h1>
@@ -132,7 +142,7 @@ export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps)
                                         {track.name.substring(0, track.name.lastIndexOf('.'))}
                                     </div>
                                     <div onClick={() => removeTrackFromPlaylist(track.id)}
-                                    className="hover:bg-[#00000045] cursor-pointer rounded-xs duration-500">
+                                        className="hover:bg-[#00000045] cursor-pointer rounded-xs duration-500">
                                         <HiOutlineX size={15} />
                                     </div>
                                 </div>
