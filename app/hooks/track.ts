@@ -44,7 +44,35 @@ export const useGetTrackInfo = (id: string) => {
             if (resp.status === 200)
                 setTrack(resp.data);
         });
-    },[id])
+    }, [id])
 
     return track;
+}
+
+export const useGetTracks = (page: number = 0, playlist_id?: string) => {
+    const service = TrackService.get();
+
+    const [tracks, setTracks] = useState<TrackDTO[]>([]);
+    const [currentPage, setPage] = useState(page ?? 0);
+    const [playlistId, setPlaylistId] = useState(playlist_id);
+
+    useEffect(() => {
+        service.getTracks(currentPage, playlistId).then(resp => {
+            if (resp.status === 200)
+                setTracks(resp.data);
+        });
+    },[currentPage]);
+
+    useEffect(() => {
+        service.getTracks(currentPage,playlistId).then(resp => {
+            if (resp.status === 200)
+                setTracks(resp.data);
+        });
+    },[playlistId]);
+
+    return {
+        tracks,
+        setPage,
+        setPlaylistId
+    }
 }

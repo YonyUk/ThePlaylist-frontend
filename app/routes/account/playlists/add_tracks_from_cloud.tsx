@@ -8,10 +8,13 @@ import PlayListTrackItem from "~/components/playlist_track_item/playlist_track_i
 import type { Route } from "./+types/add_tracks_from_cloud";
 import type { TrackDTO } from "~/dtos/trackdto";
 import { PlaylistService } from "~/services/PlaylistService";
+import { useGetTracks } from "~/hooks/track";
+import { useState } from "react";
 
 interface MyLoadedData {
     tracks: TrackDTO[];
     playlistId: string;
+    page:number;
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
@@ -30,6 +33,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
         return {
             tracks: tracksResponse.data,
             playlistId: id,
+            page:parseInt(page)
         } as MyLoadedData;
     } catch (error) {
         return (error as AxiosError).response?.data
@@ -40,8 +44,15 @@ export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps)
 
     const service = PlaylistService.get();
     const data = loaderData as MyLoadedData;
-    const tracks = data.tracks;
+    const userTracks = data.tracks;
     const playlistId = data.playlistId;
+    const [currentPage,setCurrentPage] = useState(data.page);
+
+    const {
+        tracks,
+        setPage,
+        setPlaylistId
+    } = useGetTracks(0,playlistId);
 
     const addTrackToPlaylist = async (trackId: string) => {
         const response = await service.addTrackToPlaylist(playlistId, trackId);
@@ -56,7 +67,7 @@ export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps)
                 <div className="flex flex-col h-4/5 w-full p-2 overflow-hidden rounded-md items-center bg-[#00000045]">
                     <h1>Tracks</h1>
                     {
-                        tracks.map((trackItem, index) => (
+                        userTracks.map((trackItem, index) => (
                             <PlayListTrackItem
                                 track_id={trackItem.id}
                                 key={index}
@@ -68,7 +79,11 @@ export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps)
                 </div>
                 <div className="flex flex-col h-4/5 w-1/3 p-2 overflow-hidden rounded-md justify-start items-center bg-[#00000045]">
                     <h1>Tracks added</h1>
-                    
+                    {
+                        tracks.map((track,index) => (
+                            <h1 key={index}>{track.name.substring(0,track.name.lastIndexOf('.'))}</h1>
+                        ))
+                    }
                 </div>
             </div>
         </div>
