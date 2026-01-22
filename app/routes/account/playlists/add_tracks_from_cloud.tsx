@@ -164,6 +164,12 @@ export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps)
                         }} />
                 </div>
             </div>
+            <div className="flex w-full justify-end px-3">
+                <button onClick={() => navigate(`${ROUTES.MYPLAYLISTS}/0`)} 
+                className="p-1 px-2 bg-[#ffffff15] backdrop-blur-xs rounded-md hover:bg-[#00000045] cursor-pointer duration-500">
+                    Done
+                </button>
+            </div>
         </div>
     )
 }
