@@ -77,4 +77,15 @@ export class TrackService{
             }
         });
     }
+
+    public async getTracks(page:number,playlistId?:string) {
+        const url = this.environmentSettings.tracksUrl;
+        const query = playlistId ? `?playlist_id=${playlistId}` : ''
+        return await this.axiosClient.get<TrackDTO[]>(`${url}${query}`,{
+            params:{
+                page,
+                limit:10
+            }
+        });
+    }
 }

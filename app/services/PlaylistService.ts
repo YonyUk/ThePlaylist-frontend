@@ -9,39 +9,44 @@ export class PlaylistService {
     private static instance: PlaylistService;
     private environmentSettings = environmentSettings();
 
-    private constructor( ) {
+    private constructor() {
         this.axiosClient = new AxiosClient(String(`${this.environmentSettings.apiUrl}`));
     }
 
-    public static get():PlaylistService{
+    public static get(): PlaylistService {
         if (!this.instance)
             this.instance = new PlaylistService();
         return this.instance;
     }
 
-    public async getPlaylist(id:string){
+    public async getPlaylist(id: string) {
         return await this.axiosClient.get<PlaylistDTO>(`/${this.environmentSettings.playlistsUrl}/${id}`);
     }
 
-    public async createPlaylist(data:CreatePlaylistDTO){
-        return await this.axiosClient.post<PlaylistDTO>(`/${this.environmentSettings.playlistsUrl}/create`,data);
+    public async createPlaylist(data: CreatePlaylistDTO) {
+        return await this.axiosClient.post<PlaylistDTO>(`/${this.environmentSettings.playlistsUrl}/create`, data);
     }
 
-    public async getPlaylists(){
+    public async getPlaylists() {
         return await this.axiosClient.get<PlaylistDTO[]>(this.environmentSettings.playlistsUrl);
     }
 
-    public async checkPlaylistName(name:string){
+    public async checkPlaylistName(name: string) {
         return await this.axiosClient.get<ExistencialQuery>(`${this.environmentSettings.playlistsSearchUrl}/${name}`);
     }
 
-    public async getMyPlaylists(page:number=0){
+    public async getMyPlaylists(page: number = 0) {
         const url = `/${this.environmentSettings.playlistsUrl}/me`
-        return await this.axiosClient.get<PlaylistDTO[]>(url,{
-            params:{
+        return await this.axiosClient.get<PlaylistDTO[]>(url, {
+            params: {
                 page,
-                limit:10
+                limit: 10
             }
         });
+    }
+
+    public async addTrackToPlaylist(playlistId: string, trackId: string) {
+        const url = `${this.environmentSettings.playlistsUrl}/${playlistId}/tracks`;
+        return await this.axiosClient.put(`${url}?track_id=${trackId}`);
     }
 }

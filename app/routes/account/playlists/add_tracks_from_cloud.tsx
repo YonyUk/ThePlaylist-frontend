@@ -4,24 +4,22 @@ import { redirect } from "react-router";
 import { ROUTES } from "~/routes";
 import type { AxiosError } from "axios";
 import SearchBar from "~/components/searchbar/searchbar";
-import type { TrackDTO } from "~/dtos/trackdto";
 import PlayListTrackItem from "~/components/playlist_track_item/playlist_track_item";
-import { useState } from "react";
-import type { PlaylistDTO } from "~/dtos/playlistdto";
-import { PlaylistService } from "~/services/PlaylistService";
 import type { Route } from "./+types/add_tracks_from_cloud";
+import type { TrackDTO } from "~/dtos/trackdto";
+import { PlaylistService } from "~/services/PlaylistService";
 
-interface MyTracksLoaderData {
+interface MyLoadedData {
     tracks: TrackDTO[];
-    playlists: PlaylistDTO[]
+    playlistId: string;
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     const service = TrackService.get();
-    const playlistService = PlaylistService.get();
     const userService = UserService.get();
 
     const page = params.page;
+    const id = params.playlistId;
 
     const authenticated = await userService.authenticated();
     if (!authenticated)
@@ -29,11 +27,10 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 
     try {
         const tracksResponse = await service.getMyTracks(parseInt(page));
-        const playlistsResponse = await playlistService.getMyPlaylists(parseInt(page));
         return {
             tracks: tracksResponse.data,
-            playlists: playlistsResponse.data
-        } as MyTracksLoaderData;
+            playlistId: id,
+        } as MyLoadedData;
     } catch (error) {
         return (error as AxiosError).response?.data
     }
@@ -41,11 +38,14 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 
 export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps) {
 
-    const data = (loaderData as MyTracksLoaderData);
+    const service = PlaylistService.get();
+    const data = loaderData as MyLoadedData;
     const tracks = data.tracks;
-    const playlists = data.playlists;
+    const playlistId = data.playlistId;
 
-    const [playlistSelected, setPlaylistSelected] = useState("none");
+    const addTrackToPlaylist = async (trackId: string) => {
+        const response = await service.addTrackToPlaylist(playlistId, trackId);
+    }
 
     return (
         <div
@@ -57,12 +57,18 @@ export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps)
                     <h1>Tracks</h1>
                     {
                         tracks.map((trackItem, index) => (
-                            <PlayListTrackItem track_id={trackItem.id} key={index} />
+                            <PlayListTrackItem
+                                track_id={trackItem.id}
+                                key={index}
+                                dashboardControls={true}
+                                onAddClicked={addTrackToPlaylist}
+                            />
                         ))
                     }
                 </div>
                 <div className="flex flex-col h-4/5 w-1/3 p-2 overflow-hidden rounded-md justify-start items-center bg-[#00000045]">
                     <h1>Tracks added</h1>
+                    
                 </div>
             </div>
         </div>
