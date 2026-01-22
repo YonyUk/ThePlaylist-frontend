@@ -11,6 +11,7 @@ import { PlaylistService } from "~/services/PlaylistService";
 import { useGetTracks } from "~/hooks/track";
 import { useEffect, useState } from "react";
 import PageController from "~/components/pagecontroller/pagecontroller";
+import { HiOutlineX } from "react-icons/hi";
 
 interface MyLoadedData {
     tracks: TrackDTO[];
@@ -77,6 +78,11 @@ export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps)
         refreshTracks();
     }
 
+    const removeTrackFromPlaylist = async (trackId:string) => {
+        const response = await service.removeTrackFromPlaylist(playlistId, trackId);
+        refreshTracks();
+    }
+
     const handleNext = () => {
         navigate(`${ROUTES.MYPLAYLISTS}/${playlistId}/modify/add_from_cloud/${currentPage + 1}`);
         setCurrentPage(currentPage + 1);
@@ -108,8 +114,8 @@ export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps)
                         }
                     </div>
                     <PageController currentPage={currentPage} nextPage={nextUserTracksPage}
-                    onNext={handleNext}
-                    onPrev={handlePrev}/>
+                        onNext={handleNext}
+                        onPrev={handlePrev} />
                 </div>
                 <div className="flex flex-col h-full w-1/3 p-2 overflow-hidden rounded-md justify-start items-center bg-[#00000045]">
                     <h1>{playlistName}</h1>
@@ -120,9 +126,15 @@ export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps)
                         {
                             tracks.map((track, index) => (
                                 <div
-                                    className="flex h-fit w-full items-center justify-center p-1 text-[12px] px-3 backdrop-blur-xs rounded-md bg-[#ffffff25]"
+                                    className="flex flex-row h-fit w-full items-center justify-between p-1 text-[12px] px-3 backdrop-blur-xs rounded-md bg-[#ffffff25]"
                                     key={index}>
-                                    {track.name.substring(0, track.name.lastIndexOf('.'))}
+                                    <div>
+                                        {track.name.substring(0, track.name.lastIndexOf('.'))}
+                                    </div>
+                                    <div onClick={() => removeTrackFromPlaylist(track.id)}
+                                    className="hover:bg-[#00000045] cursor-pointer rounded-xs duration-500">
+                                        <HiOutlineX size={15} />
+                                    </div>
                                 </div>
                             ))
                         }
