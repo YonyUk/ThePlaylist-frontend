@@ -1,6 +1,6 @@
 import { TrackService } from "~/services/TrackService";
 import { UserService } from "~/services/UserService";
-import { redirect } from "react-router";
+import { redirect, useNavigate } from "react-router";
 import { ROUTES } from "~/routes";
 import type { AxiosError } from "axios";
 import SearchBar from "~/components/searchbar/searchbar";
@@ -16,6 +16,7 @@ interface MyLoadedData {
     tracks: TrackDTO[];
     playlistId: string;
     page: number;
+    nextPage: boolean;
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
@@ -31,10 +32,13 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 
     try {
         const tracksResponse = await service.getMyTracks(parseInt(page));
+        const nextTracksResponse = await service.getMyTracks(parseInt(page) + 1);
+
         return {
             tracks: tracksResponse.data,
             playlistId: id,
-            page: parseInt(page)
+            page: parseInt(page),
+            nextPage: nextTracksResponse.data.length > 0
         } as MyLoadedData;
     } catch (error) {
         return (error as AxiosError).response?.data
@@ -47,8 +51,15 @@ export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps)
     const data = loaderData as MyLoadedData;
     const userTracks = data.tracks;
     const playlistId = data.playlistId;
+    // the current page of tracks uploadeds by user
     const [currentPage, setCurrentPage] = useState(data.page);
+    // true if there is a next page of tracks uploadeds by user
+    const nextUserTracksPage = data.nextPage;
     const [playlistName, setPlaylistName] = useState('');
+    // current page of tracks addeds to the current playlist
+    const [tracksPage, setTracksPage] = useState(0);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         service.getPlaylist(playlistId).then(resp => setPlaylistName(resp.data.name));
@@ -59,11 +70,21 @@ export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps)
         nextPage,
         setPage,
         refreshTracks
-    } = useGetTracks(currentPage, playlistId);
+    } = useGetTracks(tracksPage, playlistId);
 
     const addTrackToPlaylist = async (trackId: string) => {
         const response = await service.addTrackToPlaylist(playlistId, trackId);
         refreshTracks();
+    }
+
+    const handleNext = () => {
+        navigate(`${ROUTES.MYPLAYLISTS}/${playlistId}/modify/add_from_cloud/${currentPage + 1}`);
+        setCurrentPage(currentPage + 1);
+    }
+
+    const handlePrev = () => {
+        navigate(`${ROUTES.MYPLAYLISTS}/${playlistId}/modify/add_from_cloud/${currentPage - 1}`);
+        setCurrentPage(currentPage - 1);
     }
 
     return (
@@ -86,7 +107,9 @@ export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps)
                             ))
                         }
                     </div>
-                    
+                    <PageController currentPage={currentPage} nextPage={nextUserTracksPage}
+                    onNext={handleNext}
+                    onPrev={handlePrev}/>
                 </div>
                 <div className="flex flex-col h-full w-1/3 p-2 overflow-hidden rounded-md justify-start items-center bg-[#00000045]">
                     <h1>{playlistName}</h1>
@@ -104,19 +127,19 @@ export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps)
                             ))
                         }
                     </div>
-                    <PageController currentPage={currentPage} nextPage={nextPage}
-                    onNext={() => {
-                        if (nextPage){
-                            setCurrentPage(currentPage + 1);
-                            setPage(currentPage + 1);
-                        }
-                    }}
-                    onPrev={() => {
-                        if (currentPage > 0){
-                            setCurrentPage(currentPage - 1);
-                            setPage(currentPage - 1);
-                        }
-                    }}/>
+                    <PageController currentPage={tracksPage} nextPage={nextPage}
+                        onNext={() => {
+                            if (nextPage) {
+                                setPage(tracksPage + 1);
+                                setTracksPage(tracksPage + 1);
+                            }
+                        }}
+                        onPrev={() => {
+                            if (tracksPage > 0) {
+                                setPage(tracksPage - 1);
+                                setTracksPage(tracksPage + 1);
+                            }
+                        }} />
                 </div>
             </div>
         </div>
