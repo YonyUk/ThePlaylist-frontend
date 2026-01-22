@@ -55,24 +55,46 @@ export const useGetTracks = (page: number = 0, playlist_id?: string) => {
     const [tracks, setTracks] = useState<TrackDTO[]>([]);
     const [currentPage, setPage] = useState(page ?? 0);
     const [playlistId, setPlaylistId] = useState(playlist_id);
+    const [nextPage, setNextPage] = useState(false);
 
     useEffect(() => {
         service.getTracks(currentPage, playlistId).then(resp => {
             if (resp.status === 200)
                 setTracks(resp.data);
         });
-    },[currentPage]);
+        service.getTracks(currentPage + 1, playlistId).then(resp => {
+            if (resp.status === 200)
+                setNextPage(resp.data.length > 0);
+        });
+    }, [currentPage]);
 
     useEffect(() => {
-        service.getTracks(currentPage,playlistId).then(resp => {
+        service.getTracks(currentPage, playlistId).then(resp => {
             if (resp.status === 200)
                 setTracks(resp.data);
         });
-    },[playlistId]);
+        service.getTracks(currentPage + 1, playlistId).then(resp => {
+            if (resp.status === 200)
+                setNextPage(resp.data.length > 0);
+        });
+    }, [playlistId]);
+
+    const refreshTracks = () => {
+        service.getTracks(currentPage, playlistId).then(resp => {
+            if (resp.status === 200)
+                setTracks(resp.data);
+        });
+        service.getTracks(currentPage + 1, playlistId).then(resp => {
+            if (resp.status === 200)
+                setNextPage(resp.data.length > 0);
+        });
+    }
 
     return {
         tracks,
+        nextPage,
         setPage,
-        setPlaylistId
+        setPlaylistId,
+        refreshTracks
     }
 }

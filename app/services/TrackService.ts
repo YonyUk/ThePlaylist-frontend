@@ -73,7 +73,7 @@ export class TrackService{
             params:{
                 page,
                 text:pattern,
-                limit:10
+                limit:1
             }
         });
     }

@@ -94,9 +94,9 @@ export default function Login({ actionData, loaderData }: Route.ComponentProps) 
                         onClick={() => {
                             setSended(true);
                         }}
-                        className="cursor-pointer hover:bg-[#00000045] rounded-md duration-300 p-1">
+                        className="outline-none cursor-pointer hover:bg-[#00000045] rounded-md duration-300 p-1">
                         Login</button>
-                    <button className="cursor-pointer hover:bg-[#00000045] rounded-md duration-300 p-1">
+                    <button className="cursor-pointer outline-none hover:bg-[#00000045] rounded-md duration-300 p-1">
                         Cancel</button>
                 </div>
             </Form>
