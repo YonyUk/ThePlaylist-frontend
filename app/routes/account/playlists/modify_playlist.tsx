@@ -1,9 +1,28 @@
-import { useActionData, useNavigate } from "react-router";
+import { redirect, useActionData, useNavigate } from "react-router";
 import { useRef, useState } from "react";
 import AddItem from "~/components/add_item/add_item";
 import TrackToUpload from "~/components/track_to_upload/track_to_upload";
+import { TrackService } from "~/services/TrackService";
+import { PlaylistService } from "~/services/PlaylistService";
+import type { Route } from "./+types/modify_playlist";
+import { UserService } from "~/services/UserService";
+import { ROUTES } from "~/routes";
 
-export default function ModifyPlaylist() {
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+    const service = UserService.get();
+
+    const authenticated = await service.authenticated();
+    if (!authenticated)
+        return redirect(ROUTES.LOGIN);
+    const playlistId = params.playlistId;
+    return playlistId;
+}
+
+export default function ModifyPlaylist({ loaderData }: Route.ComponentProps) {
+    const trackService = TrackService.get();
+    const playlistService = PlaylistService.get();
+
+    const playlistId = loaderData;
 
     const [tracks, setTracks] = useState<File[]>([]);
     const [isDragging, setIsDragging] = useState(false);
@@ -11,6 +30,23 @@ export default function ModifyPlaylist() {
     const actionData = useActionData();
 
     const navigate = useNavigate();
+
+    const uploadTrack = async (trackName: string, authorName: string, file: File) => {
+        const formData = new FormData();
+
+
+        console.log(file);
+        formData.append('data',file as Blob);
+
+        const uploadResponse = await trackService.uploadTrack(trackName,authorName,formData);
+
+        if (uploadResponse.status === 200) {
+            const trackId = uploadResponse.data.id;
+            const addResponse = await playlistService.addTrackToPlaylist(playlistId,trackId);
+            return addResponse.status === 200;
+        }
+        return false;
+    }
 
     const handleDragOver = (e: React.DragEvent) => {
         e.preventDefault();
@@ -75,6 +111,7 @@ export default function ModifyPlaylist() {
                                 track_index={index}
                                 key={index}
                                 onDelete={() => removeTrack(index)}
+                                uploadTrack={uploadTrack}
                             />
                         )
                     })
@@ -88,7 +125,7 @@ export default function ModifyPlaylist() {
                     />
                 </div>
                 <div
-                onClick={() => navigate('add_from_cloud/0')}
+                    onClick={() => navigate('add_from_cloud/0')}
                 >
                     <AddItem
                         iconSize={30}

@@ -88,4 +88,11 @@ export class TrackService{
             }
         });
     }
+
+    public async uploadTrack(trackName:string,authorName:string,data:FormData) {
+        const url = encodeURI(`upload?track_name=${trackName}&author_name=${authorName}`);
+        return await this.axiosClient.post<TrackDTO>(url,data,{headers:{
+            "Content-Type":"multipart/form-data"
+        }});
+    }
 }

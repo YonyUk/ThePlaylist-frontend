@@ -3,19 +3,41 @@ import EditableField from "../editablefield/editablefield";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { HiUpload } from "react-icons/hi";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { FaRedoAlt } from "react-icons/fa";
+import { MdEdit, MdDone } from "react-icons/md";
 
 interface TrackToUploadInput {
     track: File;
     track_index: number;
     onDelete: () => void;
+    uploadTrack: (trackName: string, author: string,data:File) => Promise<boolean>;
 }
 
-export default function TrackToUpload({ track, track_index, onDelete }: TrackToUploadInput) {
+enum UploadState{
+    START,
+    PENDING,
+    FAILED,
+    DONE
+}
+
+export default function TrackToUpload({ track, track_index, onDelete, uploadTrack }: TrackToUploadInput) {
+
     const [trackName, setTrackName] = useState(track.name);
     const [authorName, setAuthorName] = useState("");
 
     const [trackNameValid, setTrackNameValid] = useState(false);
     const [authorNameValid, setAuthorNameValid] = useState(false);
+
+    const [uploadState,setUploadState] = useState<UploadState>(UploadState.START);
+
+    const handleUploadTrack = () => {
+        console.log(track);
+        setUploadState(UploadState.PENDING);
+        uploadTrack(trackName,authorName,track).then( resp => resp ? 
+            setUploadState(UploadState.DONE) : 
+            setUploadState(UploadState.FAILED)
+        ).catch(err => setUploadState(UploadState.FAILED));
+    }
 
     const validateInput = (input: string, callback: (value: boolean | ((prevState: boolean) => boolean)) => void) => {
         const pattern = /^[a-zA-Z0-9\s]+$/;
@@ -55,11 +77,28 @@ export default function TrackToUpload({ track, track_index, onDelete }: TrackToU
                 <div onClick={onDelete} className="cursor-pointer hover:bg-[#00000065] duration-500 p-1 rounded-md">
                     <RiDeleteBin6Line size={30} />
                 </div>
-                <div className={`${trackNameValid && authorNameValid && "cursor-pointer hover:bg-[#00000065]"} duration-500 rounded-md p-1 
+                <button disabled={!(trackNameValid && authorNameValid)}
+                onClick={handleUploadTrack}
+                className={`${trackNameValid && authorNameValid && "cursor-pointer hover:bg-[#00000065]"} duration-500 rounded-md p-1 
                     ${!(trackNameValid && authorNameValid) && "text-[#ffffff45]"}
                     `}>
-                    <HiUpload size={30} />
-                </div>
+                    {
+                        uploadState === UploadState.START &&
+                        <HiUpload size={30} />
+                    }
+                    {
+                        uploadState === UploadState.PENDING &&
+                        <AiOutlineLoading3Quarters size={25}/>
+                    }
+                    {
+                        uploadState === UploadState.FAILED &&
+                        <FaRedoAlt size={25}/>
+                    }
+                    {
+                        uploadState === UploadState.DONE &&
+                        <MdDone size={25}/>
+                    }
+                </button>
             </div>
         </div>
     )
