@@ -1,42 +1,11 @@
 import { CgAdd } from "react-icons/cg";
+import { getHeight, getWidth } from "~/utils/tools";
 
 interface AddItemInput {
     width?: number | "full" | "fit";
     height?: number | "full" | "fit";
     text?: string;
     iconSize?: number;
-}
-
-const getWidth = (width?: number | "full" | "fit") => {
-    if (width) {
-        switch (width) {
-            case "full":
-                return "w-full";
-
-            case "fit":
-                return "w-fit";
-
-            default:
-                return `w-[${width}px]`;
-        }
-    }
-    return '';
-}
-
-const getHeight = (height?: number | "full" | "fit") => {
-    if (height) {
-        switch (height) {
-            case "full":
-                return "h-full";
-
-            case "fit":
-                return "h-fit";
-
-            default:
-                return `h-[${height}px]`;
-        }
-    }
-    return '';
 }
 
 export default function AddItem({ width, height, text, iconSize }: AddItemInput) {

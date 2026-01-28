@@ -16,11 +16,11 @@ export default function EditableField({ invalidDescription, valid, value, id, na
 
     const [fieldValue, setFieldValue] = useState(value);
     const [editing, setEditing] = useState(false);
-    const [validField,setValidField] = useState(valid !== undefined ? valid : true);
+    const [validField, setValidField] = useState(valid !== undefined ? valid : true);
 
     useEffect(() => {
         setValidField(valid !== undefined ? valid : true);
-    },[valid]);
+    }, [valid]);
 
     return (
         <>
@@ -34,7 +34,7 @@ export default function EditableField({ invalidDescription, valid, value, id, na
             <div className="flex flex-row gap-5 p-2">
                 <input type={type} name={name} id={id}
                     placeholder={name}
-                    className={`outline-none color-white  rounded-md bg-[#00000035] p-2 ${!valid && "border-[1px] border-red-500"}`}
+                    className={`flex outline-none color-white rounded-md bg-[#00000035] p-2 ${!valid && "border-[1px] border-red-500"}`}
                     value={fieldValue}
                     disabled={!editing}
                     onChange={(e) => {
