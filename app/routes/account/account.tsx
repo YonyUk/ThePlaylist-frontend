@@ -24,6 +24,12 @@ export default function Account({ actionData }: Route.ComponentProps) {
     const location = useLocation();
     const navigate = useNavigate();
 
+    const isSubPath = (itemUrl:string) => {
+        const index = itemUrl.indexOf('/',1);
+        const subpath = itemUrl.substring(0,index);
+        return subpath.length !== 0 ? location.pathname.startsWith(subpath) : location.pathname === itemUrl;
+    }
+
     const logout = async () => {
         const service = UserService.get();
         const response = await service.logout();
@@ -48,7 +54,7 @@ export default function Account({ actionData }: Route.ComponentProps) {
                                 key={index}
                                 className={`rounded-t-md cursor-pointer p-2 px-4 duration-300
                              hover:bg-[#00000040] hover:border-b-1 
-                             ${location.pathname === item.url && "bg-[#00000040] border-b-1"}`}
+                             ${isSubPath(item.url) && "bg-[#00000040] border-b-1"}`}
                                 onClick={() => navigateTo(item.url)}
                             >
                                 {item.label}
