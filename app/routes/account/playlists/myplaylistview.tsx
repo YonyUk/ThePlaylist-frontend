@@ -12,6 +12,7 @@ import type { TrackDTO } from "~/dtos/trackdto";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaRedoAlt } from "react-icons/fa";
+import { MdEdit } from "react-icons/md";
 
 export enum PlaylistDeletingState {
     IDLE,
@@ -81,7 +82,11 @@ export default function MyPlaylistView({ loaderData }: Route.ComponentProps) {
                     ))
                 }
             </div>
-            <div className="flex flex-row justify-end w-full p-1 px-4 pb-3">
+            <div className="flex flex-row justify-end w-full p-1 px-4 pb-3 gap-5">
+                <button onClick={() => navigate(`${ROUTES.MYPLAYLISTS}/${playlistId}/modify`)}
+                    className="px-5 rounded-md bg-[#ffffff15] p-2 hover:bg-[#00000045] duration-500 cursor-pointer">
+                        <MdEdit size={20}/>
+                </button>
                 <button
                     onClick={() => removePlaylist()}
                     className="px-5 rounded-md bg-[#ffffff15] p-2 hover:bg-[#00000045] duration-500 cursor-pointer">
