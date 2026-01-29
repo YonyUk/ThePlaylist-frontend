@@ -14,6 +14,7 @@ import { ROUTES } from "~/routes";
 import type { TrackDTO, TrackUpdateDTO } from "~/dtos/trackdto";
 import { redirect } from "react-router";
 import PlayListTrackItem from "~/components/playlist_track_item/playlist_track_item";
+import { FaRedoAlt } from "react-icons/fa";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     const playlist_id = params.playlistId;
@@ -207,8 +208,11 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
                     width:trackContainerWidth,
                     height:trackContainerHeight
                 }}
-                className="flex justify-center items-center bg-[#00000045] p-1 rounded-md text-[10px]">
+                className="flex flex-col justify-center items-center bg-[#00000045] p-1 rounded-md text-[12px]">
                     <p>Track couldn't be loaded</p>
+                    <button className="mt-3 cursor-pointer" onClick={() => refreshTrack(currentTrack.id)}>
+                        <FaRedoAlt size={Math.min(trackContainerHeight,trackContainerWidth) / 6}/>
+                    </button>
                 </div>
             }
             <SongBar src={track?.url}
