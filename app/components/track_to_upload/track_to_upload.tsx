@@ -4,7 +4,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { HiUpload } from "react-icons/hi";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaRedoAlt } from "react-icons/fa";
-import { MdEdit, MdDone } from "react-icons/md";
+import { MdDone } from "react-icons/md";
 
 interface TrackToUploadInput {
     track: File;

@@ -48,6 +48,10 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
     const [page,setPage] = useState(data.currentPage);
     const [next,setNext] = useState(data.next);
     const [textPattern,setTextPattern] = useState('');
+
+    const removeTrack = async (trackId:string) => {
+        
+    }
     
     const navigate = useNavigate();
 
@@ -98,7 +102,8 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
                 <h1>Tracks</h1>
                 {
                     tracks.map((trackItem, index) => (
-                        <PlayListTrackItem track_id={trackItem.id} key={index} />
+                        <PlayListTrackItem track_id={trackItem.id} key={index} dispensable={true}
+                        onRemoveClicked={(trackId:string) => removeTrack(trackId)}/>
                     ))
                 }
             </div>

@@ -1,4 +1,4 @@
-import { Form, redirect } from "react-router";
+import { Form, redirect, useLocation, useNavigate, useNavigation } from "react-router";
 import type { Route } from "./+types/create_playlist";
 import { useState } from "react";
 import { UserService } from "~/services/UserService";
@@ -53,6 +53,8 @@ export default function CreatePlaylist({ loaderData, actionData }: Route.Compone
 
     const [playlistName, setPlaylistName] = useState("");
     const [description, setDescription] = useState("");
+
+    const navigate = useNavigate();
 
     const pattern = /^[a-zA-Z0-9\s]+$/;
 
@@ -119,6 +121,7 @@ export default function CreatePlaylist({ loaderData, actionData }: Route.Compone
                         disabled={!pattern.test(playlistName)}
                         type="submit">Create</button>
                     <button
+                    onClick={() => navigate(-1)}
                         className="p-1 hover:bg-[#00000035] duration-500 rounded-md cursor-pointer"
                     >Cancel</button>
                 </div>
