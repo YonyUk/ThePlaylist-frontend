@@ -9,9 +9,13 @@ interface TrackLoadingInput {
 
 export default function TrackLoading({ width, height, iconSize }: TrackLoadingInput) {
     return (
-        <div className={`flex ${getWidth(width ?? 50)} ${getHeight(height ?? 65)} justify-center items-center bg-[#00000045] rounded-md`}>
+        <div style={{
+            width:width ?? 50,
+            height:height ?? 65
+        }}
+        className={`flex justify-center items-center bg-[#00000045] rounded-md`}>
             <div style={{
-                animation: "loadingAnimation 1.5s linear infinite"
+                animation: "loadingAnimation 1.5s linear infinite",
             }}>
                 < AiOutlineLoading3Quarters size={iconSize ?? 50} />
             </div>

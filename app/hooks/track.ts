@@ -3,16 +3,23 @@ import type { TrackDownloadDTO } from "~/dtos/track_download_dto";
 import type { TrackDTO } from "~/dtos/trackdto";
 import { TrackService } from "~/services/TrackService";
 
+export enum TrackLoadState {
+    LOADING,
+    DONE,
+    FAILED,
+    IDLE
+}
+
 export const useGetTrack = (id: string | null) => {
     const service = TrackService.get();
 
-    const [loading, setLoading] = useState(true);
+    const [loadState, setLoadState] = useState<TrackLoadState>(TrackLoadState.IDLE);
     const [track, setTrack] = useState<TrackDownloadDTO | null>(null);
     const [track_id, setTrackId] = useState(id);
     const [expires, setExpires] = useState(0);
 
     const getTrack = (id_: string | null) => {
-        setLoading(true);
+        setLoadState(TrackLoadState.LOADING);
         setTrack(null);
         if (id_) {
             service.getTrack(id_)
@@ -20,18 +27,16 @@ export const useGetTrack = (id: string | null) => {
                     if (resp.status === 200) {
                         setTrack(resp.data);
                         setExpires(resp.data.expires);
+                        setLoadState(TrackLoadState.DONE);
                     }
-                })
-                .finally(() => {
-                    setLoading(false);
-                });
+                }).catch( err => setLoadState(TrackLoadState.FAILED));
         }
     }
     useEffect(() => {
         getTrack(track_id);
     }, [track_id]);
 
-    return { loading, track, setTrackId, refreshTrack: getTrack };
+    return { loadState, track, setTrackId, refreshTrack: getTrack };
 }
 
 export const useGetTrackInfo = (id: string) => {

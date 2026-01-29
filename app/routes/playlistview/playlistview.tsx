@@ -7,7 +7,7 @@ import { PlaylistService } from "~/services/PlaylistService";
 import type { AxiosError } from "axios";
 import { TrackService } from "~/services/TrackService";
 import type { PlaylistDTO } from "~/dtos/playlistdto";
-import { useGetTrack } from "~/hooks/track";
+import { TrackLoadState, useGetTrack } from "~/hooks/track";
 import TrackLoading from "~/components/track_loading/trackloading";
 import { UserService } from "~/services/UserService";
 import { ROUTES } from "~/routes";
@@ -46,12 +46,14 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
     const [dislikes, setDislikes] = useState(0);
     const [loves, setLoves] = useState(0);
     const [plays, setPlays] = useState(0);
-    const { loading, track, setTrackId, refreshTrack } = useGetTrack(currentTrack.id);
+    const { loadState, track, setTrackId, refreshTrack } = useGetTrack(currentTrack.id);
     const [interval, setInternalInterval] = useState<NodeJS.Timeout | null>(null);
     const [keepPlay, setKeepPlay] = useState(false);
     const [liked, setLiked] = useState(false);
     const [disliked, setDisliked] = useState(false);
     const [loved, setLoved] = useState(false);
+    const trackContainerWidth = 150;
+    const trackContainerHeight = 200;
 
     const updateData = (data: TrackDTO) => {
         setLikes(data.likes);
@@ -162,15 +164,17 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
     }, [currentTrack]);
 
     useEffect(() => {
-        if (!loading) {
+        if (loadState !== TrackLoadState.LOADING) {
             if (interval)
                 clearInterval(interval);
-            const interval_ = setInterval(() => {
-                refreshTrack(track?.id ?? null);
-            }, Number(track?.expires) * 1000);
-            setInternalInterval(interval_);
+            if (loadState === TrackLoadState.DONE){
+                const interval_ = setInterval(() => {
+                    refreshTrack(track?.id ?? null);
+                }, Number(track?.expires) * 1000);
+                setInternalInterval(interval_);
+            }
         }
-    }, [loading]);
+    }, [loadState]);
 
     return (
         <div className="flex flex-col pl-18 w-full h-screen items-center gap-5 p-2 overflow-y-auto">
@@ -194,12 +198,22 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
                 />
             }
             {
-                !track &&
-                <TrackLoading />
+                loadState === TrackLoadState.LOADING &&
+                <TrackLoading width={trackContainerWidth} height={trackContainerHeight}/>
+            }
+            {
+                loadState === TrackLoadState.FAILED &&
+                <div style={{
+                    width:trackContainerWidth,
+                    height:trackContainerHeight
+                }}
+                className="flex justify-center items-center bg-[#00000045] p-1 rounded-md text-[10px]">
+                    <p>Track couldn't be loaded</p>
+                </div>
             }
             <SongBar src={track?.url}
                 play={keepPlay}
-                onPlay={onPlayTrack}
+                onPlay={loadState === TrackLoadState.DONE ? onPlayTrack : undefined}
                 onNext={
                     currentTrackIndex < tracks.length - 1 ?
                         handleNext : undefined

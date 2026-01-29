@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 interface SongBarInput {
     src?: string;
     play: boolean;
-    onPlay: () => void;
+    onPlay?: () => void;
     onNext?: (keepPlay: boolean) => void;
     onPrev?: (keepPlay: boolean) => void;
 }
@@ -38,14 +38,14 @@ const getFormattedCurrentTime = (value?: number) => {
     return "--:--";
 }
 
-const SongBar = ({ src, play, onNext, onPrev , onPlay }: SongBarInput) => {
+const SongBar = ({ src, play, onNext, onPrev, onPlay }: SongBarInput) => {
     const [playing, setPlaying] = useState(play);
     const [volume, setVolume] = useState(0.5);
     const [currentTime, setCurrentTime] = useState(0);
     const [muted, setMuted] = useState(false);
     const [source, setSource] = useState(src);
     const [duration, setDuration] = useState("--:--");
-    const [played,setPlayed] = useState(false);
+    const [played, setPlayed] = useState(false);
 
     const audioHandler = useRef<HTMLAudioElement>(null);
 
@@ -62,8 +62,9 @@ const SongBar = ({ src, play, onNext, onPrev , onPlay }: SongBarInput) => {
     }
 
     const handlePlay = () => {
-        if (!played){
-            onPlay();
+        if (!played) {
+            if (onPlay)
+                onPlay();
             setPlayed(true);
         }
         if (playing)
@@ -124,7 +125,8 @@ const SongBar = ({ src, play, onNext, onPrev , onPlay }: SongBarInput) => {
                     {currentTime ? getFormattedCurrentTime(currentTime) : '00:00'}/{duration}
                 </small>
                 <div className="flex flex-row justify-around items-center w-fit gap-3">
-                    <div className={`
+                    <button disabled={!onPrev}
+                    className={`
                         rounded-md ${onPrev && "hover:bg-[#00000045] cursor-pointer"} duration-500
                         ${!onPrev && "text-[#ffffff65]"}
                     `}
@@ -134,12 +136,17 @@ const SongBar = ({ src, play, onNext, onPrev , onPlay }: SongBarInput) => {
                             }
                         }}>
                         <MdSkipPrevious size={20} />
-                    </div>
-                    <div className="cursor-pointer rounded-md hover:bg-[#00000045] duration-500"
+                    </button>
+                    <button disabled={!onPlay}
+                    className={`
+                    rounded-md ${onPlay && "cursor-pointer hover:bg-[#00000045]"} duration-500
+                    ${!onPlay && "text-[#ffffff65"}
+                    `}
                         onClick={() => handlePlay()}>
                         {playing ? <IoPause size={20} /> : <IoPlay size={20} />}
-                    </div>
-                    <div className={`
+                    </button>
+                    <button disabled={!onNext}
+                    className={`
                         rounded-md ${onNext && "hover:bg-[#00000045] cursor-pointer"} duration-500
                         ${!onNext && "text-[#ffffff65]"}
                     `}
@@ -149,7 +156,7 @@ const SongBar = ({ src, play, onNext, onPrev , onPlay }: SongBarInput) => {
                             }
                         }}>
                         <MdSkipNext size={20} />
-                    </div>
+                    </button>
                 </div>
                 <div className="flex flex-row justify-around items-center w-fit">
                     <div

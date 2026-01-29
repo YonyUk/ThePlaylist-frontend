@@ -5,9 +5,11 @@ interface CurrentSongInput extends TrackDTO {
     liked?: boolean;
     disliked?: boolean;
     loved?: boolean;
-    onLiked: (value:boolean) => void;
-    onDisliked: (value:boolean) => void;
-    onLoved: (value:boolean) => void;
+    width?: number;
+    height?: number;
+    onLiked: (value: boolean) => void;
+    onDisliked: (value: boolean) => void;
+    onLoved: (value: boolean) => void;
 }
 
 const CurrentSong = (
@@ -22,6 +24,8 @@ const CurrentSong = (
         liked,
         disliked,
         loved,
+        width,
+        height,
         onLiked,
         onDisliked,
         onLoved
@@ -46,7 +50,11 @@ const CurrentSong = (
     };
 
     return (
-        <div className="flex flex-col gap-2 p-3 w-50 h-65 bg-[#00000045] rounded-md items-center overflow-hidden">
+        <div style={{
+            width: width ?? 50,
+            height: height ?? 65
+        }}
+            className="flex flex-col gap-2 p-3 bg-[#00000045] rounded-md items-center overflow-hidden">
             <style>
                 {
                     `
