@@ -26,6 +26,8 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 export default function MyPlaylists({ actionData, loaderData }: Route.ComponentProps) {
 
     const playlists = (loaderData as PlaylistDTO[]);
+    const itemsContainerWidth = 210;
+    const itemsContainerHeight = 200;
 
     const navigate = useNavigate();
 
@@ -34,6 +36,8 @@ export default function MyPlaylists({ actionData, loaderData }: Route.ComponentP
             {loaderData && playlists.map((playlist, index) => {
                 return (
                     <PlayListItem
+                        width={itemsContainerWidth}
+                        height={itemsContainerHeight}
                         key={index}
                         id={playlist.id}
                         name={playlist.name}
@@ -45,7 +49,8 @@ export default function MyPlaylists({ actionData, loaderData }: Route.ComponentP
             })}
             <div className="flex flex-1" onClick={() => navigate(ROUTES.CREATEPLAYLIST)}>
                 <AddItem
-                    width={55}
+                    width={itemsContainerWidth}
+                    height={itemsContainerHeight}
                     text="Add new playlist" />
             </div>
         </div>

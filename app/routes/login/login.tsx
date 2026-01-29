@@ -11,10 +11,14 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
     const formData = await request.formData()
     const username = String(formData.get('username'));
     const password = String(formData.get('password'));
+
     try {
         const response = await service.authenticate(username, password);
         if (response.status === 201){
-            return redirect(ROUTES.HOME);
+            if (window.history.length !== 0)
+                window.history.back();
+            else
+                return redirect(ROUTES.HOME);
         }
         if (response.status !== 422)
             return response.data;

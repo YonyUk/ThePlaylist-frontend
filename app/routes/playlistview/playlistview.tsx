@@ -53,7 +53,7 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
     const [liked, setLiked] = useState(false);
     const [disliked, setDisliked] = useState(false);
     const [loved, setLoved] = useState(false);
-    const trackContainerWidth = 150;
+    const trackContainerWidth = 160;
     const trackContainerHeight = 200;
 
     const updateData = (data: TrackDTO) => {

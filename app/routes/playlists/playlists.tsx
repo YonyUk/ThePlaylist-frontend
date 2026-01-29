@@ -30,6 +30,9 @@ export default function PlayLists({ loaderData }: Route.ComponentProps) {
     const playlists = Array.from(loaderData as PlaylistDTO[]);
     const error = (loaderData as AxiosError);
 
+    const itemsContainerWidth = 210;
+    const itemsContainerHeight = 200;
+
     const error_msg = ((error.response?.data as any) as NetworkError);
 
     return (
@@ -58,6 +61,8 @@ export default function PlayLists({ loaderData }: Route.ComponentProps) {
                     playlists.map((item, index) => {
                         return (
                             <PlayListItem
+                                width={itemsContainerWidth}
+                                height={itemsContainerHeight}
                                 key={index}
                                 id={item.id}
                                 name={item.name}

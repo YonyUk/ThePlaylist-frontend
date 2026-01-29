@@ -38,11 +38,13 @@ export default function ModifyPlaylist({ loaderData }: Route.ComponentProps) {
 
         const uploadResponse = await trackService.uploadTrack(trackName, authorName, formData);
 
-        if (uploadResponse.status === 200) {
+        if (uploadResponse.status === 201) {
             const trackId = uploadResponse.data.id;
             const addResponse = await playlistService.addTrackToPlaylist(playlistId, trackId);
-            return addResponse.status === 200;
+            return addResponse.status === 202;
         }
+        if (uploadResponse.status === 401)
+            navigate(ROUTES.LOGIN);
         return false;
     }
 
@@ -75,7 +77,7 @@ export default function ModifyPlaylist({ loaderData }: Route.ComponentProps) {
     };
 
     const removeTrack = async (index: number, uploaded: boolean = false) => {
-        if (uploaded){
+        if (uploaded) {
             console.log('Not implemented');
         }
         setTracks(prev => prev.filter((_, i) => i !== index));
@@ -111,7 +113,7 @@ export default function ModifyPlaylist({ loaderData }: Route.ComponentProps) {
                                 track={track}
                                 track_index={index}
                                 key={index}
-                                onDelete={(uploaded:boolean) => removeTrack(index,uploaded)}
+                                onDelete={(uploaded: boolean) => removeTrack(index, uploaded)}
                                 uploadTrack={uploadTrack}
                             />
                         )
@@ -121,6 +123,7 @@ export default function ModifyPlaylist({ loaderData }: Route.ComponentProps) {
             <div className="flex flex-row justify-around items-center">
                 <div onClick={triggerFileInput}>
                     <AddItem
+                        width={150}
                         iconSize={30}
                         text="add from local"
                     />
@@ -129,6 +132,7 @@ export default function ModifyPlaylist({ loaderData }: Route.ComponentProps) {
                     onClick={() => navigate('add_from_cloud/0')}
                 >
                     <AddItem
+                        width={150}
                         iconSize={30}
                         text="add from cloud"
                     />

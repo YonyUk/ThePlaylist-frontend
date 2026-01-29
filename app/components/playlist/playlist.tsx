@@ -15,9 +15,23 @@ interface PlayList {
     dislikes?: number
     loves?: number
     toEditMode?: boolean
+    width?: number
+    height?: number
 }
 
-export default function PlayListItem({ name, img, toEditMode, author, songs, id, reproductions, dislikes, likes, loves }: PlayList) {
+export default function PlayListItem({ 
+    width,
+    height,
+    name,
+    img,
+    toEditMode,
+    author,
+    songs,
+    id,
+    reproductions,
+    dislikes,
+    likes,
+    loves }: PlayList) {
 
     const [plays, setPlays] = useState(reproductions ?? 0);
     const [_likes, setLikes] = useState(likes ?? 0);
@@ -34,7 +48,12 @@ export default function PlayListItem({ name, img, toEditMode, author, songs, id,
     const navigate = useNavigate();
 
     return (
-        <div className="flex flex-col bg-[#ffffff15] backdrop-blur-xs w-55 p-2 px-4
+        <div
+        style={{
+            width:width ?? 50,
+            height:height ?? 65
+        }}
+        className="flex flex-col bg-[#ffffff15] backdrop-blur-xs w-55 p-2 px-4
             items-center rounded-md cursor-pointer hover:bg-[#00000015]
             duration-500 m-1" onClick={(e) => navigate(
             toEditMode ? `${ROUTES.MYPLAYLISTS}/${id}/view` : `${ROUTES.PLAYLISTS}/${id}`,

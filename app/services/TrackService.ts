@@ -4,99 +4,102 @@ import type { TrackDownloadDTO } from "~/dtos/track_download_dto";
 import type { TrackDTO, TrackUpdateDTO } from "~/dtos/trackdto";
 import type { ExistencialQuery } from "~/types/responsetypes";
 
-export class TrackService{
+export class TrackService {
 
-    private axiosClient:AxiosClient;
-    private static instance:TrackService;
+    private axiosClient: AxiosClient;
+    private static instance: TrackService;
     private environmentSettings = environmentSettings();
 
-    private constructor( ) {
+    private constructor() {
         this.axiosClient = new AxiosClient(String(`${this.environmentSettings.apiUrl}/${this.environmentSettings.tracksUrl}`));
     }
 
-    public static get() : TrackService {
+    public static get(): TrackService {
         if (!this.instance)
             this.instance = new TrackService();
         return this.instance;
     }
 
-    public async getTrack(id:string) {
-        return await this.axiosClient.get<TrackDownloadDTO>(`/download/${id}`,{timeout:30000});
+    public async getTrack(id: string) {
+        return await this.axiosClient.get<TrackDownloadDTO>(`/download/${id}`, { timeout: 30000 });
     }
 
-    public async updateTrackPlays(id:string){
+    public async updateTrackPlays(id: string) {
         return await this.axiosClient.put<TrackDTO>(`${id}/stats/plays`);
     }
 
-    public async isLiked(id:string){
+    public async isLiked(id: string) {
         return await this.axiosClient.get<ExistencialQuery>(`${id}/stats/likes`);
     }
 
-    public async addLike(id:string){
+    public async addLike(id: string) {
         return await this.axiosClient.put<TrackDTO>(`${id}/stats/likes`);
     }
 
-    public async removeLike(id:string){
+    public async removeLike(id: string) {
         return await this.axiosClient.delete<TrackDTO>(`${id}/stats/likes`);
     }
 
-    public async isDisliked(id:string){
+    public async isDisliked(id: string) {
         return await this.axiosClient.get<ExistencialQuery>(`${id}/stats/dislikes`);
     }
 
-    public async addDislike(id:string){
+    public async addDislike(id: string) {
         return await this.axiosClient.put<TrackDTO>(`${id}/stats/dislikes`);
     }
 
-    public async removeDislike(id:string){
+    public async removeDislike(id: string) {
         return await this.axiosClient.delete<TrackDTO>(`${id}/stats/dislikes`);
     }
 
-    public async isLoved(id:string){
+    public async isLoved(id: string) {
         return await this.axiosClient.get<ExistencialQuery>(`${id}/stats/loves`)
     }
 
-    public async addLove(id:string){
+    public async addLove(id: string) {
         return await this.axiosClient.put<TrackDTO>(`${id}/stats/loves`);
     }
 
-    public async removeLove(id:string){
+    public async removeLove(id: string) {
         return await this.axiosClient.delete<TrackDTO>(`${id}/stats/loves`);
     }
 
-    public async getTrackInfo(id:string) {
+    public async getTrackInfo(id: string) {
         return await this.axiosClient.get<TrackDTO>(id);
     }
 
-    public async getMyTracks(page:number=0,pattern:string=''){
-        return await this.axiosClient.get<TrackDTO[]>("mytracks",{
-            params:{
+    public async getMyTracks(page: number = 0, pattern: string = '') {
+        return await this.axiosClient.get<TrackDTO[]>("mytracks", {
+            params: {
                 page,
-                text:pattern,
-                limit:10
+                text: pattern,
+                limit: 10
             }
         });
     }
 
-    public async getTracks(page:number,playlistId?:string) {
+    public async getTracks(page: number, playlistId?: string) {
         const playlist_id = playlistId ?? '';
-        return await this.axiosClient.get<TrackDTO[]>('',{
-            params:{
+        return await this.axiosClient.get<TrackDTO[]>('', {
+            params: {
                 page,
-                limit:10,
+                limit: 10,
                 playlist_id
             }
         });
     }
 
-    public async uploadTrack(trackName:string,authorName:string,data:FormData) {
+    public async uploadTrack(trackName: string, authorName: string, data: FormData) {
         const url = encodeURI(`upload?track_name=${trackName}&author_name=${authorName}`);
-        return await this.axiosClient.post<TrackDTO>(url,data,{headers:{
-            "Content-Type":"multipart/form-data"
-        }});
+        return await this.axiosClient.post<TrackDTO>(url, data, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            },
+            timeout:this.environmentSettings.trackUploadTimeout * 1000
+        });
     }
 
-    public async removeTrack(trackId:string){
+    public async removeTrack(trackId: string) {
         return await this.axiosClient.delete(trackId);
     }
 }

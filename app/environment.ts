@@ -10,6 +10,7 @@ const environmentSettings = () => {
         const playlistsUrl = process.env.REACT_APP_PLAYLISTS_URL;
         const playlistsSearchUrl = process.env.REATC_APP_PLAYLISTS_SEARCH_URL;
         const tracksUrl = process.env.REACT_APP_TRACKS_URL;
+        const trackUploadTimeout = parseInt(String(process.env.REACT_APP_TRACK_UPLOAD_TIMEOUT));
 
         return {
             apiUrl,
@@ -21,7 +22,8 @@ const environmentSettings = () => {
             usersLogoutUrl,
             playlistsUrl,
             playlistsSearchUrl,
-            tracksUrl
+            tracksUrl,
+            trackUploadTimeout
         };
     } catch (error) {
         const apiUrl = import.meta.env.VITE_API_URL;
@@ -34,6 +36,7 @@ const environmentSettings = () => {
         const playlistsUrl = import.meta.env.VITE_API_PLAYLISTS_URL;
         const playlistsSearchUrl = import.meta.env.VITE_API_PLAYLISTS_SEARCH_URL;
         const tracksUrl = import.meta.env.VITE_API_TRACKS_URL;
+        const trackUploadTimeout = parseInt(String(import.meta.env.VITE_API_TRACK_UPLOAD_TIMEOUT));
 
         return {
             apiUrl,
@@ -45,7 +48,8 @@ const environmentSettings = () => {
             usersLogoutUrl,
             playlistsUrl,
             playlistsSearchUrl,
-            tracksUrl
+            tracksUrl,
+            trackUploadTimeout
         };
     }
 }
