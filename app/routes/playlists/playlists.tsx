@@ -43,8 +43,14 @@ export default function PlayLists({ loaderData }: Route.ComponentProps) {
                     playlists.length === 0 &&
                     <div className='bg-[#00000045] rounded-md p-10 flex flex-col self-center
                         justify-self-center justify-center items-center'>
-                        <h1 className="text-[30px]">No playlists</h1>
-                        <h3 className="text-red-500 text-[15px]">{error_msg.msg}</h3>
+                        {
+                            !error_msg &&
+                            <h1 className="text-[30px]">No playlists</h1>
+                        }
+                        {
+                            error_msg &&
+                            <h3 className="text-red-500 text-[15px]">{error_msg.msg}</h3>
+                        }
                     </div>
                 }
                 {
