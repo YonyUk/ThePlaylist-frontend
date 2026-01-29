@@ -127,7 +127,7 @@ const SongBar = ({ src, play, onNext, onPrev, onPlay }: SongBarInput) => {
                 <div className="flex flex-row justify-around items-center w-fit gap-3">
                     <button disabled={!onPrev}
                     className={`
-                        rounded-md ${onPrev && "hover:bg-[#00000045] cursor-pointer"} duration-500
+                        rounded-md outline-none ${onPrev && "hover:bg-[#00000045] cursor-pointer"} duration-500
                         ${!onPrev && "text-[#ffffff65]"}
                     `}
                         onClick={() => {
@@ -139,7 +139,7 @@ const SongBar = ({ src, play, onNext, onPrev, onPlay }: SongBarInput) => {
                     </button>
                     <button disabled={!onPlay}
                     className={`
-                    rounded-md ${onPlay && "cursor-pointer hover:bg-[#00000045]"} duration-500
+                    rounded-md outline-none ${onPlay && "cursor-pointer hover:bg-[#00000045]"} duration-500
                     ${!onPlay && "text-[#ffffff65"}
                     `}
                         onClick={() => handlePlay()}>
@@ -147,7 +147,7 @@ const SongBar = ({ src, play, onNext, onPrev, onPlay }: SongBarInput) => {
                     </button>
                     <button disabled={!onNext}
                     className={`
-                        rounded-md ${onNext && "hover:bg-[#00000045] cursor-pointer"} duration-500
+                        rounded-md outline-none ${onNext && "hover:bg-[#00000045] cursor-pointer"} duration-500
                         ${!onNext && "text-[#ffffff65]"}
                     `}
                         onClick={() => {
