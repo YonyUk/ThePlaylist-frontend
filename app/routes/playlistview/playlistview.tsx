@@ -37,10 +37,10 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     }
 }
 
-export default function PlayListView({ loaderData }: Route.ComponentProps) {
+export default function PlayListView({ loaderData, params }: Route.ComponentProps) {
     const service = TrackService.get();
 
-    const tracks = (loaderData as PlaylistDTO).tracks;
+    const [tracks, setTracks] = useState((loaderData as PlaylistDTO).tracks);
     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
     const [currentTrack, setCurrentTrack] = useState(tracks[currentTrackIndex]);
     const [likes, setLikes] = useState(0);
@@ -177,9 +177,21 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
         }
     }, [loadState]);
 
+    const searchTracksByPattern = (pattern: string) => {
+        service.searchTracksOnPlaylist(params.playlistId, pattern).then(resp => {
+            if (resp.status === 200) {
+                setTracks(resp.data);
+                setCurrentTrackIndex(0);
+                setCurrentTrack(tracks[0]);
+                setTrackId(tracks[0].id);
+                setKeepPlay(false);
+            }
+        })
+    }
+
     return (
         <div className="flex flex-col pl-18 w-full h-screen items-center gap-5 p-2 overflow-y-auto">
-            <SearchBar />
+            <SearchBar onSearchClick={searchTracksByPattern} />
             {
                 track &&
                 <CurrentSong

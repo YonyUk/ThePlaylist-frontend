@@ -4,6 +4,12 @@ import type { TrackDownloadDTO } from "~/dtos/track_download_dto";
 import type { TrackDTO, TrackUpdateDTO } from "~/dtos/trackdto";
 import type { ExistencialQuery } from "~/types/responsetypes";
 
+enum SearchMode {
+    BY_NAME = 'by name',
+    BY_AUTHOR = 'by author',
+    BOTH = 'both'
+}
+
 export class TrackService {
 
     private axiosClient: AxiosClient;
@@ -101,5 +107,16 @@ export class TrackService {
 
     public async removeTrack(trackId: string) {
         return await this.axiosClient.delete(trackId);
+    }
+
+    public async searchTracksOnPlaylist(playlistId:string,pattern:string) {
+        return await this.axiosClient.get<TrackDTO[]>('',{
+            params:{
+                playlist_id:playlistId,
+                pattern,
+                search_mode:SearchMode.BOTH,
+                limit:100
+            }
+        })
     }
 }
