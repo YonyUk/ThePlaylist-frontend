@@ -57,6 +57,8 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
         const response = await service.removeTrack(trackId);
         if (response.status === 401)
             navigate(ROUTES.LOGIN);
+        if (response.status === 202)
+            setTracks(tracks.filter((track,_) => track.id !== trackId));
         return response.status === 202;
     }    
 

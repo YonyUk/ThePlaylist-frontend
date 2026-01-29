@@ -7,11 +7,17 @@ import { ROUTES } from "~/routes";
 import { redirect, useNavigate } from "react-router";
 import type { AxiosError } from "axios";
 import type { PlaylistDTO } from "~/dtos/playlistdto";
-import { TrackService } from "~/services/TrackService";
 import { useState } from "react";
 import type { TrackDTO } from "~/dtos/trackdto";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { FaRedoAlt } from "react-icons/fa";
+
+export enum PlaylistDeletingState {
+    IDLE,
+    PENDING,
+    FAILED
+}
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     const playlist_id = params.playlistId;
@@ -35,27 +41,29 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 }
 
 export default function MyPlaylistView({ loaderData }: Route.ComponentProps) {
-    const service = TrackService.get();
     const playlistService = PlaylistService.get();
     const [tracks, setTracks] = useState<TrackDTO[]>((loaderData as PlaylistDTO).tracks);
     const playlistName = (loaderData as PlaylistDTO).name;
     const playlistId = (loaderData as PlaylistDTO).id;
-    const [deleting, setDeleting] = useState(false);
+    const [deleting, setDeleting] = useState<PlaylistDeletingState>(PlaylistDeletingState.IDLE);
 
     const navigate = useNavigate();
 
     const removeTrack = async (trackId: string) => {
-        setDeleting(true);
-        const response = await service.removeTrack(trackId);
+        const response = await playlistService.removeTrackFromPlaylist(playlistId,trackId);
         if (response.status === 202)
             setTracks(tracks.filter((track, _) => track.id != trackId));
-        setDeleting(false);
+        return response.status === 202;
     }
 
     const removePlaylist = async () => {
+        setDeleting(PlaylistDeletingState.PENDING);
         const response = await playlistService.removePlaylist(playlistId);
-        if (response.status === 202)
+        if (response.status === 202) {
+            setDeleting(PlaylistDeletingState.IDLE);
             navigate(`${ROUTES.MYPLAYLISTS}/0`);
+        }
+        setDeleting(PlaylistDeletingState.FAILED);
     }
 
     return (
@@ -69,26 +77,30 @@ export default function MyPlaylistView({ loaderData }: Route.ComponentProps) {
                 {
                     tracks.map((trackItem, index) => (
                         <PlayListTrackItem track_id={trackItem.id} key={index}
-                            dispensable onRemoveClicked={(trackId: string) => removeTrack(trackId)} />
+                            dispensable onRemoveClicked={removeTrack} />
                     ))
                 }
             </div>
             <div className="flex flex-row justify-end w-full p-1 px-4 pb-3">
                 <button
-                onClick={() => removePlaylist()}
-                className="px-5 rounded-md bg-[#ffffff15] p-2 hover:bg-[#00000045] duration-500 cursor-pointer">
-                    <div style={{
-                        animation: deleting ? "loadingAnimation 1.5s linear infinite" : ''
-                    }}>
-                        {
-                            deleting &&
+                    onClick={() => removePlaylist()}
+                    className="px-5 rounded-md bg-[#ffffff15] p-2 hover:bg-[#00000045] duration-500 cursor-pointer">
+                    {
+                        deleting === PlaylistDeletingState.PENDING &&
+                        <div style={{
+                            animation: deleting ? "loadingAnimation 1.5s linear infinite" : ''
+                        }}>
                             <AiOutlineLoading3Quarters size={20} />
-                        }
-                        {
-                            !deleting &&
-                            <RiDeleteBin6Line size={20} />
-                        }
-                    </div>
+                        </div>
+                    }
+                    {
+                        deleting === PlaylistDeletingState.IDLE &&
+                        <RiDeleteBin6Line size={20} />
+                    }
+                    {
+                        deleting === PlaylistDeletingState.FAILED &&
+                        <FaRedoAlt size={20} />
+                    }
                 </button>
             </div>
         </div>
