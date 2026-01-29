@@ -1,4 +1,5 @@
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { getHeight, getWidth } from "~/utils/tools";
 
 interface TrackLoadingInput {
     width?: number;
@@ -8,7 +9,7 @@ interface TrackLoadingInput {
 
 export default function TrackLoading({ width, height, iconSize }: TrackLoadingInput) {
     return (
-        <div className={`flex w-${width ?? 50} h-${height ?? 65} justify-center items-center bg-[#00000045] rounded-md`}>
+        <div className={`flex ${getWidth(width ?? 50)} ${getHeight(height ?? 65)} justify-center items-center bg-[#00000045] rounded-md`}>
             <div style={{
                 animation: "loadingAnimation 1.5s linear infinite"
             }}>

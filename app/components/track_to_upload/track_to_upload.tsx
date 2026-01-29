@@ -9,11 +9,11 @@ import { MdEdit, MdDone } from "react-icons/md";
 interface TrackToUploadInput {
     track: File;
     track_index: number;
-    onDelete: () => void;
-    uploadTrack: (trackName: string, author: string,data:File) => Promise<boolean>;
+    onDelete: (uploaded:boolean) => void;
+    uploadTrack: (trackName: string, author: string, data: File) => Promise<boolean>;
 }
 
-enum UploadState{
+enum UploadState {
     START,
     PENDING,
     FAILED,
@@ -28,13 +28,12 @@ export default function TrackToUpload({ track, track_index, onDelete, uploadTrac
     const [trackNameValid, setTrackNameValid] = useState(false);
     const [authorNameValid, setAuthorNameValid] = useState(false);
 
-    const [uploadState,setUploadState] = useState<UploadState>(UploadState.START);
+    const [uploadState, setUploadState] = useState<UploadState>(UploadState.START);
 
     const handleUploadTrack = () => {
-        console.log(track);
         setUploadState(UploadState.PENDING);
-        uploadTrack(trackName,authorName,track).then( resp => resp ? 
-            setUploadState(UploadState.DONE) : 
+        uploadTrack(trackName, authorName, track).then(resp => resp ?
+            setUploadState(UploadState.DONE) :
             setUploadState(UploadState.FAILED)
         ).catch(err => setUploadState(UploadState.FAILED));
     }
@@ -74,30 +73,35 @@ export default function TrackToUpload({ track, track_index, onDelete, uploadTrac
                 />
             </div>
             <div className="flex flex-row gap-5">
-                <div onClick={onDelete} className="cursor-pointer hover:bg-[#00000065] duration-500 p-1 rounded-md">
+                <button onClick={() => onDelete(uploadState === UploadState.DONE)} className="cursor-pointer hover:bg-[#00000065] duration-500 p-1 rounded-md">
                     <RiDeleteBin6Line size={30} />
-                </div>
-                <button disabled={!(trackNameValid && authorNameValid)}
-                onClick={handleUploadTrack}
-                className={`${trackNameValid && authorNameValid && "cursor-pointer hover:bg-[#00000065]"} duration-500 rounded-md p-1 
-                    ${!(trackNameValid && authorNameValid) && "text-[#ffffff45]"}
+                </button>
+                <button
+                    disabled={!(trackNameValid && authorNameValid) || uploadState === UploadState.DONE}
+                    onClick={handleUploadTrack}
+                    className={`${trackNameValid && authorNameValid && uploadState !== UploadState.DONE && "outline-none cursor-pointer hover:bg-[#00000065]"} duration-500 rounded-md p-1 
+                    ${(!(trackNameValid && authorNameValid) || uploadState === UploadState.DONE) && "text-[#ffffff45]"}
                     `}>
-                    {
-                        uploadState === UploadState.START &&
-                        <HiUpload size={30} />
-                    }
-                    {
-                        uploadState === UploadState.PENDING &&
-                        <AiOutlineLoading3Quarters size={25}/>
-                    }
-                    {
-                        uploadState === UploadState.FAILED &&
-                        <FaRedoAlt size={25}/>
-                    }
-                    {
-                        uploadState === UploadState.DONE &&
-                        <MdDone size={25}/>
-                    }
+                    <div style={{
+                        animation: uploadState === UploadState.PENDING ? "loadingAnimation 1.5s linear infinite" : ''
+                    }}>
+                        {
+                            uploadState === UploadState.START &&
+                            <HiUpload size={30} />
+                        }
+                        {
+                            uploadState === UploadState.PENDING &&
+                            <AiOutlineLoading3Quarters size={25} />
+                        }
+                        {
+                            uploadState === UploadState.FAILED &&
+                            <FaRedoAlt size={25} />
+                        }
+                        {
+                            uploadState === UploadState.DONE &&
+                            <MdDone size={25} />
+                        }
+                    </div>
                 </button>
             </div>
         </div>

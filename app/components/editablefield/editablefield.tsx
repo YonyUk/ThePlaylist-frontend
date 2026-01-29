@@ -42,7 +42,7 @@ export default function EditableField({ invalidDescription, valid, value, id, na
                         setFieldValue(e.target.value);
                     }}
                 />
-                <div
+                <button
                     onClick={() => {
                         if (editing)
                             onEditEnd();
@@ -52,7 +52,7 @@ export default function EditableField({ invalidDescription, valid, value, id, na
                     {
                         editing ? <MdDone size={20} /> : <MdEdit size={20} />
                     }
-                </div>
+                </button>
             </div>
         </>
     );

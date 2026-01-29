@@ -34,15 +34,13 @@ export default function ModifyPlaylist({ loaderData }: Route.ComponentProps) {
     const uploadTrack = async (trackName: string, authorName: string, file: File) => {
         const formData = new FormData();
 
+        formData.append('data', file as Blob);
 
-        console.log(file);
-        formData.append('data',file as Blob);
-
-        const uploadResponse = await trackService.uploadTrack(trackName,authorName,formData);
+        const uploadResponse = await trackService.uploadTrack(trackName, authorName, formData);
 
         if (uploadResponse.status === 200) {
             const trackId = uploadResponse.data.id;
-            const addResponse = await playlistService.addTrackToPlaylist(playlistId,trackId);
+            const addResponse = await playlistService.addTrackToPlaylist(playlistId, trackId);
             return addResponse.status === 200;
         }
         return false;
@@ -76,7 +74,10 @@ export default function ModifyPlaylist({ loaderData }: Route.ComponentProps) {
         }
     };
 
-    const removeTrack = (index: number) => {
+    const removeTrack = async (index: number, uploaded: boolean = false) => {
+        if (uploaded){
+            console.log('Not implemented');
+        }
         setTracks(prev => prev.filter((_, i) => i !== index));
     };
 
@@ -110,7 +111,7 @@ export default function ModifyPlaylist({ loaderData }: Route.ComponentProps) {
                                 track={track}
                                 track_index={index}
                                 key={index}
-                                onDelete={() => removeTrack(index)}
+                                onDelete={(uploaded:boolean) => removeTrack(index,uploaded)}
                                 uploadTrack={uploadTrack}
                             />
                         )
