@@ -54,7 +54,7 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
     const [disliked, setDisliked] = useState(false);
     const [loved, setLoved] = useState(false);
     const trackContainerWidth = 160;
-    const trackContainerHeight = 200;
+    const trackContainerHeight = 300;
 
     const updateData = (data: TrackDTO) => {
         setLikes(data.likes);
@@ -168,7 +168,7 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
         if (loadState !== TrackLoadState.LOADING) {
             if (interval)
                 clearInterval(interval);
-            if (loadState === TrackLoadState.DONE){
+            if (loadState === TrackLoadState.DONE) {
                 const interval_ = setInterval(() => {
                     refreshTrack(track?.id ?? null);
                 }, Number(track?.expires) * 1000);
@@ -183,8 +183,8 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
             {
                 track &&
                 <CurrentSong
-                width={trackContainerWidth}
-                height={trackContainerHeight}
+                    width={trackContainerWidth}
+                    height={trackContainerHeight}
                     name={currentTrack.name.substring(0, currentTrack.name.indexOf('.'))}
                     id={currentTrack.id}
                     author_name={currentTrack.author_name}
@@ -202,18 +202,18 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
             }
             {
                 loadState === TrackLoadState.LOADING &&
-                <TrackLoading width={trackContainerWidth} height={trackContainerHeight}/>
+                <TrackLoading width={trackContainerWidth} height={trackContainerHeight} />
             }
             {
                 loadState === TrackLoadState.FAILED &&
                 <div style={{
-                    width:trackContainerWidth,
-                    height:trackContainerHeight
+                    width: trackContainerWidth,
+                    height: trackContainerHeight
                 }}
-                className="flex flex-col justify-center items-center bg-[#00000045] p-1 rounded-md text-[12px]">
+                    className="flex flex-col justify-center items-center bg-[#00000045] p-1 rounded-md text-[12px]">
                     <p>Track couldn't be loaded</p>
                     <button className="mt-3 cursor-pointer" onClick={() => refreshTrack(currentTrack.id)}>
-                        <FaRedoAlt size={Math.min(trackContainerHeight,trackContainerWidth) / 6}/>
+                        <FaRedoAlt size={Math.min(trackContainerHeight, trackContainerWidth) / 6} />
                     </button>
                 </div>
             }
@@ -228,10 +228,34 @@ export default function PlayListView({ loaderData }: Route.ComponentProps) {
                     currentTrackIndex > 0 ?
                         handlePrev : undefined
                 } />
-            <div className="flex flex-col h-fit w-full px-5 overflow-hidden rounded-md items-center">
+            <div className="flex flex-col h-fit w-full px-5 rounded-md items-center
+            overflow-y-auto
+                    
+            [&::-webkit-scrollbar]:w-2
+            [&::-webkit-scrollbar-track]:rounded-full
+            [&::-webkit-scrollbar-thumb]:bg-[#ffffff35]
+            [&::-webkit-scrollbar-thumb]:rounded-full
+            [&::-webkit-scrollbar-thumb:hover]:bg-[#ffffff65]
+            [&::-webkit-scrollbar-thumb:hover]:cursor-pointer
+
+            scrollbar-thin
+            scrollbar-thumb-gray-400
+            scrollbar-track-gray-100
+            scrollbar-track-rounded
+            scrollbar-thumb-rounded
+            ">
                 {
-                    tracks.map((trackItem,index) => (
-                        <PlayListTrackItem track_id={trackItem.id} key={index}/>
+                    tracks.map((trackItem, index) => (
+                        <div
+                            onClick={() => {
+                                setCurrentTrackIndex(index);
+                                setCurrentTrack(tracks[index]);
+                                setTrackId(tracks[index].id);
+                                setKeepPlay(keepPlay);
+                            }}
+                            key={index} className="flex w-full cursor-pointer hover:bg-[#00000045] rounded-md duration-500">
+                            <PlayListTrackItem track_id={trackItem.id} />
+                        </div>
                     ))
                 }
             </div>

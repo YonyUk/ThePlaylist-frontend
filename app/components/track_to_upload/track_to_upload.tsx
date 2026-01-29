@@ -45,6 +45,8 @@ export const TrackToUpload = forwardRef<TrackToUploadRef,TrackToUploadInput>(({ 
     const [uploadState, setUploadState] = useState<UploadState>(UploadState.START);
 
     const handleUploadTrack = () => {
+        if (uploadState === UploadState.DONE)
+            return;
         setUploadState(UploadState.PENDING);
         uploadTrack(trackName, authorName, track).then(resp => resp ?
             setUploadState(UploadState.DONE) :
