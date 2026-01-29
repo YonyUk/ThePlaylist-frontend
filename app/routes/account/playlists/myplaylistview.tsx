@@ -13,6 +13,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaRedoAlt } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
+import { TrackService } from "~/services/TrackService";
 
 export enum PlaylistDeletingState {
     IDLE,
@@ -43,6 +44,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 
 export default function MyPlaylistView({ loaderData }: Route.ComponentProps) {
     const playlistService = PlaylistService.get();
+    const trackService = TrackService.get();
     const [tracks, setTracks] = useState<TrackDTO[]>((loaderData as PlaylistDTO).tracks);
     const playlistName = (loaderData as PlaylistDTO).name;
     const playlistId = (loaderData as PlaylistDTO).id;
@@ -67,13 +69,20 @@ export default function MyPlaylistView({ loaderData }: Route.ComponentProps) {
         setDeleting(PlaylistDeletingState.FAILED);
     }
 
+    const searchTracks = (pattern:string) => {
+        trackService.searchTracksOnPlaylist(playlistId,pattern).then(resp => {
+            if (resp.status === 200)
+                setTracks(resp.data);
+        })
+    }
+
     return (
         <div className="flex flex-col pl-18 w-full h-9/10 items-center gap-5 p-2 overflow-y-auto">
             <div className="flex rounded-md text-[30px] justify-center items-center p-1 w-full bg-[#00000045]">
                 {playlistName}
             </div>
             <hr className="flex w-full" />
-            <SearchBar />
+            <SearchBar onSearchClick={searchTracks}/>
             <div className="flex flex-col h-full w-full px-5 rounded-md items-center
             overflow-y-auto
                     
