@@ -1,12 +1,12 @@
 import { redirect, useActionData, useNavigate } from "react-router";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import AddItem from "~/components/add_item/add_item";
-import TrackToUpload from "~/components/track_to_upload/track_to_upload";
 import { TrackService } from "~/services/TrackService";
 import { PlaylistService } from "~/services/PlaylistService";
 import type { Route } from "./+types/modify_playlist";
 import { UserService } from "~/services/UserService";
 import { ROUTES } from "~/routes";
+import { TrackToUpload, type TrackToUploadRef } from "~/components/track_to_upload/track_to_upload";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     const service = UserService.get();
@@ -26,8 +26,14 @@ export default function ModifyPlaylist({ loaderData }: Route.ComponentProps) {
 
     const [tracks, setTracks] = useState<File[]>([]);
     const [isDragging, setIsDragging] = useState(false);
+    const tracksRef = useRef<(TrackToUploadRef | null)[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const actionData = useActionData();
+
+    const setTrackRef = useCallback((index:number) => {
+        return (el:TrackToUploadRef | null) => {
+            tracksRef.current[index] = el;
+        };
+    },[]);
 
     const navigate = useNavigate();
 
@@ -40,8 +46,8 @@ export default function ModifyPlaylist({ loaderData }: Route.ComponentProps) {
 
         if (uploadResponse.status === 201) {
             const trackId = uploadResponse.data.id;
-            const addResponse = await playlistService.addTrackToPlaylist(playlistId, trackId);
-            return addResponse.status === 202;
+            playlistService.addTrackToPlaylist(playlistId, trackId);
+            return true;
         }
         if (uploadResponse.status === 401)
             navigate(ROUTES.LOGIN);
@@ -87,6 +93,10 @@ export default function ModifyPlaylist({ loaderData }: Route.ComponentProps) {
         fileInputRef.current?.click();
     }
 
+    const uploadAllTracks = () => {
+        tracksRef.current.forEach(ref => ref?.handleClick());
+    }
+
     return (
         <div
             className="flex flex-col h-22/25 mt-2 mr-2 ml-18 justify-start items-center rounded-md bg-[#00000045] overflow-y-auto"
@@ -97,7 +107,22 @@ export default function ModifyPlaylist({ loaderData }: Route.ComponentProps) {
                 className="hidden"
                 ref={fileInputRef}
             />
-            <div className="flex flex-col h-full w-full justify-center items-center text-[#ffffff65] overflow-y-auto"
+            <div className="flex flex-col h-full pt-10 w-full justify-center items-center text-[#ffffff65]
+            overflow-y-auto
+                    
+            [&::-webkit-scrollbar]:w-2
+            [&::-webkit-scrollbar-track]:rounded-full
+            [&::-webkit-scrollbar-thumb]:bg-[#00000035]
+            [&::-webkit-scrollbar-thumb]:rounded-full
+            [&::-webkit-scrollbar-thumb:hover]:bg-[#00000065]
+            [&::-webkit-scrollbar-thumb:hover]:cursor-pointer
+
+            scrollbar-thin
+            scrollbar-thumb-gray-400
+            scrollbar-track-gray-100
+            scrollbar-track-rounded
+            scrollbar-thumb-rounded
+            "
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
@@ -110,6 +135,7 @@ export default function ModifyPlaylist({ loaderData }: Route.ComponentProps) {
                     tracks.map((track, index) => {
                         return (
                             <TrackToUpload
+                                ref={setTrackRef(index)}
                                 track={track}
                                 track_index={index}
                                 key={index}
@@ -138,6 +164,13 @@ export default function ModifyPlaylist({ loaderData }: Route.ComponentProps) {
                     />
                 </div>
             </div>
+            {
+                tracks.length !== 0 &&
+                <button onClick={uploadAllTracks}
+                    className="rounded-md p-1 px-5 bg-[#ffffff15] cursor-pointer hover:bg-[#00000045] duration-500 fixed bottom-5 right-5">
+                    Upload
+                </button>
+            }
         </div>
     )
 }

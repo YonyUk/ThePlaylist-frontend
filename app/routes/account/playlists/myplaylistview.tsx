@@ -51,7 +51,7 @@ export default function MyPlaylistView({ loaderData }: Route.ComponentProps) {
     const navigate = useNavigate();
 
     const removeTrack = async (trackId: string) => {
-        const response = await playlistService.removeTrackFromPlaylist(playlistId,trackId);
+        const response = await playlistService.removeTrackFromPlaylist(playlistId, trackId);
         if (response.status === 202)
             setTracks(tracks.filter((track, _) => track.id != trackId));
         return response.status === 202;
@@ -74,7 +74,23 @@ export default function MyPlaylistView({ loaderData }: Route.ComponentProps) {
             </div>
             <hr className="flex w-full" />
             <SearchBar />
-            <div className="flex flex-col h-full w-full px-5 overflow-hidden rounded-md items-center">
+            <div className="flex flex-col h-full w-full px-5 rounded-md items-center
+            overflow-y-auto
+                    
+            [&::-webkit-scrollbar]:w-2
+            [&::-webkit-scrollbar-track]:rounded-full
+            [&::-webkit-scrollbar-thumb]:bg-[#ffffff15]
+            [&::-webkit-scrollbar-thumb]:rounded-full
+            [&::-webkit-scrollbar-thumb:hover]:bg-[#ffffff35]
+            [&::-webkit-scrollbar-thumb:hover]:cursor-pointer
+
+            scrollbar-thin
+            scrollbar-thumb-gray-400
+            scrollbar-track-gray-100
+            scrollbar-track-rounded
+            scrollbar-thumb-rounded
+
+            ">
                 {
                     tracks.map((trackItem, index) => (
                         <PlayListTrackItem track_id={trackItem.id} key={index}
@@ -85,7 +101,7 @@ export default function MyPlaylistView({ loaderData }: Route.ComponentProps) {
             <div className="flex flex-row justify-end w-full p-1 px-4 pb-3 gap-5">
                 <button onClick={() => navigate(`${ROUTES.MYPLAYLISTS}/${playlistId}/modify`)}
                     className="px-5 rounded-md bg-[#ffffff15] p-2 hover:bg-[#00000045] duration-500 cursor-pointer">
-                        <MdEdit size={20}/>
+                    <MdEdit size={20} />
                 </button>
                 <button
                     onClick={() => removePlaylist()}
@@ -93,7 +109,7 @@ export default function MyPlaylistView({ loaderData }: Route.ComponentProps) {
                     {
                         deleting === PlaylistDeletingState.PENDING &&
                         <div style={{
-                            animation: deleting ? "loadingAnimation 1.5s linear infinite" : ''
+                            animation: "loadingAnimation 1.5s linear infinite"
                         }}>
                             <AiOutlineLoading3Quarters size={20} />
                         </div>

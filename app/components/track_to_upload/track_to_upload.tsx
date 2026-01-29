@@ -5,11 +5,16 @@ import { HiUpload } from "react-icons/hi";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaRedoAlt } from "react-icons/fa";
 import { MdDone } from "react-icons/md";
+import React, { forwardRef, useImperativeHandle, useRef } from "react";
+
+export interface TrackToUploadRef {
+    handleClick: () => void;
+}
 
 interface TrackToUploadInput {
     track: File;
     track_index: number;
-    onDelete: (uploaded:boolean) => void;
+    onDelete: (uploaded: boolean) => void;
     uploadTrack: (trackName: string, author: string, data: File) => Promise<boolean>;
 }
 
@@ -20,7 +25,16 @@ enum UploadState {
     DONE
 }
 
-export default function TrackToUpload({ track, track_index, onDelete, uploadTrack }: TrackToUploadInput) {
+export const TrackToUpload = forwardRef<TrackToUploadRef,TrackToUploadInput>(({ track, track_index, onDelete, uploadTrack }: TrackToUploadInput,ref) => {
+
+    const buttonRef = useRef<HTMLButtonElement>(null);
+
+    useImperativeHandle(ref,() => ({
+        handleClick: () => {
+            if (buttonRef.current)
+                buttonRef.current.click();
+        }
+    }));
 
     const [trackName, setTrackName] = useState(track.name);
     const [authorName, setAuthorName] = useState("");
@@ -77,6 +91,7 @@ export default function TrackToUpload({ track, track_index, onDelete, uploadTrac
                     <RiDeleteBin6Line size={30} />
                 </button>
                 <button
+                    ref={buttonRef}
                     disabled={!(trackNameValid && authorNameValid) || uploadState === UploadState.DONE}
                     onClick={handleUploadTrack}
                     className={`${trackNameValid && authorNameValid && uploadState !== UploadState.DONE && "outline-none cursor-pointer hover:bg-[#00000065]"} duration-500 rounded-md p-1 
@@ -106,4 +121,4 @@ export default function TrackToUpload({ track, track_index, onDelete, uploadTrac
             </div>
         </div>
     )
-}
+});
