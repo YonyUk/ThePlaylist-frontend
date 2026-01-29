@@ -43,17 +43,18 @@ export default function MyPlaylists({ actionData, loaderData, params }: Route.Co
 
     const navigate = useNavigate();
 
-    const handlePrev = async () => {
+    const handleNext = async () => {
         const response = await service.myPlaylists(currentPage + 1, 10);
         const nextResponse = await service.myPlaylists(currentPage + 2, 10);
-        if (response.status === 200)
+        if (response.status === 200){
             setPlaylists(response.data);
+            setCurrentPage(currentPage + 1);
+        }
         if (nextResponse.status === 200)
             setNextPage(nextResponse.data.length !== 0);
-        setCurrentPage(currentPage + 1);
     }
 
-    const handleNext = async () => {
+    const handlePrev = async () => {
         const response = await service.myPlaylists(currentPage - 1, 10);
         if (response.status === 200)
             setPlaylists(response.data);

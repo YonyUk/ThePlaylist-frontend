@@ -27,8 +27,13 @@ export class PlaylistService {
         return await this.axiosClient.post<PlaylistDTO>(`/${this.environmentSettings.playlistsUrl}/create`, data);
     }
 
-    public async getPlaylists() {
-        return await this.axiosClient.get<PlaylistDTO[]>(this.environmentSettings.playlistsUrl);
+    public async getPlaylists(page:number=0) {
+        return await this.axiosClient.get<PlaylistDTO[]>(this.environmentSettings.playlistsUrl,{
+            params:{
+                page,
+                limit:10
+            }
+        });
     }
 
     public async checkPlaylistName(name: string) {

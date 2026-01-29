@@ -9,31 +9,64 @@ import type { PlaylistDTO } from "~/dtos/playlistdto";
 import { PlaylistService } from "~/services/PlaylistService";
 import type { AxiosError } from "axios";
 import type { NetworkError } from "~/types/responsetypes";
+import PageController from "~/components/pagecontroller/pagecontroller";
+
+interface LoaderDataResult {
+    playlists:PlaylistDTO[];
+    nextPage:boolean;
+}
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     const service = UserService.get();
     const playlistService = PlaylistService.get();
+    const page = parseInt(params.page);
 
     if (!service.authenticated())
         return redirect(ROUTES.LOGIN);
 
     try {
-        const response = await playlistService.getPlaylists();
-        return response.data;
+        const response = await playlistService.getPlaylists(page);
+        const nextResponse = await playlistService.getPlaylists(page + 1);
+        return {
+            playlists:response.data,
+            nextPage:nextResponse.data.length !== 0
+        } as LoaderDataResult
     } catch (error) {
         return (error as AxiosError);
     }
 }
 
-export default function PlayLists({ loaderData }: Route.ComponentProps) {
+export default function PlayLists({ loaderData, params }: Route.ComponentProps) {
+    const service = PlaylistService.get();
 
-    const playlists = Array.from(loaderData as PlaylistDTO[]);
+    const [playlists,setPlaylists] = useState(Array.from((loaderData as LoaderDataResult).playlists));
+    const [nextPage,setNextPage] = useState((loaderData as LoaderDataResult).nextPage);
+    const [currentPage,setCurrentPage] = useState(parseInt(params.page));
     const error = (loaderData as AxiosError);
 
     const itemsContainerWidth = 210;
     const itemsContainerHeight = 200;
 
     const error_msg = ((error.response?.data as any) as NetworkError);
+
+    const handlePrev = async () => {
+        const response = await service.getPlaylists(currentPage - 1);
+        setCurrentPage(currentPage - 1);
+        setNextPage(true);
+        if (response.status === 200)
+            setPlaylists(response.data);
+    }
+
+    const handleNext = async () => {
+        const response = await service.getPlaylists(currentPage + 1);
+        const nextResponse = await service.getPlaylists(currentPage + 2);
+        if (response.status === 200){
+            setCurrentPage(currentPage + 1);
+            setPlaylists(response.data);
+        }
+        if (nextResponse.status === 200)
+            setNextPage(nextResponse.data.length !== 0)
+    }
 
     return (
         <div className="p-3 pl-18 gap-5 flex flex-col h-screen w-full items-center">
@@ -73,6 +106,11 @@ export default function PlayLists({ loaderData }: Route.ComponentProps) {
                         )
                     })
                 }
+            </div>
+            <div className="flex w-full fixed justify-center items-center bottom-5">
+                <PageController currentPage={currentPage} nextPage={nextPage}
+                onNext={() => handleNext()} onPrev={() => handlePrev()}
+                />
             </div>
         </div>
     )

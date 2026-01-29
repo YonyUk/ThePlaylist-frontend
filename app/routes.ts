@@ -18,7 +18,7 @@ export type RoutePath = (typeof ROUTES)[AppRoute];
 
 export default [
     index("routes/home.tsx"),
-    route(ROUTES.PLAYLISTS,'routes/playlists/playlists.tsx'),
+    route(`${ROUTES.PLAYLISTS}/:page`,'routes/playlists/playlists.tsx'),
     route(`${ROUTES.PLAYLISTS}/:playlistId`,'routes/playlistview/playlistview.tsx'),
     route(ROUTES.REGISTER,'routes/register/register.tsx'),
     route(ROUTES.LOGIN,'routes/login/login.tsx'),
