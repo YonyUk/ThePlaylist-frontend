@@ -1,5 +1,4 @@
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { getHeight, getWidth } from "~/utils/tools";
 
 interface TrackLoadingInput {
     width?: number;

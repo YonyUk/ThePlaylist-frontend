@@ -3,6 +3,8 @@ import { useGetTrackInfo } from "~/hooks/track";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { MdOutlinePlaylistAdd } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { FaRedoAlt } from "react-icons/fa";
+import { useState } from "react";
 
 interface PlayListTrackItemInput {
     track_id: string;
@@ -10,14 +12,31 @@ interface PlayListTrackItemInput {
     dashboardControls?: boolean;
     dispensable?: boolean;
     onAddClicked?: (trackId: string) => void;
-    onRemoveClicked?: (trackId: string) => void;
+    onRemoveClicked?: (trackId: string) => Promise<boolean>;
+}
+
+export enum TrackDeletingState {
+    IDLE,
+    PENDING,
+    FAILED,
 }
 
 export default function PlayListTrackItem({ track_id, dashboardControls, draggable, dispensable, onAddClicked, onRemoveClicked }: PlayListTrackItemInput) {
     const track = useGetTrackInfo(track_id);
     const withDashboardControls = dashboardControls ?? false;
     const isDispensable = dispensable ?? false;
+    const [deletingState, setDeletingState] = useState<TrackDeletingState>(TrackDeletingState.IDLE);
     const isDraggable = draggable ?? false;
+
+    const handleRemoveClicked = () => {
+        if (onRemoveClicked) {
+            setDeletingState(TrackDeletingState.PENDING);
+            onRemoveClicked(track_id).then(resp => resp ?
+                setDeletingState(TrackDeletingState.IDLE) :
+                setDeletingState(TrackDeletingState.FAILED)
+            ).catch(err => setDeletingState(TrackDeletingState.FAILED));
+        }
+    }
 
     return (
         <>
@@ -56,11 +75,23 @@ export default function PlayListTrackItem({ track_id, dashboardControls, draggab
                                 {
                                     isDispensable &&
                                     <button className="cursor-pointer p-1 rounded-md duration-500 hover:bg-[#00000045]"
-                                        onClick={() => {
-                                            if (onRemoveClicked)
-                                                onRemoveClicked(track_id);
-                                        }}>
-                                        <RiDeleteBin6Line size={20} />
+                                        onClick={handleRemoveClicked}>
+                                        {
+                                            deletingState === TrackDeletingState.IDLE &&
+                                            <RiDeleteBin6Line size={20} />
+                                        }
+                                        {
+                                            deletingState === TrackDeletingState.PENDING &&
+                                            <div style={{
+                                                animation: "loadingAnimation 1.5s linear infinite"
+                                            }}>
+                                                <AiOutlineLoading3Quarters size={20} />
+                                            </div>
+                                        }
+                                        {
+                                            deletingState === TrackDeletingState.FAILED &&
+                                            <FaRedoAlt size={20} />
+                                        }
                                     </button>
                                 }
                             </div>
@@ -78,11 +109,23 @@ export default function PlayListTrackItem({ track_id, dashboardControls, draggab
                             {
                                 isDispensable &&
                                 <button className="cursor-pointer p-1 rounded-md duration-500 hover:bg-[#00000045]"
-                                    onClick={() => {
-                                        if (onRemoveClicked)
-                                            onRemoveClicked(track_id);
-                                    }}>
-                                    <RiDeleteBin6Line size={20} />
+                                    onClick={handleRemoveClicked}>
+                                    {
+                                        deletingState === TrackDeletingState.IDLE &&
+                                        <RiDeleteBin6Line size={20} />
+                                    }
+                                    {
+                                        deletingState === TrackDeletingState.PENDING &&
+                                        <div style={{
+                                            animation: "loadingAnimation 1.5s linear infinite"
+                                        }}>
+                                            <AiOutlineLoading3Quarters size={20} />
+                                        </div>
+                                    }
+                                    {
+                                        deletingState === TrackDeletingState.FAILED &&
+                                        <FaRedoAlt size={20} />
+                                    }
                                 </button>
                             }
                         </div>

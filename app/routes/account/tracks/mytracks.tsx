@@ -10,6 +10,8 @@ import PlayListTrackItem from "~/components/playlist_track_item/playlist_track_i
 import { useState } from "react";
 import { MdNavigateNext } from "react-icons/md";
 import { MdNavigateBefore } from "react-icons/md";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { FaRedoAlt } from "react-icons/fa";
 
 interface ClientLoaderData {
     tracks: TrackDTO[];
@@ -49,11 +51,14 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
     const [next,setNext] = useState(data.next);
     const [textPattern,setTextPattern] = useState('');
 
-    const removeTrack = async (trackId:string) => {
-        
-    }
-    
     const navigate = useNavigate();
+
+    const removeTrack = async (trackId:string) => {
+        const response = await service.removeTrack(trackId);
+        if (response.status === 401)
+            navigate(ROUTES.LOGIN);
+        return response.status === 202;
+    }    
 
     const searchByPattern = async (text:string) => {
         try {
@@ -109,7 +114,7 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
             </div>
             <div
                 className="flex flex-row justify-around mt-2 gap-2">
-                <div 
+                <button 
                 onClick={() => {
                     if (page > 0)
                         handlePrevPage(page - 1);
@@ -118,11 +123,11 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
                     ${page === 0 && 'text-[#ffffff65]'} ${page !== 0 && 'cursor-pointer'}
                     `}>
                     <MdNavigateBefore size={20} />
-                </div>
-                <div className="flex flex-row justify-center items-center p-1 bg-[#00000045] rounded-md">
+                </button>
+                <button className="flex flex-row justify-center items-center p-1 bg-[#00000045] rounded-md">
                     <small> {page} </small>
-                </div>
-                <div
+                </button>
+                <button
                 onClick={() => {
                     if (next)
                         handleNextPage(page + 1);
@@ -131,7 +136,7 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
                     ${!next && 'text-[#ffffff65]'} ${next && 'cursor-pointer'}
                     `}>
                     <MdNavigateNext size={20} />
-                </div>
+                </button>
             </div>
         </div>
     )
