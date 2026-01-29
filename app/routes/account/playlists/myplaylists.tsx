@@ -5,6 +5,14 @@ import { ROUTES } from "~/routes";
 import type { PlaylistDTO } from "~/dtos/playlistdto";
 import PlayListItem from "~/components/playlist/playlist";
 import AddItem from "~/components/add_item/add_item";
+import PageController from "~/components/pagecontroller/pagecontroller";
+import { useState } from "react";
+import { PlaylistService } from "~/services/PlaylistService";
+
+interface LoaderDataResult {
+    playlists: PlaylistDTO[];
+    nextPage: boolean;
+}
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     const page = parseInt(params.page);
@@ -12,10 +20,12 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     try {
         const authenticated = await service.authenticated();
         if (authenticated) {
-            const response = await service.getInfo();
-            const user_id = response.data.id;
-            const playlists_response = await service.myPlaylists(page,10);
-            return playlists_response.data;
+            const playlists_response = await service.myPlaylists(page, 10);
+            const nextResponse = await service.myPlaylists(page + 1, 10);
+            return {
+                playlists: playlists_response.data,
+                nextPage: nextResponse.data.length !== 0
+            } as LoaderDataResult
         }
         return redirect(ROUTES.LOGIN);
     } catch (error) {
@@ -23,13 +33,33 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     }
 }
 
-export default function MyPlaylists({ actionData, loaderData }: Route.ComponentProps) {
-
-    const playlists = (loaderData as PlaylistDTO[]);
+export default function MyPlaylists({ actionData, loaderData, params }: Route.ComponentProps) {
+    const service = UserService.get();
+    const [currentPage, setCurrentPage] = useState(parseInt(params.page));
+    const [playlists, setPlaylists] = useState((loaderData as LoaderDataResult).playlists);
+    const [nextPage, setNextPage] = useState((loaderData as LoaderDataResult).nextPage);
     const itemsContainerWidth = 210;
     const itemsContainerHeight = 200;
 
     const navigate = useNavigate();
+
+    const handlePrev = async () => {
+        const response = await service.myPlaylists(currentPage + 1, 10);
+        const nextResponse = await service.myPlaylists(currentPage + 2, 10);
+        if (response.status === 200)
+            setPlaylists(response.data);
+        if (nextResponse.status === 200)
+            setNextPage(nextResponse.data.length !== 0);
+        setCurrentPage(currentPage + 1);
+    }
+
+    const handleNext = async () => {
+        const response = await service.myPlaylists(currentPage - 1, 10);
+        if (response.status === 200)
+            setPlaylists(response.data);
+        setNextPage(true);
+        setCurrentPage(currentPage - 1);
+    }
 
     return (
         <div className="flex flex-end flex-wrap rounded-md bg-[#00000045] p-4 pl-18">
@@ -52,6 +82,14 @@ export default function MyPlaylists({ actionData, loaderData }: Route.ComponentP
                     width={itemsContainerWidth}
                     height={itemsContainerHeight}
                     text="Add new playlist" />
+            </div>
+            <div className="flex w-full fixed justify-center items-center bottom-5">
+                <PageController
+                    nextPage={nextPage}
+                    currentPage={currentPage}
+                    onNext={() => handleNext()}
+                    onPrev={() => handlePrev()}
+                />
             </div>
         </div>
     )
