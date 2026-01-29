@@ -4,7 +4,7 @@ import type { TrackDownloadDTO } from "~/dtos/track_download_dto";
 import type { TrackDTO, TrackUpdateDTO } from "~/dtos/trackdto";
 import type { ExistencialQuery } from "~/types/responsetypes";
 
-enum SearchMode {
+enum TrackSearchMode {
     BY_NAME = 'by name',
     BY_AUTHOR = 'by author',
     BOTH = 'both'
@@ -114,7 +114,7 @@ export class TrackService {
             params:{
                 playlist_id:playlistId,
                 pattern,
-                search_mode:SearchMode.BOTH,
+                search_mode:TrackSearchMode.BOTH,
                 limit:100
             }
         })

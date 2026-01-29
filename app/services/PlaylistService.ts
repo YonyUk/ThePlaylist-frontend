@@ -3,6 +3,12 @@ import { AxiosClient } from "./http/AxiosClient";
 import type { CreatePlaylistDTO, PlaylistDTO } from "~/dtos/playlistdto";
 import type { ExistencialQuery } from "~/types/responsetypes";
 
+enum PlaylistSearchMode {
+    BY_NAME = 'by name',
+    BY_AUTHOR = 'by author',
+    BOTH = 'both'
+}
+
 export class PlaylistService {
 
     private axiosClient: AxiosClient;
@@ -63,5 +69,17 @@ export class PlaylistService {
     public async removePlaylist(playlistId:string){
         const url = `${this.environmentSettings.playlistsUrl}/${playlistId}`;
         return await this.axiosClient.delete(url);
+    }
+
+    public async searchPlaylists(pattern:string,page:number=0){
+        const url = `${this.environmentSettings.playlistsUrl}`
+        return await this.axiosClient.get<PlaylistDTO[]>(url,{
+            params:{
+                page,
+                limit:10,
+                pattern,
+                search_mode:PlaylistSearchMode.BOTH
+            }
+        });
     }
 }

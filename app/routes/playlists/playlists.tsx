@@ -12,8 +12,8 @@ import type { NetworkError } from "~/types/responsetypes";
 import PageController from "~/components/pagecontroller/pagecontroller";
 
 interface LoaderDataResult {
-    playlists:PlaylistDTO[];
-    nextPage:boolean;
+    playlists: PlaylistDTO[];
+    nextPage: boolean;
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
@@ -28,8 +28,8 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
         const response = await playlistService.getPlaylists(page);
         const nextResponse = await playlistService.getPlaylists(page + 1);
         return {
-            playlists:response.data,
-            nextPage:nextResponse.data.length !== 0
+            playlists: response.data,
+            nextPage: nextResponse.data.length !== 0
         } as LoaderDataResult
     } catch (error) {
         return (error as AxiosError);
@@ -39,18 +39,21 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 export default function PlayLists({ loaderData, params }: Route.ComponentProps) {
     const service = PlaylistService.get();
 
-    const [playlists,setPlaylists] = useState(Array.from((loaderData as LoaderDataResult).playlists));
-    const [nextPage,setNextPage] = useState((loaderData as LoaderDataResult).nextPage);
-    const [currentPage,setCurrentPage] = useState(parseInt(params.page));
+    const [playlists, setPlaylists] = useState(Array.from((loaderData as LoaderDataResult).playlists));
+    const [nextPage, setNextPage] = useState((loaderData as LoaderDataResult).nextPage);
+    const [currentPage, setCurrentPage] = useState(parseInt(params.page));
     const error = (loaderData as AxiosError);
-
+    const [isSearching, setIsSearching] = useState(false);
+    const [currentPattern, setCurrentPattern] = useState('');
     const itemsContainerWidth = 210;
     const itemsContainerHeight = 200;
 
     const error_msg = ((error.response?.data as any) as NetworkError);
 
     const handlePrev = async () => {
-        const response = await service.getPlaylists(currentPage - 1);
+        const response = isSearching ?
+            await service.searchPlaylists(currentPattern, currentPage - 1) :
+            await service.getPlaylists(currentPage - 1);
         setCurrentPage(currentPage - 1);
         setNextPage(true);
         if (response.status === 200)
@@ -58,9 +61,13 @@ export default function PlayLists({ loaderData, params }: Route.ComponentProps) 
     }
 
     const handleNext = async () => {
-        const response = await service.getPlaylists(currentPage + 1);
-        const nextResponse = await service.getPlaylists(currentPage + 2);
-        if (response.status === 200){
+        const response = isSearching ?
+            await service.searchPlaylists(currentPattern, currentPage + 1) :
+            await service.getPlaylists(currentPage + 1);
+        const nextResponse = isSearching ?
+            await service.searchPlaylists(currentPattern, currentPage + 2) :
+            await service.getPlaylists(currentPage + 2);
+        if (response.status === 200) {
             setCurrentPage(currentPage + 1);
             setPlaylists(response.data);
         }
@@ -68,9 +75,17 @@ export default function PlayLists({ loaderData, params }: Route.ComponentProps) 
             setNextPage(nextResponse.data.length !== 0)
     }
 
+    const searchPlaylists = async (pattern: string) => {
+        const response = await service.searchPlaylists(pattern, isSearching ? 0 : currentPage);
+        setCurrentPattern(pattern);
+        setIsSearching(pattern.length !== 0)
+        if (response.status === 200)
+            setPlaylists(response.data);
+    }
+
     return (
         <div className="p-3 pl-18 gap-5 flex flex-col h-screen w-full items-center">
-            <SearchBar />
+            <SearchBar onSearchClick={(value: string) => searchPlaylists(value)} />
             <div className={`flex ${playlists.length !== 0 ?
                 'flex-wrap bg-[#00000045] w-full px-5 py-2 overflow-auto' :
                 'flex-col h-full justify-center'}
@@ -109,7 +124,7 @@ export default function PlayLists({ loaderData, params }: Route.ComponentProps) 
             </div>
             <div className="flex w-full fixed justify-center items-center bottom-5">
                 <PageController currentPage={currentPage} nextPage={nextPage}
-                onNext={() => handleNext()} onPrev={() => handlePrev()}
+                    onNext={() => handleNext()} onPrev={() => handlePrev()}
                 />
             </div>
         </div>

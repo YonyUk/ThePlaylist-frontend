@@ -18,7 +18,7 @@ const SideBar = () => {
         {
             icon: <BsMusicNoteList size={30} />,
             label: 'Playlists',
-            url: ROUTES.PLAYLISTS
+            url: `${ROUTES.PLAYLISTS}/0`
         },
         {
             icon: <IoMdContact size={30} />,
