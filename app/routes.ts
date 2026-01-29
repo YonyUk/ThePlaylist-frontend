@@ -28,6 +28,7 @@ export default [
         route(ROUTES.CREATEPLAYLIST,'routes/account/playlists/create_playlist.tsx'),
         route(`${ROUTES.MYPLAYLISTS}/:playlistId/modify`,"routes/account/playlists/modify_playlist.tsx"),
         route(`${ROUTES.MYTRACKS}/:page`,"routes/account/tracks/mytracks.tsx"),
-        route(`${ROUTES.MYPLAYLISTS}/:playlistId/modify/add_from_cloud/:page`,'routes/account/playlists/add_tracks_from_cloud.tsx')
+        route(`${ROUTES.MYPLAYLISTS}/:playlistId/modify/add_from_cloud/:page`,'routes/account/playlists/add_tracks_from_cloud.tsx'),
+        route(`${ROUTES.MYPLAYLISTS}/:playlistId/view`,'routes/account/playlists/myplaylistview.tsx')
     ])
 ] satisfies RouteConfig;

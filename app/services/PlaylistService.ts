@@ -54,4 +54,9 @@ export class PlaylistService {
         const url = `${this.environmentSettings.playlistsUrl}/${playlistId}/tracks`;
         return await this.axiosClient.delete(`${url}?track_id=${trackId}`);
     }
+
+    public async removePlaylist(playlistId:string){
+        const url = `${this.environmentSettings.playlistsUrl}/${playlistId}`;
+        return await this.axiosClient.delete(url);
+    }
 }

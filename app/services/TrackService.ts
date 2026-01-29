@@ -95,4 +95,8 @@ export class TrackService{
             "Content-Type":"multipart/form-data"
         }});
     }
+
+    public async removeTrack(trackId:string){
+        return await this.axiosClient.delete(trackId);
+    }
 }
