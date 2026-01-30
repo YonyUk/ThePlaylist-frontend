@@ -100,6 +100,36 @@ export class PlaylistService {
 
     public async addPlayToPlaylist(playlistId:string){
         const url = `${this.environmentSettings.playlistsUrl}/${playlistId}/stats/plays`;
-        return await this.axiosClient.get<PlaylistDTO>(url);
+        return await this.axiosClient.put<PlaylistDTO>(url);
+    }
+
+    public async addDislikeToPlaylist(playlistId:string){
+        const url = `${this.environmentSettings.playlistsUrl}/${playlistId}/stats/dislikes`;
+        return await this.axiosClient.put<PlaylistDTO>(url);
+    }
+
+    public async removeDislikeFromPlaylist(playlistId:string){
+        const url = `${this.environmentSettings.playlistsUrl}/${playlistId}/stats/dislikes`;
+        return await this.axiosClient.delete<PlaylistDTO>(url);
+    }
+
+    public async disliked(playlistId:string){
+        const url = `${this.environmentSettings.playlistsUrl}/${playlistId}/stats/dislikes`;
+        return await this.axiosClient.get<ExistencialQuery>(url);
+    }
+
+    public async addLoveToPlaylist(playlistId:string){
+        const url = `${this.environmentSettings.playlistsUrl}/${playlistId}/stats/loves`;
+        return await this.axiosClient.put<PlaylistDTO>(url);
+    }
+
+    public async removeLoveFromPlaylist(playlistId:string){
+        const url = `${this.environmentSettings.playlistsUrl}/${playlistId}/stats/loves`;
+        return await this.axiosClient.delete<PlaylistDTO>(url);
+    }
+
+    public async loved(playlistId:string){
+        const url = `${this.environmentSettings.playlistsUrl}/${playlistId}/stats/loves`;
+        return await this.axiosClient.get<ExistencialQuery>(url);
     }
 }
