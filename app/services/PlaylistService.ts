@@ -1,6 +1,6 @@
 import environmentSettings from "~/environment";
 import { AxiosClient } from "./http/AxiosClient";
-import type { CreatePlaylistDTO, PlaylistDTO } from "~/dtos/playlistdto";
+import type { CreatePlaylistDTO, PlaylistDTO, UpdatePlaylistInfoDTO } from "~/dtos/playlistdto";
 import type { ExistencialQuery } from "~/types/responsetypes";
 
 enum PlaylistSearchMode {
@@ -131,5 +131,10 @@ export class PlaylistService {
     public async loved(playlistId:string){
         const url = `${this.environmentSettings.playlistsUrl}/${playlistId}/stats/loves`;
         return await this.axiosClient.get<ExistencialQuery>(url);
+    }
+
+    public async updatePlaylistInfo(playlistId:string,data:UpdatePlaylistInfoDTO){
+        const url = `${this.environmentSettings.playlistsUrl}/${playlistId}`;
+        return await this.axiosClient.put<PlaylistDTO>(url,data);
     }
 }

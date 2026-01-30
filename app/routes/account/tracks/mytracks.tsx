@@ -105,7 +105,22 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
             className="flex flex-col pl-18 w-full h-22/25 items-center p-2 overflow-y-auto"
         >
             <SearchBar onSearchClick={(value:string) => searchByPattern(value)}/>
-            <div className="flex flex-col mt-2 h-4/5 w-full p-2 overflow-hidden rounded-md items-center bg-[#00000045]">
+            <div className="flex flex-col mt-2 h-4/5 w-full p-2 rounded-md items-center bg-[#00000045]
+            overflow-y-auto
+                    
+            [&::-webkit-scrollbar]:w-2
+            [&::-webkit-scrollbar-track]:rounded-full
+            [&::-webkit-scrollbar-thumb]:bg-[#ffffff35]
+            [&::-webkit-scrollbar-thumb]:rounded-full
+            [&::-webkit-scrollbar-thumb:hover]:bg-[#ffffff65]
+            [&::-webkit-scrollbar-thumb:hover]:cursor-pointer
+
+            scrollbar-thin
+            scrollbar-thumb-gray-400
+            scrollbar-track-gray-100
+            scrollbar-track-rounded
+            scrollbar-thumb-rounded
+            ">
                 <h1>Tracks</h1>
                 {
                     tracks.map((trackItem, index) => (

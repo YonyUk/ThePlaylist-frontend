@@ -17,3 +17,8 @@ export interface CreatePlaylistDTO {
     name:string;
     description:string;
 }
+
+export interface UpdatePlaylistInfoDTO {
+    name:string;
+    description:string;
+}
