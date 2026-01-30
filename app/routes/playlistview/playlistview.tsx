@@ -120,15 +120,7 @@ export default function PlayListView({ loaderData, params }: Route.ComponentProp
     }
 
     const onPlayTrack = async () => {
-        const response = await service.getTrackInfo(currentTrack.id);
         try {
-            const track_data = response.data;
-            const update_track_data: TrackUpdateDTO = {
-                likes: track_data.likes,
-                dislikes: track_data.dislikes,
-                loves: track_data.loves,
-                plays: track_data.plays + 1
-            }
             service.updateTrackPlays(currentTrack.id);
         } catch (error) {
 

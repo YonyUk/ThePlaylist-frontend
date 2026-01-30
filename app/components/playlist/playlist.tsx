@@ -55,8 +55,8 @@ export default function PlayListItem({
         }}
         className="flex flex-col bg-[#ffffff15] backdrop-blur-xs w-55 p-2 px-4
             items-center rounded-md cursor-pointer hover:bg-[#00000015]
-            duration-500 m-1" onClick={(e) => navigate(
-            toEditMode ? `${ROUTES.MYPLAYLISTS}/${id}/view` : `${ROUTES.PLAYLISTS}/${id}`,
+            duration-500 " onClick={(e) => navigate(
+            toEditMode ? `${ROUTES.MYPLAYLISTS}/${id}/view` : `${ROUTES.PLAYLISTS}/${id}/view`,
             { state: { edit: toEditMode === true } }
         )}>
             <h1 className="text-[20px]">{name}</h1>
