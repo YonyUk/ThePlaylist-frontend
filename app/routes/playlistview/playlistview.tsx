@@ -101,7 +101,7 @@ const onTrackLoveRemoved = async (trackId: string, callback: (data: TrackDTO) =>
     }
 }
 
-const addLikeToPlaylist = async (playlistId:string) => {
+const addLikeToPlaylist = async (playlistId: string) => {
     const service = PlaylistService.get();
     try {
         const response = await service.addLikeToPlaylist(playlistId);
@@ -111,7 +111,7 @@ const addLikeToPlaylist = async (playlistId:string) => {
     }
 }
 
-const removeLikeFromPlaylist = async (playlistId:string) => {
+const removeLikeFromPlaylist = async (playlistId: string) => {
     const service = PlaylistService.get();
     try {
         const response = await service.removeLikeFromPlaylist(playlistId);
@@ -121,11 +121,61 @@ const removeLikeFromPlaylist = async (playlistId:string) => {
     }
 }
 
-const MenuItems:ComboboxFloatingButtonOption[] = [
+const addDislikeToPlaylist = async (playlistId: string) => {
+    const service = PlaylistService.get();
+    try {
+        const response = await service.addDislikeToPlaylist(playlistId);
+        return response.status === 202;
+    } catch (error) {
+        return false;
+    }
+}
+
+const removeDislikeFromPlaylist = async (playlistId: string) => {
+    const service = PlaylistService.get();
+    try {
+        const response = await service.removeDislikeFromPlaylist(playlistId);
+        return response.status === 202;
+    } catch (error) {
+        return false;
+    }
+}
+
+const addLoveToPlaylist = async (playlistId: string) => {
+    const service = PlaylistService.get();
+    try {
+        const response = await service.addLoveToPlaylist(playlistId);
+        return response.status === 202;
+    } catch (error) {
+        return false;
+    }
+}
+
+const removeLoveFromPlaylist = async (playlistId: string) => {
+    const service = PlaylistService.get();
+    try {
+        const response = await service.removeLoveFromPlaylist(playlistId);
+        return response.status === 202;
+    } catch (error) {
+        return false;
+    }
+}
+
+const MenuItems: ComboboxFloatingButtonOption[] = [
     {
-        description:'likes',
-        primaryIcon:<AiOutlineLike size={20}/>,
-        secondaryIcon:<AiFillLike size={20}/>,
+        description: 'likes',
+        primaryIcon: <AiOutlineLike size={20} />,
+        secondaryIcon: <AiFillLike size={20} />,
+    },
+    {
+        description: 'dislikes',
+        primaryIcon: <AiOutlineDislike size={20} />,
+        secondaryIcon: <AiFillDislike size={20} />
+    },
+    {
+        description: 'loves',
+        primaryIcon: <FaRegHeart size={20} />,
+        secondaryIcon: <FaHeart size={20} />
     }
 ]
 
@@ -151,12 +201,22 @@ export default function PlayListView({ loaderData, params }: Route.ComponentProp
     const {
         infoState,
         isLiked,
+        isDisliked,
+        isLoved,
         refreshStats
     } = useGetUserPlaylistStats(params.playlistId);
 
-    MenuItems[0].primary = infoState === PlaylistInfoLoadState.DONE && !isLiked;
+    MenuItems[0].primary = !isLiked;
     MenuItems[0].onSelect = async () => addLikeToPlaylist(params.playlistId);
     MenuItems[0].onDeselect = async () => removeLikeFromPlaylist(params.playlistId);
+
+    MenuItems[1].primary = !isDisliked;
+    MenuItems[1].onSelect = async () => addDislikeToPlaylist(params.playlistId);
+    MenuItems[1].onDeselect = async () => removeDislikeFromPlaylist(params.playlistId);
+
+    MenuItems[2].primary = !isLoved;
+    MenuItems[2].onSelect = async () => addLoveToPlaylist(params.playlistId);
+    MenuItems[2].onDeselect = async () => removeLoveFromPlaylist(params.playlistId);
 
     const updateData = (data: TrackDTO) => {
         setLikes(data.likes);
@@ -255,7 +315,7 @@ export default function PlayListView({ loaderData, params }: Route.ComponentProp
                         onTrackDislikeRemoved(currentTrack.id, updateData)}
                     onLoved={(value: boolean) => value ?
                         onTrackLoved(currentTrack.id, updateData) :
-                        onTrackLoveRemoved(currentTrack.id,updateData)}
+                        onTrackLoveRemoved(currentTrack.id, updateData)}
                 />
             }
             {
@@ -286,8 +346,8 @@ export default function PlayListView({ loaderData, params }: Route.ComponentProp
                     currentTrackIndex > 0 ?
                         handlePrev : undefined
                 }
-                onTrackEnded={() => playlistService.addPlayToPlaylist(params.playlistId)} 
-                />
+                onTrackEnded={() => playlistService.addPlayToPlaylist(params.playlistId)}
+            />
             <div className="flex flex-col h-fit w-full px-5 rounded-md items-center
             overflow-y-auto
                     
@@ -325,6 +385,7 @@ export default function PlayListView({ loaderData, params }: Route.ComponentProp
                 marginBottom={5}
                 marginRight={10}
                 iconSize={30}
+                height={40}
                 refreshFunc={refreshStats}
             />
         </div>

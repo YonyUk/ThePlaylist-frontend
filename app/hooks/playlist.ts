@@ -5,7 +5,8 @@ export enum PlaylistInfoLoadState {
     IDLE,
     PENDING,
     DONE,
-    FAILED
+    FAILED,
+    PARTIAL
 }
 
 export const useGetUserPlaylistStats = (id:string) => {
@@ -17,13 +18,41 @@ export const useGetUserPlaylistStats = (id:string) => {
 
     const loadInfoStats = () => {
         setInfoState(PlaylistInfoLoadState.PENDING);
-        service.liked(id).then( resp => {
-            if (resp.status === 200){
-                setLiked(resp.data.result);
-                setInfoState(PlaylistInfoLoadState.DONE);
-            } else
+        (async () => {
+            const likeResponse = await service.liked(id);
+            const dislikeResponse = await service.disliked(id);
+            const loveResponse = await service.loved(id);
+
+            if (likeResponse.status === 200){
+                setLiked(likeResponse.data.result);
+                setInfoState(PlaylistInfoLoadState.PARTIAL);
+            }
+
+            if (dislikeResponse.status === 200){
+                setDisliked(dislikeResponse.data.result);
+                setInfoState(PlaylistInfoLoadState.PARTIAL);
+            }
+
+            if (loveResponse.status === 200){
+                setLoved(loveResponse.data.result);
+                setInfoState(PlaylistInfoLoadState.PARTIAL);
+            }
+
+            if (
+                likeResponse.status !== 200 &&
+                dislikeResponse.status !== 200 &&
+                loveResponse.status !== 200
+            )
                 setInfoState(PlaylistInfoLoadState.FAILED);
-        }).catch(err => setInfoState(PlaylistInfoLoadState.FAILED));
+
+            if (
+                likeResponse.status === dislikeResponse.status && 
+                dislikeResponse.status === loveResponse.status &&
+                loveResponse.status === 200
+            )
+                setInfoState(PlaylistInfoLoadState.DONE);
+        })();
+
     };
 
     useEffect(() => {
@@ -33,6 +62,8 @@ export const useGetUserPlaylistStats = (id:string) => {
     return {
         infoState,
         isLiked:liked,
+        isDisliked:disliked,
+        isLoved:loved,
         refreshStats:loadInfoStats
     };
 }
