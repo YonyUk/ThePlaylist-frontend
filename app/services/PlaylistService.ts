@@ -82,4 +82,19 @@ export class PlaylistService {
             }
         });
     }
+
+    public async addLikeToPlaylist(playlistId:string){
+        const url = `${this.environmentSettings.playlistsUrl}/${playlistId}/stats/likes`;
+        return await this.axiosClient.put<PlaylistDTO>(url);
+    }
+
+    public async removeLikeFromPlaylist(playlistId:string){
+        const url = `${this.environmentSettings.playlistsUrl}/${playlistId}/stats/likes`;
+        return await this.axiosClient.delete<PlaylistDTO>(url);
+    }
+
+    public async liked(playlistId:string) {
+        const url = `${this.environmentSettings.playlistsUrl}/${playlistId}/stats/likes`;
+        return await this.axiosClient.get<ExistencialQuery>(url);
+    }
 }

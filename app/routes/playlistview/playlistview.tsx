@@ -11,10 +11,14 @@ import { TrackLoadState, useGetTrack } from "~/hooks/track";
 import TrackLoading from "~/components/track_loading/trackloading";
 import { UserService } from "~/services/UserService";
 import { ROUTES } from "~/routes";
-import type { TrackDTO, TrackUpdateDTO } from "~/dtos/trackdto";
+import type { TrackDTO } from "~/dtos/trackdto";
 import { redirect } from "react-router";
 import PlayListTrackItem from "~/components/playlist_track_item/playlist_track_item";
 import { FaRedoAlt } from "react-icons/fa";
+import ComboBoxFloatingButton, { type ComboboxFloatingButtonOption } from "~/components/floatingbutton/comboboxfloatingbutton";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { AiFillLike, AiOutlineLike, AiFillDislike, AiOutlineDislike } from "react-icons/ai";
+import { PlaylistInfoLoadState, useGetUserPlaylistStats } from "~/hooks/playlist";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     const playlist_id = params.playlistId;
@@ -37,9 +41,96 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     }
 }
 
+const onTrackLiked = async (trackId: string, callback: (data: TrackDTO) => void) => {
+    const service = TrackService.get();
+    try {
+        const response = await service.addLike(trackId);
+        callback(response.data);
+    } catch (error) {
+
+    }
+}
+
+const onTrackLikeRemoved = async (trackId: string, callback: (data: TrackDTO) => void) => {
+    const service = TrackService.get();
+    try {
+        const response = await service.removeLike(trackId);
+        callback(response.data);
+    } catch (error) {
+
+    }
+}
+
+const onTrackDisliked = async (trackId: string, callback: (data: TrackDTO) => void) => {
+    const service = TrackService.get();
+    try {
+        const response = await service.addDislike(trackId);
+        callback(response.data);
+    } catch (error) {
+
+    }
+}
+
+const onTrackDislikeRemoved = async (trackId: string, callback: (data: TrackDTO) => void) => {
+    const service = TrackService.get();
+    try {
+        const response = await service.removeDislike(trackId);
+        callback(response.data);
+    } catch (error) {
+
+    }
+}
+
+const onTrackLoved = async (trackId: string, callback: (data: TrackDTO) => void) => {
+    const service = TrackService.get();
+    try {
+        const response = await service.addLove(trackId);
+        callback(response.data);
+    } catch (error) {
+
+    }
+}
+
+const onTrackLoveRemoved = async (trackId: string, callback: (data: TrackDTO) => void) => {
+    const service = TrackService.get();
+    try {
+        const response = await service.removeLove(trackId);
+        callback(response.data);
+    } catch (error) {
+
+    }
+}
+
+const addLikeToPlaylist = async (playlistId:string) => {
+    const service = PlaylistService.get();
+    try {
+        const response = await service.addLikeToPlaylist(playlistId);
+        return response.status === 202;
+    } catch (error) {
+        return false;
+    }
+}
+
+const removeLikeFromPlaylist = async (playlistId:string) => {
+    const service = PlaylistService.get();
+    try {
+        const response = await service.removeLikeFromPlaylist(playlistId);
+        return response.status === 202;
+    } catch (error) {
+        return false;
+    }
+}
+
+const MenuItems:ComboboxFloatingButtonOption[] = [
+    {
+        description:'likes',
+        primaryIcon:<AiOutlineLike size={20}/>,
+        secondaryIcon:<AiFillLike size={20}/>,
+    }
+]
+
 export default function PlayListView({ loaderData, params }: Route.ComponentProps) {
     const service = TrackService.get();
-
     const [tracks, setTracks] = useState((loaderData as PlaylistDTO).tracks);
     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
     const [currentTrack, setCurrentTrack] = useState(tracks[currentTrackIndex]);
@@ -56,6 +147,16 @@ export default function PlayListView({ loaderData, params }: Route.ComponentProp
     const trackContainerWidth = 160;
     const trackContainerHeight = 300;
 
+    const {
+        infoState,
+        isLiked,
+        refreshStats
+    } = useGetUserPlaylistStats(params.playlistId);
+
+    MenuItems[0].primary = infoState === PlaylistInfoLoadState.DONE && !isLiked;
+    MenuItems[0].onSelect = async () => addLikeToPlaylist(params.playlistId);
+    MenuItems[0].onDeselect = async () => removeLikeFromPlaylist(params.playlistId);
+
     const updateData = (data: TrackDTO) => {
         setLikes(data.likes);
         setDislikes(data.dislikes);
@@ -63,60 +164,6 @@ export default function PlayListView({ loaderData, params }: Route.ComponentProp
         setPlays(data.plays);
         tracks[currentTrackIndex] = data;
         setCurrentTrack(data);
-    }
-
-    const onTrackLiked = async () => {
-        try {
-            const response = await service.addLike(currentTrack.id);
-            updateData(response.data);
-        } catch (error) {
-
-        }
-    }
-
-    const onTrackLikeRemoved = async () => {
-        try {
-            const response = await service.removeLike(currentTrack.id);
-            updateData(response.data);
-        } catch (error) {
-
-        }
-    }
-
-    const onTrackDisliked = async () => {
-        try {
-            const response = await service.addDislike(currentTrack.id);
-            updateData(response.data);
-        } catch (error) {
-
-        }
-    }
-
-    const onTrackDislikeRemoved = async () => {
-        try {
-            const response = await service.removeDislike(currentTrack.id);
-            updateData(response.data);
-        } catch (error) {
-
-        }
-    }
-
-    const onTrackLoved = async () => {
-        try {
-            const response = await service.addLove(currentTrack.id);
-            updateData(response.data);
-        } catch (error) {
-
-        }
-    }
-
-    const onTrackLoveRemoved = async () => {
-        try {
-            const response = await service.removeLove(currentTrack.id);
-            updateData(response.data);
-        } catch (error) {
-
-        }
     }
 
     const onPlayTrack = async () => {
@@ -199,9 +246,15 @@ export default function PlayListView({ loaderData, params }: Route.ComponentProp
                     liked={liked}
                     disliked={disliked}
                     loved={loved}
-                    onLiked={(value: boolean) => value ? onTrackLiked() : onTrackLikeRemoved()}
-                    onDisliked={(value: boolean) => value ? onTrackDisliked() : onTrackDislikeRemoved()}
-                    onLoved={(value: boolean) => value ? onTrackLoved() : onTrackLoveRemoved()}
+                    onLiked={(value: boolean) => value ?
+                        onTrackLiked(currentTrack.id, updateData) :
+                        onTrackLikeRemoved(currentTrack.id, updateData)}
+                    onDisliked={(value: boolean) => value ?
+                        onTrackDisliked(currentTrack.id, updateData) :
+                        onTrackDislikeRemoved(currentTrack.id, updateData)}
+                    onLoved={(value: boolean) => value ?
+                        onTrackLoved(currentTrack.id, updateData) :
+                        onTrackLoveRemoved(currentTrack.id,updateData)}
                 />
             }
             {
@@ -263,6 +316,14 @@ export default function PlayListView({ loaderData, params }: Route.ComponentProp
                     ))
                 }
             </div>
+            <ComboBoxFloatingButton
+                options={MenuItems}
+                growDirection="col"
+                marginBottom={5}
+                marginRight={10}
+                iconSize={30}
+                refreshFunc={refreshStats}
+            />
         </div>
     )
 };
