@@ -131,6 +131,7 @@ const MenuItems:ComboboxFloatingButtonOption[] = [
 
 export default function PlayListView({ loaderData, params }: Route.ComponentProps) {
     const service = TrackService.get();
+    const playlistService = PlaylistService.get();
     const [tracks, setTracks] = useState((loaderData as PlaylistDTO).tracks);
     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
     const [currentTrack, setCurrentTrack] = useState(tracks[currentTrackIndex]);
@@ -284,7 +285,9 @@ export default function PlayListView({ loaderData, params }: Route.ComponentProp
                 onPrev={
                     currentTrackIndex > 0 ?
                         handlePrev : undefined
-                } />
+                }
+                onTrackEnded={() => playlistService.addPlayToPlaylist(params.playlistId)} 
+                />
             <div className="flex flex-col h-fit w-full px-5 rounded-md items-center
             overflow-y-auto
                     

@@ -117,6 +117,9 @@ export default function PlayLists({ loaderData, params }: Route.ComponentProps) 
                                 songs={item.tracks.length}
                                 author={item.author}
                                 reproductions={item.plays}
+                                likes={item.likes}
+                                dislikes={item.dislikes}
+                                loves={item.loves}
                             />
                         )
                     })

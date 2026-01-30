@@ -9,6 +9,7 @@ interface SongBarInput {
     onPlay?: () => void;
     onNext?: (keepPlay: boolean) => void;
     onPrev?: (keepPlay: boolean) => void;
+    onTrackEnded?: () => void;
 }
 
 const formatTime = (duration?: number) => {
@@ -38,7 +39,7 @@ const getFormattedCurrentTime = (value?: number) => {
     return "--:--";
 }
 
-const SongBar = ({ src, play, onNext, onPrev, onPlay }: SongBarInput) => {
+const SongBar = ({ src, play, onNext, onPrev, onPlay, onTrackEnded }: SongBarInput) => {
     const [playing, setPlaying] = useState(play);
     const [volume, setVolume] = useState(0.5);
     const [currentTime, setCurrentTime] = useState(0);
@@ -103,6 +104,8 @@ const SongBar = ({ src, play, onNext, onPrev, onPlay }: SongBarInput) => {
                 onEnded={() => {
                     if (onNext)
                         onNext(playing);
+                    if (onTrackEnded)
+                        onTrackEnded();
                 }}
                 onLoadedMetadata={initalizeAudioHandlerProperties}
                 onTimeUpdate={(e) => setCurrentTime(audioHandler.current?.currentTime ?? 0)}
@@ -126,7 +129,7 @@ const SongBar = ({ src, play, onNext, onPrev, onPlay }: SongBarInput) => {
                 </small>
                 <div className="flex flex-row justify-around items-center w-fit gap-3">
                     <button disabled={!onPrev}
-                    className={`
+                        className={`
                         rounded-md outline-none ${onPrev && "hover:bg-[#00000045] cursor-pointer"} duration-500
                         ${!onPrev && "text-[#ffffff65]"}
                     `}
@@ -138,7 +141,7 @@ const SongBar = ({ src, play, onNext, onPrev, onPlay }: SongBarInput) => {
                         <MdSkipPrevious size={20} />
                     </button>
                     <button disabled={!onPlay}
-                    className={`
+                        className={`
                     rounded-md outline-none ${onPlay && "cursor-pointer hover:bg-[#00000045]"} duration-500
                     ${!onPlay && "text-[#ffffff65"}
                     `}
@@ -146,7 +149,7 @@ const SongBar = ({ src, play, onNext, onPrev, onPlay }: SongBarInput) => {
                         {playing ? <IoPause size={20} /> : <IoPlay size={20} />}
                     </button>
                     <button disabled={!onNext}
-                    className={`
+                        className={`
                         rounded-md outline-none ${onNext && "hover:bg-[#00000045] cursor-pointer"} duration-500
                         ${!onNext && "text-[#ffffff65]"}
                     `}

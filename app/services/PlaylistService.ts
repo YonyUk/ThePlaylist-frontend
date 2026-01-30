@@ -97,4 +97,9 @@ export class PlaylistService {
         const url = `${this.environmentSettings.playlistsUrl}/${playlistId}/stats/likes`;
         return await this.axiosClient.get<ExistencialQuery>(url);
     }
+
+    public async addPlayToPlaylist(playlistId:string){
+        const url = `${this.environmentSettings.playlistsUrl}/${playlistId}/stats/plays`;
+        return await this.axiosClient.get<PlaylistDTO>(url);
+    }
 }
