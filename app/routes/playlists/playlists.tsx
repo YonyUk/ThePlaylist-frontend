@@ -87,7 +87,7 @@ export default function PlayLists({ loaderData, params }: Route.ComponentProps) 
         <div className="p-3 pl-18 gap-5 flex flex-col h-screen w-full items-center">
             <SearchBar onSearchClick={(value: string) => searchPlaylists(value)} />
             <div className={`flex ${playlists.length !== 0 ?
-                'flex-wrap bg-[#00000045] w-full px-5 py-2 overflow-auto' :
+                'flex-wrap bg-[#00000045] w-full px-5 gap-2 py-2 overflow-auto' :
                 'flex-col h-full justify-center'}
                 rounded-md justify-items-start`}>
                 {
