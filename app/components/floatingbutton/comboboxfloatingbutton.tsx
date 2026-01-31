@@ -45,7 +45,7 @@ export default function ComboBoxFloatingButton({
     const [isClicked, setIsClicked] = useState(false);
     return (
         <div
-            className={`flex flex-${growDirection} justify-end items-center p-2 gap-2 bg-[#ffffff35] rounded-full
+            className={`flex flex-${growDirection} justify-end items-center p-2 gap-3 bg-[#ffffff35] rounded-full
             fixed ${getMargins(marginLeft, marginRight, marginTop, marginBottom)} overflow-hidden
             ${!isClicked ? 'h-11' : `h-${height ?? 20}`} duration-500
             `}
@@ -62,6 +62,7 @@ export default function ComboBoxFloatingButton({
                                 item.onSelect().then(resp => {
                                     if (resp && refreshFunc)
                                         refreshFunc();
+                                    setIsClicked(false);
                                 });
                             }
                             else if (item.primary !== true && item.onDeselect) {
@@ -77,10 +78,17 @@ export default function ComboBoxFloatingButton({
                     </button>
                 ))
             }
-            <button className={`hover:cursor-pointer duration-500 ${isClicked && 'rotate-45'}`}
+            <button className={`flex justify-center items-center hover:cursor-pointer duration-500 ${isClicked && options.every((v,_) => v.primary) && 'rotate-45'}`}
                 onClick={() => setIsClicked(!isClicked)}
             >
-                <IoAdd size={iconSize ?? 20} />
+                {
+                    options.some((v, _) => !v.primary) &&
+                    options.find((v, _) => !v.primary)?.secondaryIcon
+                }
+                {
+                    options.every((v, _) => v.primary) &&
+                    <IoAdd size={iconSize ?? 20} />
+                }
             </button>
         </div>
     )

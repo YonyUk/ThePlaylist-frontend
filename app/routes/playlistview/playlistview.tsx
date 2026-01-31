@@ -383,9 +383,9 @@ export default function PlayListView({ loaderData, params }: Route.ComponentProp
                 options={MenuItems}
                 growDirection="col"
                 marginBottom={5}
-                marginRight={10}
+                marginRight={5}
                 iconSize={30}
-                height={40}
+                height={35}
                 refreshFunc={refreshStats}
             />
         </div>
