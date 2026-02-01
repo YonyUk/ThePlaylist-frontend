@@ -7,6 +7,9 @@ import manage_playlists from 'app/assets/images/manage_playlists.png';
 import manage_playlist_content from 'app/assets/images/manage_playlist_content.png';
 import manage_playlist_content_2 from 'app/assets/images/manage_playlist_content_2.png';
 import playlist_ranking from 'app/assets/images/playlist_ranking.png';
+import SocialContacts from "~/components/socialcontacts/socialcontacts";
+import { useNavigate } from "react-router";
+import { ROUTES } from "~/routes";
 
 export function meta({ }: Route.MetaArgs) {
 	return [
@@ -52,14 +55,15 @@ export default function Home() {
 	]
 
 	const width = Math.floor(100 / features.length);
+	const navigate = useNavigate();
 
 	return (
-		<div className="flex flex-col h-full w-full overflow-y-auto overflow-x-hidden p-2 pl-18
+		<div className="flex flex-col h-full w-full overflow-y-auto overflow-x-hidden">
+
+			<div className="flex flex-col h-full w-full overflow-y-auto overflow-x-hidden p-2 pl-18
     	[&::-webkit-scrollbar]:w-2
     	[&::-webkit-scrollbar-track]:rounded-full
-    	[&::-webkit-scrollbar-thumb]:bg-[#ffffff35]
     	[&::-webkit-scrollbar-thumb]:rounded-full
-    	[&::-webkit-scrollbar-thumb:hover]:bg-[#ffffff65]
     	[&::-webkit-scrollbar-thumb:hover]:cursor-pointer
     
     	scrollbar-thin
@@ -67,31 +71,46 @@ export default function Home() {
     	scrollbar-track-gray-100
     	scrollbar-track-rounded
     	scrollbar-thumb-rounded"
-		>
-			<div className="flex flex-col justify-center items-center bg-[#00000045] rounded-md w-full">
-				<div className="text-[50px]">
-					ThePlaylist
+			>
+				<div className="flex flex-col justify-center items-center bg-[#00000045] rounded-md w-full">
+					<div className="text-[50px]">
+						ThePlaylist
+					</div>
+					<div className="m-3 text-[#ffffffb5] text-center">
+						Where people connect through their musical tastes and music is the language
+					</div>
 				</div>
-				<div className="m-3 text-[#ffffffb5] text-center">
-					Where people connect through their musical tastes and music is the language
+				<div className="flex justify-center items-center h-fit w-full p-2 text-[30px]">
+					What you can do?
+				</div>
+				<div className="flex flex-row justify-around items-start w-full h-full pb-15 min-h-2/5
+				">
+					{
+						features.map((item, index) => (
+							<FeatureBox key={index}
+								mainText={item.mainText}
+								features={item.features}
+								width={width < 100 ? `${width}/100` : 'full'}
+								imgs={item.imgs}
+								replaceImageInterval={item.replaceImageInterval}
+							/>
+						))
+					}
 				</div>
 			</div>
-			<div className="flex justify-center items-center h-fit w-full p-2 text-[30px]">
-				What you can do?
-			</div>
-			<div className="flex flex-row justify-around items-start w-full min-h-2/5">
-				{
-					features.map((item, index) => (
-						<FeatureBox key={index}
-							mainText={item.mainText}
-							features={item.features}
-							width={width < 100 ? `${width}/100` : 'full'}
-							imgs={item.imgs}
-							replaceImageInterval={item.replaceImageInterval}
-						/>
-					))
-				}
-			</div>
+			<footer className="flex text-[#ffffff75] bg-[#ffffff15] pl-18 flex-row fixed bottom-0 h-fit w-full justify-between items-center p-1">
+				<div className="flex flex-col">
+					Developer contacts:
+					<SocialContacts iconsSize={15}
+						phone="+53 56467260"
+						email="yonatanjoseguerraperez@gmail.com"
+					/>
+				</div>
+				<button onClick={() => navigate(ROUTES.REGISTER)}
+				className="p-3 px-5 rounded-full duration-500 cursor-pointer hover:bg-[#00000045] bg-[#ffffff35]">
+					Join
+				</button>
+			</footer>
 		</div>
 	);
 }

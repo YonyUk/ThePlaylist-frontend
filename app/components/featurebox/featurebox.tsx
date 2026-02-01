@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export interface FeatureBoxProps {
     features: string[];
@@ -31,7 +31,10 @@ const sanitazeWidthValue = (value: string): boolean => {
 export default function FeatureBox({ features, mainText, imgs, width, replaceImageInterval }: FeatureBoxProps) {
     const [currentIndex,setCurrentIndex] = useState(0);
 
-    setInterval(() => setCurrentIndex((currentIndex + 1) % imgs.length),replaceImageInterval);
+    useEffect(() => {
+        const interval = setInterval(() => setCurrentIndex((currentIndex + 1) % imgs.length),replaceImageInterval);
+        return () => clearInterval(interval);
+    },[imgs.length,replaceImageInterval]);
 
     return (
         <div className={`flex flex-col ${width && sanitazeWidthValue(width) && `w-${width}`}
