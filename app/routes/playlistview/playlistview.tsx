@@ -1,6 +1,6 @@
 import SearchBar from "~/components/searchbar/searchbar";
 import type { Route } from "./+types/playlistview";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CurrentSong from "~/components/currentsong/currentsong";
 import SongBar from "~/components/songbar/songbar";
 import { PlaylistService } from "~/services/PlaylistService";
@@ -218,36 +218,37 @@ export default function PlayListView({ loaderData, params }: Route.ComponentProp
     MenuItems[2].onSelect = async () => addLoveToPlaylist(params.playlistId);
     MenuItems[2].onDeselect = async () => removeLoveFromPlaylist(params.playlistId);
 
-    const updateData = (data: TrackDTO) => {
+    const updateData = useCallback((data: TrackDTO) => {
         setLikes(data.likes);
         setDislikes(data.dislikes);
         setLoves(data.loves);
         setPlays(data.plays);
         tracks[currentTrackIndex] = data;
         setCurrentTrack(data);
-    }
+    },[currentTrackIndex]);
 
-    const onPlayTrack = async () => {
+    const onPlayTrack = useCallback(async () => {
+        if(loadState != TrackLoadState.DONE) return;
         try {
             service.updateTrackPlays(currentTrack.id);
         } catch (error) {
 
         }
-    }
+    },[currentTrack.id,loadState]);
 
-    const handleNext = (keepPlaying: boolean) => {
+    const handleNext = useCallback((keepPlaying: boolean) => {
         setCurrentTrackIndex(currentTrackIndex + 1);
         setCurrentTrack(tracks[currentTrackIndex + 1]);
         setTrackId(tracks[currentTrackIndex + 1].id);
         setKeepPlay(keepPlaying);
-    }
+    },[currentTrackIndex]);
 
-    const handlePrev = (keepPlaying: boolean) => {
+    const handlePrev = useCallback((keepPlaying: boolean) => {
         setCurrentTrackIndex(currentTrackIndex - 1);
         setCurrentTrack(tracks[currentTrackIndex - 1]);
         setTrackId(tracks[currentTrackIndex - 1].id);
         setKeepPlay(keepPlaying);
-    }
+    },[currentTrackIndex]);
 
     useEffect(() => {
         service.getTrackInfo(currentTrack.id)
@@ -273,11 +274,16 @@ export default function PlayListView({ loaderData, params }: Route.ComponentProp
                     refreshTrack(track?.id ?? null);
                 }, Number(track?.expires) * 1000);
                 setInternalInterval(interval_);
+                return () => clearInterval(interval_);
             }
+        }
+        return () => {
+            if (interval)
+                clearInterval(interval);
         }
     }, [loadState]);
 
-    const searchTracksByPattern = (pattern: string) => {
+    const searchTracksByPattern = useCallback((pattern: string) => {
         service.searchTracksOnPlaylist(params.playlistId, pattern).then(resp => {
             if (resp.status === 200) {
                 setTracks(resp.data);
@@ -287,7 +293,7 @@ export default function PlayListView({ loaderData, params }: Route.ComponentProp
                 setKeepPlay(false);
             }
         })
-    }
+    },[params.playlistId]);
 
     return (
         <div className="flex flex-col pl-18 w-full h-full items-center gap-5 p-2 overflow-y-auto">
