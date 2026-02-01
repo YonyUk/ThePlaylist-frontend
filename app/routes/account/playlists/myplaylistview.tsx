@@ -107,7 +107,7 @@ export default function MyPlaylistView({ loaderData }: Route.ComponentProps) {
                     ))
                 }
             </div>
-            <div className="flex flex-row justify-end w-full p-1 px-4 pb-3 gap-5">
+            <div className="flex fixed flex-row justify-end w-full p-1 px-4 pb-3 gap-5 bottom-5 right-5">
                 <button onClick={() => navigate(`${ROUTES.MYPLAYLISTS}/${playlistId}/modify`)}
                     className="px-5 rounded-md bg-[#ffffff15] p-2 hover:bg-[#00000045] duration-500 cursor-pointer">
                     <MdEdit size={20} />

@@ -90,7 +90,7 @@ export default function TrackUploader({ playlistId, cloudAccess }: TrackUploader
 
     return (
         <div
-            className="flex flex-col h-22/25 mt-2 mr-2 ml-18 justify-start items-center rounded-md bg-[#00000045] overflow-y-auto"
+            className="flex flex-col h-98/100 mt-2 mr-2 ml-18 justify-start items-center rounded-md bg-[#00000045] overflow-y-auto"
         >
             <input type="file" name="tracks" id="tracks"
                 multiple

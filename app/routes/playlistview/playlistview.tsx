@@ -290,7 +290,7 @@ export default function PlayListView({ loaderData, params }: Route.ComponentProp
     }
 
     return (
-        <div className="flex flex-col pl-18 w-full h-screen items-center gap-5 p-2 overflow-y-auto">
+        <div className="flex flex-col pl-18 w-full h-full items-center gap-5 p-2 overflow-y-auto">
             <SearchBar onSearchClick={searchTracksByPattern} />
             {
                 track &&

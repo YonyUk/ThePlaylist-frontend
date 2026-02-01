@@ -45,7 +45,7 @@ export default function Account({ actionData }: Route.ComponentProps) {
     }
 
     return (
-        <div className="h-screen">
+        <div className="h-90/100">
             <nav className="pl-18 pt-2 bg-[#00000090]">
                 <div className="flex flex-row w-full justify-end gap-3">
                     {

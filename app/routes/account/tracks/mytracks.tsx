@@ -104,7 +104,7 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
 
     return (
         <div
-            className="flex flex-col pl-18 w-full h-22/25 items-center p-2 overflow-y-auto"
+            className="flex flex-col pl-18 w-full h-full items-center p-2 overflow-y-auto"
         >
             <SearchBar onSearchClick={(value: string) => searchByPattern(value)} />
             <div className="flex flex-col mt-2 h-4/5 w-full p-2 rounded-md items-center bg-[#00000045]

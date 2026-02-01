@@ -105,13 +105,26 @@ export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps)
 
     return (
         <div
-            className="flex flex-col pl-18 w-full h-22/25 items-center gap-5 p-2 overflow-y-auto"
+            className="flex flex-col pl-18 w-full h-full items-center gap-5 overflow-y-auto"
         >
             <SearchBar onSearchClick={searchTracksByName} />
-            <div className="flex flex-row h-full w-full gap-2">
+            <div className="flex flex-row h-77/100 w-full gap-2">
                 <div className="flex flex-col h-full w-full p-2 overflow-hidden rounded-md items-center bg-[#00000045]">
                     <h1>Aviables tracks</h1>
-                    <div className="flex flex-col w-full h-full overflow-y-auto">
+                    <div className="flex flex-col w-full h-full overflow-y-auto mb-2
+                    [&::-webkit-scrollbar]:w-2
+    	            [&::-webkit-scrollbar-track]:rounded-full
+    	            [&::-webkit-scrollbar-thumb]:bg-[#ffffff35]
+    	            [&::-webkit-scrollbar-thumb]:rounded-full
+    	            [&::-webkit-scrollbar-thumb:hover]:bg-[#ffffff65]
+    	            [&::-webkit-scrollbar-thumb:hover]:cursor-pointer
+    
+    	            scrollbar-thin
+    	            scrollbar-thumb-gray-400
+    	            scrollbar-track-gray-100
+    	            scrollbar-track-rounded
+    	            scrollbar-thumb-rounded
+		            ">
                         {
                             userTracks.map((trackItem, index) => (
                                 <PlayListTrackItem
@@ -165,8 +178,8 @@ export default function AddTracksFromCloud({ loaderData }: Route.ComponentProps)
                 </div>
             </div>
             <div className="flex w-full justify-end px-3">
-                <button onClick={() => navigate(`${ROUTES.MYPLAYLISTS}/0`)} 
-                className="p-1 px-2 bg-[#ffffff15] backdrop-blur-xs rounded-md hover:bg-[#00000045] cursor-pointer duration-500">
+                <button onClick={() => navigate(`${ROUTES.MYPLAYLISTS}/0`)}
+                    className="p-1 px-2 bg-[#ffffff15] backdrop-blur-xs rounded-md hover:bg-[#00000045] cursor-pointer duration-500">
                     Done
                 </button>
             </div>
