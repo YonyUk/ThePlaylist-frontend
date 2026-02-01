@@ -13,6 +13,7 @@ import { MdNavigateBefore } from "react-icons/md";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaRedoAlt } from "react-icons/fa";
 import PageController from "~/components/pagecontroller/pagecontroller";
+import AddItem from "~/components/add_item/add_item";
 
 interface ClientLoaderData {
     tracks: TrackDTO[];
@@ -144,32 +145,10 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
                     }}
                 />
             </div>
-            {/* <div
-                className="flex flex-row justify-around mt-2 gap-2">
-                <button 
-                onClick={() => {
-                    if (page > 0)
-                        handlePrevPage(page - 1);
-                }}
-                className={`p-1 bg-[#00000045] rounded-md 
-                    ${page === 0 && 'text-[#ffffff65]'} ${page !== 0 && 'cursor-pointer'}
-                    `}>
-                    <MdNavigateBefore size={20} />
-                </button>
-                <button className="flex flex-row justify-center items-center p-1 bg-[#00000045] rounded-md">
-                    <small> {page} </small>
-                </button>
-                <button
-                onClick={() => {
-                    if (next)
-                        handleNextPage(page + 1);
-                }} 
-                className={`p-1 bg-[#00000045] rounded-md 
-                    ${!next && 'text-[#ffffff65]'} ${next && 'cursor-pointer'}
-                    `}>
-                    <MdNavigateNext size={20} />
-                </button>
-            </div> */}
+            <button onClick={() => navigate(`${ROUTES.MYTRACKS}/upload`)}
+            className="flex flex-row justify-end items-center fixed bottom-5 right-5">
+                <AddItem iconSize={30} height={35} width={35}/>
+            </button>
         </div>
     )
 }

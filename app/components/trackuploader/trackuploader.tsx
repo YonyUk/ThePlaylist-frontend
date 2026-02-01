@@ -8,9 +8,10 @@ import { useCallback, useRef, useState } from "react";
 
 interface TrackUploaderProps {
     playlistId?: string;
+    cloudAccess?: boolean
 }
 
-export default function TrackUploader({ playlistId }: TrackUploaderProps) {
+export default function TrackUploader({ playlistId, cloudAccess }: TrackUploaderProps) {
     const playlistService = playlistId ? PlaylistService.get() : null;
     const trackService = TrackService.get();
 
@@ -19,11 +20,11 @@ export default function TrackUploader({ playlistId }: TrackUploaderProps) {
     const tracksRef = useRef<(TrackToUploadRef | null)[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const setTrackRef = useCallback((index:number) => {
-        return (el:TrackToUploadRef | null) => {
+    const setTrackRef = useCallback((index: number) => {
+        return (el: TrackToUploadRef | null) => {
             tracksRef.current[index] = el;
         };
-    },[]);
+    }, []);
 
     const navigate = useNavigate();
 
@@ -144,15 +145,18 @@ export default function TrackUploader({ playlistId }: TrackUploaderProps) {
                         text="add from local"
                     />
                 </div>
-                <div
-                    onClick={() => navigate('add_from_cloud/0')}
-                >
-                    <AddItem
-                        width={150}
-                        iconSize={30}
-                        text="add from cloud"
-                    />
-                </div>
+                {
+                    cloudAccess === true &&
+                    <div
+                        onClick={() => navigate('add_from_cloud/0')}
+                    >
+                        <AddItem
+                            width={150}
+                            iconSize={30}
+                            text="add from cloud"
+                        />
+                    </div>
+                }
             </div>
             {
                 tracks.length !== 0 &&
