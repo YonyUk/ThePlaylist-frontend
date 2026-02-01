@@ -32,7 +32,9 @@ export default function FeatureBox({ features, mainText, imgs, width, replaceIma
     const [currentIndex,setCurrentIndex] = useState(0);
 
     useEffect(() => {
-        const interval = setInterval(() => setCurrentIndex((currentIndex + 1) % imgs.length),replaceImageInterval);
+        const interval = setInterval(
+            () => setCurrentIndex(prev => (prev + 1) % imgs.length)
+        ,replaceImageInterval);
         return () => clearInterval(interval);
     },[imgs.length,replaceImageInterval]);
 
