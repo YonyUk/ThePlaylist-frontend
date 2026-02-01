@@ -12,6 +12,7 @@ import { MdNavigateNext } from "react-icons/md";
 import { MdNavigateBefore } from "react-icons/md";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaRedoAlt } from "react-icons/fa";
+import PageController from "~/components/pagecontroller/pagecontroller";
 
 interface ClientLoaderData {
     tracks: TrackDTO[];
@@ -47,56 +48,56 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
     const service = TrackService.get();
     const data = loaderData as ClientLoaderData;
     const [tracks, setTracks] = useState(data.tracks);
-    const [page,setPage] = useState(data.currentPage);
-    const [next,setNext] = useState(data.next);
-    const [textPattern,setTextPattern] = useState('');
+    const [page, setPage] = useState(data.currentPage);
+    const [next, setNext] = useState(data.next);
+    const [textPattern, setTextPattern] = useState('');
 
     const navigate = useNavigate();
 
-    const removeTrack = async (trackId:string) => {
+    const removeTrack = async (trackId: string) => {
         const response = await service.removeTrack(trackId);
         if (response.status === 401)
             navigate(ROUTES.LOGIN);
         if (response.status === 202)
-            setTracks(tracks.filter((track,_) => track.id !== trackId));
+            setTracks(tracks.filter((track, _) => track.id !== trackId));
         return response.status === 202;
-    }    
+    }
 
-    const searchByPattern = async (text:string) => {
+    const searchByPattern = async (text: string) => {
         try {
-            const tracksResponse = await service.getMyTracks(0,text);
-            const nextTracksResponse = await service.getMyTracks(1,text);
+            const tracksResponse = await service.getMyTracks(0, text);
+            const nextTracksResponse = await service.getMyTracks(1, text);
             setTracks(tracksResponse.data);
             setNext(nextTracksResponse.data.length > 0);
             setPage(0);
             setTextPattern(text);
         } catch (error) {
-            
+
         }
     }
 
-    const handleNextPage = async (nextPage:number) => {
+    const handleNextPage = async (nextPage: number) => {
         navigate(`${ROUTES.MYTRACKS}/${nextPage}`);
-        try{
-            const tracksResponse = await service.getMyTracks(nextPage,textPattern);
-            const nextTracksResponse = await service.getMyTracks(nextPage + 1,textPattern);
+        try {
+            const tracksResponse = await service.getMyTracks(nextPage, textPattern);
+            const nextTracksResponse = await service.getMyTracks(nextPage + 1, textPattern);
             setTracks(tracksResponse.data);
             setNext(nextTracksResponse.data.length > 0);
             setPage(nextPage);
-        } catch (error){
+        } catch (error) {
 
         }
     }
 
-    const handlePrevPage = async (prevPage:number) => {
+    const handlePrevPage = async (prevPage: number) => {
         navigate(`${ROUTES.MYTRACKS}/${prevPage}`);
         try {
-            const tracksResponse = await service.getMyTracks(prevPage,textPattern);
+            const tracksResponse = await service.getMyTracks(prevPage, textPattern);
             setTracks(tracksResponse.data);
             setNext(true);
             setPage(prevPage);
         } catch (error) {
-            
+
         }
     }
 
@@ -104,7 +105,7 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
         <div
             className="flex flex-col pl-18 w-full h-22/25 items-center p-2 overflow-y-auto"
         >
-            <SearchBar onSearchClick={(value:string) => searchByPattern(value)}/>
+            <SearchBar onSearchClick={(value: string) => searchByPattern(value)} />
             <div className="flex flex-col mt-2 h-4/5 w-full p-2 rounded-md items-center bg-[#00000045]
             overflow-y-auto
                     
@@ -125,11 +126,25 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
                 {
                     tracks.map((trackItem, index) => (
                         <PlayListTrackItem track_id={trackItem.id} key={index} dispensable={true}
-                        onRemoveClicked={(trackId:string) => removeTrack(trackId)}/>
+                            onRemoveClicked={(trackId: string) => removeTrack(trackId)} />
                     ))
                 }
             </div>
-            <div
+            <div className="p-2">
+                <PageController
+                    currentPage={page}
+                    nextPage={next}
+                    onNext={() => {
+                        if (next)
+                            handleNextPage(page + 1);
+                    }}
+                    onPrev={() => {
+                        if (page > 0)
+                            handlePrevPage(page - 1);
+                    }}
+                />
+            </div>
+            {/* <div
                 className="flex flex-row justify-around mt-2 gap-2">
                 <button 
                 onClick={() => {
@@ -154,7 +169,7 @@ export default function MyTracks({ loaderData }: Route.ComponentProps) {
                     `}>
                     <MdNavigateNext size={20} />
                 </button>
-            </div>
+            </div> */}
         </div>
     )
 }

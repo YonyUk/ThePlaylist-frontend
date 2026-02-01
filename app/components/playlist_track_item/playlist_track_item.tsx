@@ -43,7 +43,8 @@ export default function PlayListTrackItem({ track_id, dashboardControls, draggab
             {
                 !track &&
                 <div style={{
-                    animation: "loadingAnimation 1.5s linear infinite"
+                    animation: "loadingAnimation 1.5s linear infinite",
+                    height:20
                 }}>
                     < AiOutlineLoading3Quarters size={10} />
                 </div>
