@@ -47,7 +47,7 @@ export default function ComboBoxFloatingButton({
         <div
             className={`flex flex-${growDirection} justify-end items-center p-2 gap-3 bg-[#ffffff35] rounded-full
             fixed ${getMargins(marginLeft, marginRight, marginTop, marginBottom)} overflow-hidden
-            ${!isClicked ? 'h-11' : `h-${height ?? 20}`} duration-500
+            ${!isClicked ? 'h-11' : `h-40`} transition-all duration-500
             `}
         >
             {
