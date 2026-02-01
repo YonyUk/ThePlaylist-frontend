@@ -64,6 +64,9 @@ export default function PlayListTrackItem({ track_id, dashboardControls, draggab
                                 dislikes={track.dislikes}
                                 hearts={track.loves}
                                 reproductions={track.plays}
+                                already_disliked
+                                already_liked
+                                already_loved
                             />
                             <div className="flex flex-row justify-around items-center">
                                 <button className="cursor-pointer p-1 rounded-md duration-500 hover:bg-[#00000045]"
@@ -106,6 +109,9 @@ export default function PlayListTrackItem({ track_id, dashboardControls, draggab
                                 dislikes={track.dislikes}
                                 hearts={track.loves}
                                 reproductions={track.plays}
+                                already_disliked
+                                already_liked
+                                already_loved
                             />
                             {
                                 isDispensable &&

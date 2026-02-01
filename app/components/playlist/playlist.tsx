@@ -72,6 +72,9 @@ export default function PlayListItem({
                 dislikes={_dislikes}
                 reproductions={plays}
                 hearts={_loves}
+                already_liked
+                already_disliked
+                already_loved
             />
         </div>
     )
